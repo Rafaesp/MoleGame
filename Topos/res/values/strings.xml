@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, topos!</string>
     <string name="app_name">Topos</string>
+    <string name="txtTitleSetting">Sonido</string>
 </resources>
