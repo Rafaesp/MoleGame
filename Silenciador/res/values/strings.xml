@@ -14,4 +14,5 @@
         <item>Saturday</item>
         <item>Sunday</item>
     </string-array>
+    <string name="btnAccept">Accept</string>
 </resources>

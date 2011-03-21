@@ -59,4 +59,16 @@
 			    >
 		    </TimePicker>
 	    </LinearLayout>
+	    <LinearLayout
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent"
+	    	android:layout_weight="0.8"
+	    	>
+	        <Button 
+	        	android:id="@+id/btnAccept" 
+	        	android:layout_height="wrap_content" 
+	        	android:layout_width="wrap_content" 
+	        	android:text="@string/btnAccept">
+	        </Button>
+	    </LinearLayout>
     </LinearLayout>
