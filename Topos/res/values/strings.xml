@@ -3,4 +3,7 @@
     <string name="hello">Hello World, topos!</string>
     <string name="app_name">Topos</string>
     <string name="txtTitleSetting">Sonido</string>
+    <string name="textView1">Topos Game</string>
+    <string name="btnPlay">Play</string>
+    <string name="btnSettings">Settings</string>
 </resources>
