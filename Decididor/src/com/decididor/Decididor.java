@@ -19,7 +19,7 @@ import android.widget.EditText;
 public class Decididor extends Activity implements OnClickListener, OnLongClickListener{
 	private List<CheckBox> lcb;
 	private Button btnDecide;
-    /** Called when the activity is first created. */
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
