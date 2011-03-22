@@ -33,9 +33,9 @@ public final class R {
         public static final int new_xml=0x7f030001;
     }
     public static final class string {
-        public static final int add=0x7f040002;
         public static final int app_name=0x7f040001;
         public static final int btnAccept=0x7f040005;
+        public static final int btnAdd=0x7f040002;
         public static final int endTime=0x7f040004;
         public static final int hello=0x7f040000;
         public static final int startTime=0x7f040003;

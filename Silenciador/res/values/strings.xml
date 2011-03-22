@@ -2,7 +2,7 @@
 <resources>
     <string name="hello">Hello World, Silenciador!</string>
     <string name="app_name">Silenciador</string>
-    <string name="add">Add</string>
+    <string name="btnAdd">Add</string>
     <string name="startTime">Starting time</string>
     <string name="endTime">Ending time</string>
     <string-array name="days">
