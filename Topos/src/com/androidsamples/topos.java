@@ -22,9 +22,15 @@ public class topos extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		int id = v.getId();
 		
+		Intent i=null;
 		switch (id) {
 		case R.id.btnSettings:
-			Intent i = new Intent(getApplicationContext(), Settings.class);
+			i = new Intent(getApplicationContext(), Settings.class);
+			startActivity(i);
+			break;
+			
+		case R.id.btnPlay:
+			i = new Intent(getApplicationContext(), ToposGameView.class);
 			startActivity(i);
 			break;
 
