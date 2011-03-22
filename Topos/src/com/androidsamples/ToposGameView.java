@@ -1,6 +1,9 @@
 package com.androidsamples;
 
 import android.content.Context;
+
+import android.view.View;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,6 +11,7 @@ import android.graphics.Color;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+
 
 public class ToposGameView extends SurfaceView{
 
