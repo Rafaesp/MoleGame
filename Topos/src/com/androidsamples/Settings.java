@@ -14,6 +14,9 @@ public class Settings extends Activity implements OnCheckedChangeListener{
 		setContentView(R.layout.settings);
 		ToggleButton tbtn = (ToggleButton) findViewById(R.id.tbtnSound);
 		tbtn.setOnCheckedChangeListener(this);
+		
+		SharedPreferences sp = getSharedPreferences("TOPOS", MODE_PRIVATE);
+		tbtn.setChecked(sp.getBoolean("sound", true));
 	}
 
 	@Override
