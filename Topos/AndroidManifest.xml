@@ -14,7 +14,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Settings"></activity>
-        <activity android:name=".ToposGameView"></activity>
+        <activity android:name=".ToposGameActivity"></activity>
 
     </application>
 </manifest>

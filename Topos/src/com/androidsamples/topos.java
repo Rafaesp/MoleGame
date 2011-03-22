@@ -30,7 +30,7 @@ public class topos extends Activity implements OnClickListener{
 			break;
 			
 		case R.id.btnPlay:
-			i = new Intent(getApplicationContext(), ToposGameView.class);
+			i = new Intent(getApplicationContext(), ToposGameActivity.class);
 			startActivity(i);
 			break;
 

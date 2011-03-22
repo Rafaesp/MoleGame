@@ -13,9 +13,13 @@ public class ToposGameView extends SurfaceView{
 
 	private Bitmap bmp;
 	private SurfaceHolder holder;
-
+	private GameLoopThread gameLoopThread;
+	private int x=0;
+	private int xSpeed=1;
+	
 	public ToposGameView(Context context) {
 		super(context);
+		gameLoopThread = new GameLoopThread(this);
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
 		holder= getHolder();
 		holder.addCallback(new Callback() {
@@ -29,7 +33,7 @@ public class ToposGameView extends SurfaceView{
 			public void surfaceCreated(SurfaceHolder arg0) {
 				// TODO Bloquear Canvas, usar, y desbloquear, rendimiento
 				Canvas c= holder.lockCanvas();
-				onDraw(c);
+				//onDraw(c); ya se hace en surfaceCreate
 				holder.unlockCanvasAndPost(c);
 
 			}
@@ -46,9 +50,15 @@ public class ToposGameView extends SurfaceView{
 	protected void onDraw(Canvas canvas) {
 
 		canvas.drawColor(Color.BLACK);
-		canvas.drawBitmap(bmp, 10, 10, null);
-
+        //movimiento del icon
+		if (x == getWidth() - bmp.getWidth()) {
+            xSpeed = -1;
+     }
+     if (x == 0) {
+            xSpeed = 1;
+     }
+     x = x + xSpeed;
+		canvas.drawBitmap(bmp, x, 10, null);
 	}
-
 
 }
