@@ -25,12 +25,10 @@ public class ToposGameView extends SurfaceView{
 		holder= getHolder();
 		holder.addCallback(new Callback() {
 
-			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
 
 			}
 
-			@Override
 			public void surfaceCreated(SurfaceHolder arg0) {
 				// TODO Bloquear Canvas, usar, y desbloquear, rendimiento
 				Canvas c= holder.lockCanvas();
@@ -39,7 +37,6 @@ public class ToposGameView extends SurfaceView{
 
 			}
 
-			@Override
 			public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 				// TODO Auto-generated method stub
 

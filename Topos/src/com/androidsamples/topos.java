@@ -21,7 +21,6 @@ public class Topos extends Activity implements OnClickListener{
         btnPlay.setOnClickListener(this);
     }
 
-	@Override
 	public void onClick(View v) {
 		int id = v.getId();
 		
