@@ -32,10 +32,9 @@ public class ToposGameView extends SurfaceView{
 
 			@Override
 			public void surfaceCreated(SurfaceHolder arg0) {
-				// TODO Bloquear Canvas, usar, y desbloquear, rendimiento
-				Canvas c= holder.lockCanvas();
-				//onDraw(c); ya se hace en surfaceCreate
-				holder.unlockCanvasAndPost(c);
+				gameLoopThread.setRunning(true);
+
+                gameLoopThread.start();
 
 			}
 
