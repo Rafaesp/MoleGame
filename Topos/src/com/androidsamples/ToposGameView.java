@@ -1,9 +1,6 @@
 package com.androidsamples;
 
 import android.content.Context;
-
-import android.view.View;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -53,7 +50,7 @@ public class ToposGameView extends SurfaceView{
 
 	protected void onDraw(Canvas canvas) {
 
-		canvas.drawColor(Color.BLACK);
+		canvas.drawColor(Color.RED);
         //movimiento del icon
 		if (x == getWidth() - bmp.getWidth()) {
             xSpeed = -1;

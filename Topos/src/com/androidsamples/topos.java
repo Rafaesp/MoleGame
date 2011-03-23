@@ -16,6 +16,9 @@ public class Topos extends Activity implements OnClickListener{
         
         Button btnSettings = (Button) findViewById(R.id.btnSettings);
         btnSettings.setOnClickListener(this);
+        
+        Button btnPlay = (Button) findViewById(R.id.btnPlay);
+        btnPlay.setOnClickListener(this);
     }
 
 	@Override
