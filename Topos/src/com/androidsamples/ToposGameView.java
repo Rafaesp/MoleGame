@@ -17,11 +17,14 @@ public class ToposGameView extends SurfaceView{
 	private GameLoopThread gameLoopThread;
 	private int x=0;
 	private int xSpeed=1;
+	private Sprite sprite;
 	
 	public ToposGameView(Context context) {
 		super(context);
 		gameLoopThread = new GameLoopThread(this);
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bad1);
+		
+		
 		holder= getHolder();
 		holder.addCallback(new Callback() {
 
@@ -44,21 +47,17 @@ public class ToposGameView extends SurfaceView{
 
 			}
 		});
+		
+		sprite = new Sprite(this, bmp);
 
 	}
 
 	protected void onDraw(Canvas canvas) {
 
-		canvas.drawColor(Color.RED);
-        //movimiento del icon
-		if (x == getWidth() - bmp.getWidth()) {
-            xSpeed = -1;
-     }
-     if (x == 0) {
-            xSpeed = 1;
-     }
-     x = x + xSpeed;
-		canvas.drawBitmap(bmp, x, 10, null);
+		canvas.drawColor(Color.GREEN);
+        sprite.onDraw(canvas);
+        
+
 	}
 
 }
