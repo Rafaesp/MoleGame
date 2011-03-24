@@ -18,10 +18,10 @@ import android.view.WindowManager;
 public class ToposGameView extends SurfaceView implements OnClickListener {
 
 
-	private static final int WIDTH =ToposGameActivity.getWidth();
-	//PROBLEMA: El ancho es 0 siempre;
+	private static final int WIDTH =topos.getWidth();
+
 	
-	private static final int HEIGHT=0 ;
+	private static final int HEIGHT=topos.getHeight();
 	
 	private Bitmap bmp;
 	private SurfaceHolder holder;
@@ -58,13 +58,24 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 
 		setOnClickListener(this);// TODO
 		
-		mole1 = new Sprite(this, this.bmp, 0, HEIGHT/6);
-		//mole2 = new Sprite(this, this.bmp, WIDTH/3, HEIGHT/6);
-		mole2 = new Sprite(this, this.bmp, 20, 20);
-
-		mole3 = new Sprite(this, this.bmp, (2*WIDTH)/3, HEIGHT/6);
+		mole1 = new Sprite(this, this.bmp, WIDTH/4, (2*HEIGHT)/8);
+		mole2 = new Sprite(this, this.bmp, (2*WIDTH)/4, (2*HEIGHT)/8);
+		mole3 = new Sprite(this, this.bmp, (3*WIDTH)/4, (2*HEIGHT)/8);
 		
-		Log.i("Ancho", ""+WIDTH);
+		mole4 = new Sprite(this, this.bmp, WIDTH/4, (3*HEIGHT)/8);
+		mole5 = new Sprite(this, this.bmp, (2*WIDTH)/4, (3*HEIGHT)/8);
+		mole6 = new Sprite(this, this.bmp, (3*WIDTH)/4, (3*HEIGHT)/8);
+		
+		mole7 = new Sprite(this, this.bmp, WIDTH/4, (4*HEIGHT)/8);
+		mole8 = new Sprite(this, this.bmp, (2*WIDTH)/4, (4*HEIGHT)/8);
+		mole9 = new Sprite(this, this.bmp, (3*WIDTH)/4, (4*HEIGHT)/8);
+		
+		mole10 = new Sprite(this, this.bmp, WIDTH/4, (5*HEIGHT)/8);
+		mole11 = new Sprite(this, this.bmp, (2*WIDTH)/4, (5*HEIGHT)/8);
+		mole12 = new Sprite(this, this.bmp, (3*WIDTH)/4, (5*HEIGHT)/8);
+		
+		Log.i("Ancho", ""+WIDTH);//TODO
+		Log.i("Alto", ""+HEIGHT);
 		
 		
 		
@@ -114,6 +125,18 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 		mole1.onDraw(canvas);
 		mole2.onDraw(canvas);
 		mole3.onDraw(canvas);
+		
+		mole4.onDraw(canvas);
+		mole5.onDraw(canvas);
+		mole6.onDraw(canvas);
+		
+		mole7.onDraw(canvas);
+		mole8.onDraw(canvas);
+		mole9.onDraw(canvas);
+		
+		mole10.onDraw(canvas);
+		mole11.onDraw(canvas);
+		mole12.onDraw(canvas);
 
 	}
 
