@@ -7,4 +7,5 @@
     <string name="btnPlay">Play</string>
     <string name="btnSettings">Settings</string>
     <string name="txtSound">Sound</string>
+    <string name="btnExit">Exit</string>
 </resources>

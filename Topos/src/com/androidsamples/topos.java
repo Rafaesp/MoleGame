@@ -3,13 +3,19 @@ package com.androidsamples;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class topos extends Activity implements OnClickListener{
     /** Called when the activity is first created. */
-    @Override
+    
+	private static final int SETTINGS = Menu.FIRST;
+	private static final int SALIR = Menu.FIRST + 1;
+	
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -41,5 +47,38 @@ public class topos extends Activity implements OnClickListener{
 		}
 		
 	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+       menu.add(Menu.NONE, SETTINGS, 0, R.string.btnSettings);
+       menu.add(Menu.NONE, SALIR, 1, "Salir");
+       //menu.add(Menu.NONE, SETTINGS, 0, R.string.btnExit);
+        return true;
+    }
+
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		  super.onMenuItemSelected(featureId, item);
+		        switch(item.getItemId()) {
+		        case SETTINGS:
+		            settings();
+		            break;
+		        case SALIR:
+		            exit();
+		            break;
+		        }
+		        return true;
+		 }
+	
+	private void settings(){
+		Intent i=null;
+		i = new Intent(getApplicationContext(), Settings.class);
+		startActivity(i);
+	}
+	
+	private void exit(){
+		setResult(RESULT_OK);
+		finish();
+	}
+	
     
 }
