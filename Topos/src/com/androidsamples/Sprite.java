@@ -123,6 +123,10 @@ public class Sprite extends View{
 		return 1;
 
 	}
+	
+	public void setBeaten(){
+
+	}
 
 
 

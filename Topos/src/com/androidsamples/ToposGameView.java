@@ -39,7 +39,6 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 	private Sprite mole11;
 	private Sprite mole12;
 	
-	private Sprite[] moleArray;
 	
 	
 	
@@ -119,6 +118,8 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 	}
 
 	protected void onDraw(Canvas canvas) {
+		
+		
 
 		canvas.drawColor(Color.GREEN);
 //		sprite.onDraw(canvas);
