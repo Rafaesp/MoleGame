@@ -17,7 +17,7 @@ public class Silenciador extends Activity implements OnClickListener{
     }
 
 	public void onClick(View v) {
-		Intent i = new Intent(getApplicationContext(), New.class);
+		Intent i = new Intent(getApplicationContext(), GCalendarActivity.class);
 		startActivity(i);
 	}
     
