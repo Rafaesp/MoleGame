@@ -5,8 +5,10 @@ import java.util.Random;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class Sprite {
+public class Sprite extends View{
 
 	// direction = 0 up, 1 left, 2 down, 3 right,
 
@@ -35,9 +37,11 @@ public class Sprite {
 	private int height;
 
 	private int ySpeed;
+	
+	private boolean moving=false;
 
 	public Sprite(ToposGameView gameView, Bitmap bmp) {
-
+		super(gameView.getContext()); //TODO
 		this.width = bmp.getWidth() / BMP_COLUMNS;
 
 		this.height = bmp.getHeight() / BMP_ROWS;
@@ -51,6 +55,8 @@ public class Sprite {
 		xSpeed = rnd.nextInt(50) - 5;
 
 		ySpeed = rnd.nextInt(50) - 5;
+		
+		
 
 	}
 
@@ -75,10 +81,14 @@ public class Sprite {
 		currentFrame = ++currentFrame % BMP_COLUMNS;
 
 	}
+	
+	public void setMoving(boolean b){
+		moving=b;
+	}
 
 	public void onDraw(Canvas canvas) {
 
-		update();
+		if(moving)update(); //TODO
 
 		int srcX = currentFrame * width;
 
@@ -105,5 +115,7 @@ public class Sprite {
 		return DIRECTION_TO_ANIMATION_MAP[direction];
 
 	}
+
+
 
 }
