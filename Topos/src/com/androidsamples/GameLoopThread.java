@@ -13,6 +13,7 @@ public class GameLoopThread extends Thread {
 	}
 
 
+	
 
 	public void setRunning(boolean run) {
 		running = run;

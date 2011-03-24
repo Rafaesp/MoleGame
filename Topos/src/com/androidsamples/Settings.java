@@ -7,6 +7,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
 
+
 public class Settings extends Activity implements OnCheckedChangeListener{
 
 	public void onCreate(Bundle saved){
@@ -20,7 +21,6 @@ public class Settings extends Activity implements OnCheckedChangeListener{
 	}
 	
 
-	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		//I get shared preferences (Data Storage method)
 		SharedPreferences sp = getSharedPreferences("TOPOS", MODE_PRIVATE);
