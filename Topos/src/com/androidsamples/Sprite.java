@@ -5,8 +5,9 @@ import java.util.Random;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
-import android.view.View.OnClickListener;
 
 public class Sprite extends View{
 
@@ -24,7 +25,7 @@ public class Sprite extends View{
 
 	private int y = 0;
 
-	private int xSpeed = 5;
+//	private int xSpeed = 5;
 
 	private ToposGameView gameView;
 
@@ -35,50 +36,55 @@ public class Sprite extends View{
 	private int width;
 
 	private int height;
+	
 
-	private int ySpeed;
+
+//	private int ySpeed;
 	
 	private boolean moving=false;
 
-	public Sprite(ToposGameView gameView, Bitmap bmp) {
+	public Sprite(ToposGameView gameView, Bitmap bmp, int x, int y) {
 		super(gameView.getContext()); //TODO
 		this.width = bmp.getWidth() / BMP_COLUMNS;
 
 		this.height = bmp.getHeight() / BMP_ROWS;
-
+		
+		this.x=x;
+		this.y=y;
+		
 		this.gameView = gameView;
 
 		this.bmp = bmp;
 
 		Random rnd = new Random(System.currentTimeMillis());
 
-		xSpeed = rnd.nextInt(50) - 5;
-
-		ySpeed = rnd.nextInt(50) - 5;
-		
+//		xSpeed = rnd.nextInt(50) - 5;
+//
+//		ySpeed = rnd.nextInt(50) - 5;
+//		
 		
 
 	}
 
 	private void update() {
 
-		if (x >= gameView.getWidth() - width - xSpeed || x + xSpeed <= 0) {
-
-			xSpeed = -xSpeed;
-
-		}
-
-		x = x + xSpeed;
-
-		if (y >= gameView.getHeight() - height - ySpeed || y + ySpeed <= 0) {
-
-			ySpeed = -ySpeed;
-
-		}
-
-		y = y + ySpeed;
-
-		currentFrame = ++currentFrame % BMP_COLUMNS;
+//		if (x >= gameView.getWidth() - width - xSpeed || x + xSpeed <= 0) {
+//
+//			xSpeed = -xSpeed;
+//
+//		}
+//
+//		x = x + xSpeed;
+//
+//		if (y >= gameView.getHeight() - height - ySpeed || y + ySpeed <= 0) {
+//
+//			ySpeed = -ySpeed;
+//
+//		}
+//
+//		y = y + ySpeed;
+//
+//		currentFrame = ++currentFrame % BMP_COLUMNS;
 
 	}
 	
@@ -88,7 +94,7 @@ public class Sprite extends View{
 
 	public void onDraw(Canvas canvas) {
 
-		if(moving)update(); //TODO
+	//	if(moving)update(); //TODO
 
 		int srcX = currentFrame * width;
 
@@ -108,11 +114,13 @@ public class Sprite extends View{
 
 	private int getAnimationRow() {
 
-		double dirDouble = (Math.atan2(xSpeed, ySpeed) / (Math.PI / 2) + 2);
-
-		int direction = (int) Math.round(dirDouble) % BMP_ROWS;
-
-		return DIRECTION_TO_ANIMATION_MAP[direction];
+//		double dirDouble = (Math.atan2(xSpeed, ySpeed) / (Math.PI / 2) + 2);
+//
+//		int direction = (int) Math.round(dirDouble) % BMP_ROWS;
+//
+//		return DIRECTION_TO_ANIMATION_MAP[direction];
+		
+		return 1;
 
 	}
 
