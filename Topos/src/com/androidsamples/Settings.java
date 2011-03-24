@@ -19,6 +19,7 @@ public class Settings extends Activity implements OnCheckedChangeListener{
 		SharedPreferences sp = getSharedPreferences("TOPOS", MODE_PRIVATE);
 		tbtn.setChecked(sp.getBoolean("sound", true));
 	}
+	
 
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		//I get shared preferences (Data Storage method)
@@ -27,7 +28,8 @@ public class Settings extends Activity implements OnCheckedChangeListener{
 		SharedPreferences.Editor editor= sp.edit();
 		//Put boolean isChecked on the shared preferences which is a "map"
 		//key = sound - value = isChecked
-		editor.putBoolean("sound", isChecked);		
+		editor.putBoolean("sound", isChecked);
+		editor.commit();
 	}
 	
 	
