@@ -1,5 +1,8 @@
 package com.androidsamples;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,9 +23,9 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 
 	private static final int WIDTH =topos.getWidth();
 
-	
+
 	private static final int HEIGHT=topos.getHeight();
-	
+
 	private Bitmap bmp;
 	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;;
@@ -38,47 +41,33 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 	private Sprite mole10;
 	private Sprite mole11;
 	private Sprite mole12;
-	
-	
-	
-	
+
+
+	private List<Sprite> moles;
+
 
 	public ToposGameView(Context context) {
 		super(context);
-		
-		
 
-		
-		
-		
-		
+		moles = new ArrayList<Sprite>();
+
 		gameLoopThread = new GameLoopThread(this);
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bad1);
 
 		setOnClickListener(this);// TODO
-		
-		mole1 = new Sprite(this, this.bmp, WIDTH/4, (2*HEIGHT)/8);
-		mole2 = new Sprite(this, this.bmp, (2*WIDTH)/4, (2*HEIGHT)/8);
-		mole3 = new Sprite(this, this.bmp, (3*WIDTH)/4, (2*HEIGHT)/8);
-		
-		mole4 = new Sprite(this, this.bmp, WIDTH/4, (3*HEIGHT)/8);
-		mole5 = new Sprite(this, this.bmp, (2*WIDTH)/4, (3*HEIGHT)/8);
-		mole6 = new Sprite(this, this.bmp, (3*WIDTH)/4, (3*HEIGHT)/8);
-		
-		mole7 = new Sprite(this, this.bmp, WIDTH/4, (4*HEIGHT)/8);
-		mole8 = new Sprite(this, this.bmp, (2*WIDTH)/4, (4*HEIGHT)/8);
-		mole9 = new Sprite(this, this.bmp, (3*WIDTH)/4, (4*HEIGHT)/8);
-		
-		mole10 = new Sprite(this, this.bmp, WIDTH/4, (5*HEIGHT)/8);
-		mole11 = new Sprite(this, this.bmp, (2*WIDTH)/4, (5*HEIGHT)/8);
-		mole12 = new Sprite(this, this.bmp, (3*WIDTH)/4, (5*HEIGHT)/8);
-		
+
+		for(int i = 0; i<4; i++){
+			moles.add(new Sprite(this, this.bmp, WIDTH/4, (2*HEIGHT)/8));
+			moles.add(new Sprite(this, this.bmp, (2*WIDTH)/4, (2*HEIGHT)/8));
+			moles.add(new Sprite(this, this.bmp, (3*WIDTH)/4, (2*HEIGHT)/8));
+		}
+
 		Log.i("Ancho", ""+WIDTH);//TODO
 		Log.i("Alto", ""+HEIGHT);
-		
-		
-		
-		
+
+
+
+
 		holder = getHolder();
 		holder.addCallback(new Callback() {
 
@@ -89,10 +78,10 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 				while(retry){
 					try{
 						gameLoopThread.join();
-					retry=false;
-					
+						retry=false;
+
 					}catch(InterruptedException i){
-						
+
 					}
 				}
 			}
@@ -118,38 +107,24 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 	}
 
 	protected void onDraw(Canvas canvas) {
-		
-		
-
 		canvas.drawColor(Color.GREEN);
-//		sprite.onDraw(canvas);
-		mole1.onDraw(canvas);
-		mole2.onDraw(canvas);
-		mole3.onDraw(canvas);
-		
-		mole4.onDraw(canvas);
-		mole5.onDraw(canvas);
-		mole6.onDraw(canvas);
-		
-		mole7.onDraw(canvas);
-		mole8.onDraw(canvas);
-		mole9.onDraw(canvas);
-		
-		mole10.onDraw(canvas);
-		mole11.onDraw(canvas);
-		mole12.onDraw(canvas);
+		//		sprite.onDraw(canvas);
+		for(Sprite mole : moles){
+			mole.onDraw(canvas);
+		}
 
 	}
 
 	@Override
-	public void onClick(View v) {
-
-//		if (v.getId()==sprite.getId()) {
-//			sprite.setMoving(true);
-//			
-
+	public void onClick(View v) { //TODO I don't like. Must be another way.
+		for(Sprite clicked : moles){
+			if(v.getId() == clicked.getId()){
+				clicked.setBeaten();
+			}
 		}
 
 	}
+
+}
 
 

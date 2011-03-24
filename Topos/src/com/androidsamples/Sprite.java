@@ -120,12 +120,12 @@ public class Sprite extends View{
 //
 //		return DIRECTION_TO_ANIMATION_MAP[direction];
 		
-		return 1;
+		return 2;
 
 	}
 	
 	public void setBeaten(){
-
+		currentFrame = 1;
 	}
 
 
