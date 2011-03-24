@@ -51,7 +51,7 @@ public class topos extends Activity implements OnClickListener{
 	public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
        menu.add(Menu.NONE, SETTINGS, 0, R.string.btnSettings);
-       menu.add(Menu.NONE, SALIR, 1, "Salir");
+       menu.add(Menu.NONE, SALIR, 1, R.string.btnExit);
        //menu.add(Menu.NONE, SETTINGS, 0, R.string.btnExit);
         return true;
     }
