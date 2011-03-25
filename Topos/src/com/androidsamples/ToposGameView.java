@@ -31,8 +31,6 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;;
 
-	private Sprite mole1;
-
 
 	private List<Sprite> moles;
 	//NO BORRAR TODAVIA COMENTARIOS
@@ -50,13 +48,9 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 
 		setOnClickListener(this);// TODO
 		
-		Log.i("Elemento clickeado en onClick","1");
-		mole1 = (Sprite) findViewById(R.drawable.mole1);
-		Log.i("Elemento clickeado en onClick","2");
-		mole1.setOnClickListener(this);
-		Log.i("Elemento clickeado en onClick","3");//no llega
-		mole1=new Sprite(this, this.bmp, WIDTH/4, (2*HEIGHT)/8);
-		Log.i("Elemento clickeado en onClick","4");
+
+		
+		
 		
 //		for(int i = 0; i<4; i++){
 //			moles.add(new Sprite(this, this.bmp, WIDTH/4, (2*HEIGHT)/8));
@@ -98,6 +92,8 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 
 			@Override
 			public void surfaceCreated(SurfaceHolder arg0) {
+				createSprites();
+				
 				gameLoopThread.setRunning(true);
 
 				gameLoopThread.start();
@@ -115,27 +111,97 @@ public class ToposGameView extends SurfaceView implements OnClickListener {
 		//sprite = new Sprite(this, bmp);
 
 	}
+	
+	
+	private void createSprites() {
 
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),WIDTH/4, (2*HEIGHT)/8));
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),(2*WIDTH)/4, (2*HEIGHT)/8));
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),(3*WIDTH)/4, (2*HEIGHT)/8));
+		
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),WIDTH/4, (3*HEIGHT)/8));
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),(2*WIDTH)/4, (3*HEIGHT)/8));
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),(3*WIDTH)/4, (3*HEIGHT)/8));
+		
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),WIDTH/4, (4*HEIGHT)/8));
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),(2*WIDTH)/4, (4*HEIGHT)/8));
+		moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),(3*WIDTH)/4, (4*HEIGHT)/8));
+
+//        sprites.add(createSprite(R.drawable.bad2));
+//
+//        sprites.add(createSprite(R.drawable.bad3));
+//
+//        sprites.add(createSprite(R.drawable.bad4));
+//
+//        sprites.add(createSprite(R.drawable.bad5));
+//
+//        sprites.add(createSprite(R.drawable.bad6));
+//
+//        sprites.add(createSprite(R.drawable.good1));
+//
+//        sprites.add(createSprite(R.drawable.good2));
+//
+//        sprites.add(createSprite(R.drawable.good3));
+//
+//        sprites.add(createSprite(R.drawable.good4));
+//
+//        sprites.add(createSprite(R.drawable.good5));
+//
+//        sprites.add(createSprite(R.drawable.good6));
+//
+//        moles.add(new Sprite(this,BitmapFactory.decodeResource(getResources(),R.drawable.bad1),2,2));
+  }
+
+	
+//	  private Sprite createSprite(int resouce) {
+//
+//          Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
+//
+//          return new Sprite(this,bmp);
+//
+//    }
 	protected void onDraw(Canvas canvas) {
-		canvas.drawColor(Color.GREEN);
-		//		sprite.onDraw(canvas);
-		for(Sprite mole : moles){
-			mole.onDraw(canvas);
-		}
+		
+        canvas.drawColor(Color.GREEN);
+
+        for (Sprite sprite : moles) {
+
+               sprite.onDraw(canvas);
+
+        }
+//		canvas.drawColor(Color.GREEN);
+//		//		sprite.onDraw(canvas);
+//		for(Sprite mole : moles){
+//			mole.onDraw(canvas);
+//		}
 
 	}
 
 	@Override
 	public void onClick(View v) { //TODO I don't like. Must be another way.
+
+		//TODO el codigo de abajo sigue son direnciar cual pulsas, entra en los dos if
 		
-if(v.getId()==mole1.getId()){
-	mole1.setBeating(true);
-	mole1.setBeaten();
-	Log.i("Elemento clickeado en onClick",mole1.toString());
+if(v.getId()==moles.get(0).getId()){
+	moles.get(0).setBeating(true);
+	moles.get(0).setBeaten();
+	Log.i("Elemento clickeado en onClick",moles.get(0).toString());
 }
+
+if(v.getId()==moles.get(1).getId()){
+	moles.get(1).setBeating(true);
+	moles.get(1).setBeaten();
+	Log.i("Elemento clickeado en onClick",moles.get(1).toString());
+}
+//
+//if(v.getId()==mole3.getId()){
+//	mole3.setBeating(true);
+//	mole3.setBeaten();
+//	Log.i("Elemento clickeado en onClick",mole3.toString());
+//}
 		
 		
-		
+//		
 //			//TODO No he podido hacer mas pruebas, esto se deberia hacer con un swich case, pero lo que pasa 
 //			// es que al no estar nombrados en algun XML los sprites, no tienen un id en R, entonces el problema que esto causa es
 //			// que no sabemos con que atributo compararlo es decir con if(v.getId()==clicked.getId()) todos entran en el if

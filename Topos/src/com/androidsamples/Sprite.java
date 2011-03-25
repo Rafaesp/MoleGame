@@ -68,7 +68,7 @@ public class Sprite extends View{
 
 	}
 
-	private void update() {
+	public void update() {
 
 //		if (x >= gameView.getWidth() - width - xSpeed || x + xSpeed <= 0) {
 //
