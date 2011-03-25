@@ -7,6 +7,5 @@
     <string name="btnPlay">Play</string><string name="btnExit">Exit</string>
     <string name="btnSettings">Settings</string>
     <string name="txtSound">Sound</string>
-    
     <string name="NO_BORRAR">peta</string>
 </resources>
