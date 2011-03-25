@@ -37,6 +37,8 @@ public class Sprite extends View{
 
 	private int height;
 	
+	private boolean beating=false;
+	
 
 
 //	private int ySpeed;
@@ -95,6 +97,7 @@ public class Sprite extends View{
 	public void onDraw(Canvas canvas) {
 
 	//	if(moving)update(); //TODO
+		if(!beating){
 
 		int srcX = currentFrame * width;
 
@@ -106,6 +109,19 @@ public class Sprite extends View{
 
 		canvas.drawBitmap(bmp, src, dst, null);
 
+		}else{
+			int srcX = currentFrame * width;
+
+			int srcY = 0 * height;
+
+			Rect src = new Rect(srcX, srcY, srcX + width, srcY + height);
+
+			Rect dst = new Rect(x, y, x + width, y + height);
+
+			canvas.drawBitmap(bmp, src, dst, null);
+			
+			beating=false;
+		}
 	}
 
 	// direction = 0 up, 1 left, 2 down, 3 right,
@@ -123,9 +139,20 @@ public class Sprite extends View{
 		return 2;
 
 	}
+	public void setBeating(boolean b){
+		beating=b;
+	}
 	
 	public void setBeaten(){
 		currentFrame = 1;
+	}
+	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
 	}
 
 
