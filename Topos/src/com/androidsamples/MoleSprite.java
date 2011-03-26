@@ -22,6 +22,7 @@ public class MoleSprite extends View{
 	private Bitmap bmp;
 	private int width;
 	private int height;	
+	private int direction;
 	
 	public MoleSprite(ToposGameView gameView, int x, int y, int direction) {
 		super(gameView.getContext()); //TODO
@@ -35,7 +36,8 @@ public class MoleSprite extends View{
 
 
 	public void onDraw(Canvas canvas) {
-        Rect src = new Rect(width, height, 2*width, 2*height);
+		int newheight = direction * height;
+        Rect src = new Rect(width, newheight, 2*width, height+newheight);
 		Rect dst = new Rect(x, y, x + width, y+height);
         canvas.drawBitmap(bmp, src, dst, null);   
 	}
