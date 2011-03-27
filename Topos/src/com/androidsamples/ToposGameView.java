@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -26,20 +27,26 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	public ToposGameView(Context context) {
 		super(context);
+		initToposGameView();		
+	}
+	
 
+	public ToposGameView(Context context,  AttributeSet attrs) {
+        super(context, attrs);
+        initToposGameView();     
+	}
+	
+	private void initToposGameView(){
 		moles = new ArrayList<MoleSprite>();
 		setFocusable(true);
 		setOnTouchListener(this);
 
 		gameLoopThread = new GameLoopThread(this);
 
-		int id = 0;
 		for(int x = 0; x<3; x++){
 			for(int y = 0; y<4 ; y++){
 
 				MoleSprite mole = new MoleSprite(this, x*WIDTH/3, HEIGHT/6+y*HEIGHT/6, MoleSprite.FRONT);
-				mole.setId(id);
-				id++;
 				moles.add(mole);
 			}
 		}
@@ -77,7 +84,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		});
 
 	}
-
+	
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.GREEN);
 		for(MoleSprite mole : moles){
