@@ -15,7 +15,7 @@ import android.view.View.OnTouchListener;
 public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	private static final String tag = "TAG";
-	private static final int WIDTH =topos.getWidth();
+	private static final int WIDTH =topos.getWidth()-100; // TODO hay que hacer bien los calculos para que salga centrado en pantalla, no esta resta cutre, (100 es el tamaño de la imagen)
 	private static final int HEIGHT=topos.getHeight();
 	
 	private SurfaceHolder holder;
@@ -34,10 +34,11 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		gameLoopThread = new GameLoopThread(this);
 
 		int id = 0;
-		for(int x = 0; x<3; x++){
+		
+		for(int x = 1; x<4; x++){ 
 			for(int y = 0; y<4 ; y++){
 
-				MoleSprite mole = new MoleSprite(this, x*WIDTH/3, HEIGHT/6+y*HEIGHT/6, MoleSprite.FRONT);
+				MoleSprite mole = new MoleSprite(this, x*WIDTH/4, HEIGHT/6+y*HEIGHT/6, MoleSprite.DIGUP2);
 				mole.setId(id);
 				id++;
 				moles.add(mole);
@@ -106,7 +107,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	public boolean onTouch(View v, MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
 			if(isMoleClicked(event.getX(), event.getY())){
-				moleClicked.turnMole(MoleSprite.BACK);
+				moleClicked.turnMole(MoleSprite.BEATEN);
 				return true;
 			}
 		}

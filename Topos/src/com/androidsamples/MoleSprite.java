@@ -8,10 +8,10 @@ import android.view.View;
 
 public class MoleSprite extends View{
 
-	public static final int FRONT = 0;
-	public static final int LEFT = 1;
-	public static final int BACK = 3;
-	public static final int RIGHT = 2;
+	public static final int HOLE = 0;
+	public static final int DIGUP1 = 1;
+	public static final int DIGUP2 = 2;
+	public static final int BEATEN = 3;
 
 	private static final int BMP_ROWS = 4;
 	private static final int BMP_COLUMNS = 3;
@@ -28,7 +28,7 @@ public class MoleSprite extends View{
 
 	public MoleSprite(ToposGameView gameView, int x, int y, int direction) {
 		super(gameView.getContext());
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bad1);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pruebanumeros);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 
