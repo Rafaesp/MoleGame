@@ -31,6 +31,8 @@ public class MoleSprite extends View{
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pruebanumeros);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
+		
+		this.direction=direction;
 
 		this.x=x;
 		this.y= y;
@@ -66,7 +68,18 @@ public class MoleSprite extends View{
 	}
 
 	public void turnMole(int direction){
-		this.direction = direction;
+
+		try {
+			
+			
+			this.direction = direction;
+			//lock.wait(10000);//TODO no podemos dormir el hilo.
+		
+			
+			} catch (Exception e) {
+			 throw new RuntimeException("Error turnMole");
+			}
+		
 	}
 
 }

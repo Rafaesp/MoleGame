@@ -38,7 +38,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		for(int x = 1; x<4; x++){ 
 			for(int y = 0; y<4 ; y++){
 
-				MoleSprite mole = new MoleSprite(this, x*WIDTH/4, HEIGHT/6+y*HEIGHT/6, MoleSprite.DIGUP2);
+				MoleSprite mole = new MoleSprite(this, x*WIDTH/4, HEIGHT/6+y*HEIGHT/6, MoleSprite.HOLE);
 				mole.setId(id);
 				id++;
 				moles.add(mole);
@@ -108,6 +108,13 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
 			if(isMoleClicked(event.getX(), event.getY())){
 				moleClicked.turnMole(MoleSprite.BEATEN);
+				try {
+					Thread.sleep(301); //TODO esto no esta bien hecho, pero hay que conseguir algo asi, hoy no estoy muy lucido.
+				} catch (InterruptedException e) {
+					throw new RuntimeException("Check onTouch(View,MotionEvent) in ToposGameView.class");
+					
+				}
+				moleClicked.turnMole(MoleSprite.HOLE);
 				return true;
 			}
 		}
