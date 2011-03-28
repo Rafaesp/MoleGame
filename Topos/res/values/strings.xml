@@ -7,5 +7,8 @@
     <string name="btnPlay">Play</string><string name="btnExit">Exit</string>
     <string name="btnSettings">Settings</string>
     <string name="txtSound">Sound</string>
+    <string name="txtFailed">Remaining failures: </string>
     <string name="NO_BORRAR">peta</string>
+    <string name="txtLives">5</string>
+    <string name="txtTime">Time</string>
 </resources>

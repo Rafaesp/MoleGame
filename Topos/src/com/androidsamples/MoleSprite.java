@@ -13,7 +13,7 @@ public class MoleSprite extends View{
 	public static final int DIGUP2 = 2;
 	public static final int BEATEN = 3;
 
-	private static final int BMP_ROWS = 1;
+	private static final int BMP_ROWS = 4;
 	private static final int BMP_COLUMNS = 1;
 	private int x = 0;
 	private int y = 0;
@@ -29,7 +29,7 @@ public class MoleSprite extends View{
 
 	public MoleSprite(ToposGameView gameView, int x, int y, int status) {
 		super(gameView.getContext());
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.png100x120);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.prueba);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 		
@@ -85,8 +85,8 @@ public class MoleSprite extends View{
 	}
 	
 	public boolean isClicked(float eventx, float eventy){
-		boolean coordx = getX() <= x && getX()+getMoleWidth() >= x;
-		boolean coordy = getY() <=y && getY()+getMoleHeight() >= y;
+		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;
+		boolean coordy = getY() <=eventy && getY()+getMoleHeight() >= eventy;
 
 		if(coordx && coordy){
 			return true;
