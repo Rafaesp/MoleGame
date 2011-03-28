@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,7 +26,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	private ArrayList<MoleSprite> moles;
 
-	public ToposGameView(Context context) {
+	public ToposGameView(Context context){
 		super(context);
 		initToposGameView();
 	}
@@ -45,7 +46,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		for(int x = 0; x<3; x++){ 
 			for(int y = 0; y<4 ; y++){
 
-				MoleSprite mole = new MoleSprite(this, (WIDTH/40)+(x*WIDTH)/3, y*HEIGHT/4, MoleSprite.HOLE);
+				MoleSprite mole = new MoleSprite(this, (WIDTH/40)+(x*WIDTH)/3, y*HEIGHT/4, MoleSprite.HOLE); // TODO el centrado de la pantalla estaria mal para otras resoluciones.
+																											 // hay que saber cuales son las resoluciones mhdpi y ldpi
 				moles.add(mole);
 				Log.i(tag, mole.toString());
 			}
@@ -82,6 +84,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 			}
 		});
+		
+		
 
 	}
 
@@ -113,6 +117,28 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		}
 		return false;
 	}
+	
+//	public void play() throws InterruptedException{ TODO                BOCETO
+//		long time=System.currentTimeMillis();
+//		long actual=time;
+//		int level=1;
+//		while(true){
+//			
+//		for(int i=level-1;i<level;i++){
+//			int indexMole =(int) (Math.random()*11);
+//			MoleSprite mol=moles.get(indexMole);
+//			mol.turnMole(MoleSprite.DIGUP1);
+//			Thread.sleep(200);//TODO esto y todos los sleep es un boceto no podemos usar sleep.
+//			mol.turnMole(MoleSprite.DIGUP2);
+//			Thread.sleep(200);
+//			//TODO Restar una vida por haber fallado
+//			actual=System.currentTimeMillis();
+//		}
+//			if(actual-time<level*30000){
+//				level++;
+//			}
+//		}		
+//	}
 
 
 
