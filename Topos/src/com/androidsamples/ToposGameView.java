@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -15,7 +17,7 @@ import android.view.View.OnTouchListener;
 public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	private static final String tag = "TAG";
-	private static final int WIDTH =topos.getWidth()-100; // TODO hay que hacer bien los calculos para que salga centrado en pantalla, no esta resta cutre, (100 es el tamaño de la imagen)
+	private static final int WIDTH =topos.getWidth(); // TODO hay que hacer bien los calculos para que salga centrado en pantalla, no esta resta cutre, (100 es el tamaño de la imagen)
 	private static final int HEIGHT=topos.getHeight();
 	
 	private SurfaceHolder holder;
@@ -26,22 +28,27 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	public ToposGameView(Context context) {
 		super(context);
-
+		initToposGameView();
+	}
+	
+	public ToposGameView(Context context, AttributeSet attrs){
+		super(context, attrs);
+		initToposGameView();
+	}
+	
+	private void initToposGameView(){
 		moles = new ArrayList<MoleSprite>();
 		setFocusable(true);
 		setOnTouchListener(this);
 
 		gameLoopThread = new GameLoopThread(this);
 
-		int id = 0;
-		
-		for(int x = 1; x<4; x++){ 
+		for(int x = 0; x<3; x++){ 
 			for(int y = 0; y<4 ; y++){
 
-				MoleSprite mole = new MoleSprite(this, x*WIDTH/4, HEIGHT/6+y*HEIGHT/6, MoleSprite.HOLE);
-				mole.setId(id);
-				id++;
+				MoleSprite mole = new MoleSprite(this, x*WIDTH/3, y*HEIGHT/4, MoleSprite.HOLE);
 				moles.add(mole);
+				Log.i(tag, mole.toString());
 			}
 		}
 

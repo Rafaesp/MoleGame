@@ -13,26 +13,27 @@ public class MoleSprite extends View{
 	public static final int DIGUP2 = 2;
 	public static final int BEATEN = 3;
 
-	private static final int BMP_ROWS = 4;
-	private static final int BMP_COLUMNS = 3;
+	private static final int BMP_ROWS = 1;
+	private static final int BMP_COLUMNS = 1;
 	private int x = 0;
 	private int y = 0;
 
-
+	
 	private Bitmap bmp;
 	private int width;
 	private int height;	
-	private int direction;
+	private int status; //Each row, each frame of the animation
+	private int animation = 0; //Each column, for example entering hole or being hit
 
 	private static final String tag = "TAG";
 
-	public MoleSprite(ToposGameView gameView, int x, int y, int direction) {
+	public MoleSprite(ToposGameView gameView, int x, int y, int status) {
 		super(gameView.getContext());
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pruebanumeros);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.png100x120);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 		
-		this.direction=direction;
+		this.status=status;
 
 		this.x=x;
 		this.y= y;
@@ -61,18 +62,19 @@ public class MoleSprite extends View{
 
 
 	public void onDraw(Canvas canvas) {
-		int newheight = direction * height;
-		Rect src = new Rect(width, newheight, 2*width, height+newheight);
+		int srcy = status * height;
+		int srcx = animation * width;
+		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
 		Rect dst = new Rect(x, y, x + width, y+height);
 		canvas.drawBitmap(bmp, src, dst, null);   
 	}
 
-	public void turnMole(int direction){
+	public void turnMole(int status){
 
 		try {
 			
 			
-			this.direction = direction;
+			this.status = status;
 			//lock.wait(10000);//TODO no podemos dormir el hilo.
 		
 			
@@ -80,6 +82,10 @@ public class MoleSprite extends View{
 			 throw new RuntimeException("Error turnMole");
 			}
 		
+	}
+	
+	public String toString(){
+		return "Mole x: "+x+", y: "+y+", width: "+width+", height: "+height;
 	}
 
 }
