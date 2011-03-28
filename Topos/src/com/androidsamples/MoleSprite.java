@@ -13,8 +13,8 @@ public class MoleSprite extends View{
 	public static final int BACK = 3;
 	public static final int RIGHT = 2;
 
-	private static final int BMP_ROWS = 4;
-	private static final int BMP_COLUMNS = 3;
+	private static final int BMP_ROWS = 1;
+	private static final int BMP_COLUMNS = 1;
 	private int x = 0;
 	private int y = 0;
 
@@ -28,7 +28,7 @@ public class MoleSprite extends View{
 
 	public MoleSprite(ToposGameView gameView, int x, int y, int direction) {
 		super(gameView.getContext());
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bad1);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.png100x120);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 

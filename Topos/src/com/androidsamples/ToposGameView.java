@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -46,8 +47,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		for(int x = 0; x<3; x++){
 			for(int y = 0; y<4 ; y++){
 
-				MoleSprite mole = new MoleSprite(this, x*WIDTH/3, HEIGHT/6+y*HEIGHT/6, MoleSprite.FRONT);
+//				MoleSprite mole = new MoleSprite(this, x*WIDTH/3, HEIGHT/6+y*HEIGHT/6, MoleSprite.FRONT);
+				MoleSprite mole = new MoleSprite(this, x*WIDTH/3, y*HEIGHT/4, 0);
 				moles.add(mole);
+				Log.i(tag, mole.getX()+" "+mole.getY()+" "+mole.getMoleWidth()+" "+mole.getMoleHeight());
 			}
 		}
 
