@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="mole1">#0000ff</drawable>
+    <drawable name="mole2">#0000ff</drawable>
+    <drawable name="mole3">#0000ff</drawable>
+    <drawable name="mole4">#0000ff</drawable>
+    <drawable name="mole5">#0000ff</drawable>
+    <drawable name="mole6">#0000ff</drawable>
+    <drawable name="mole7">#0000ff</drawable>
+    <drawable name="mole8">#0000ff</drawable>
+    <drawable name="mole9">#0000ff</drawable>
+    <drawable name="mole10">#0000ff</drawable>
+    <drawable name="mole11">#0000ff</drawable>
+    <drawable name="mole12">#0000ff</drawable>
+</resources>
