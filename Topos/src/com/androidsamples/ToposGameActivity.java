@@ -9,7 +9,6 @@ public class ToposGameActivity extends Activity {
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(new ToposGameView(this));
-        setContentView(R.layout.gameview);
+        setContentView(new ToposGameView(this));
 	}
 }
