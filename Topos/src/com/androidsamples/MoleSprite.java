@@ -84,6 +84,17 @@ public class MoleSprite extends View{
 		
 	}
 	
+	public boolean isClicked(float eventx, float eventy){
+		boolean coordx = getX() <= x && getX()+getMoleWidth() >= x;
+		boolean coordy = getY() <=y && getY()+getMoleHeight() >= y;
+
+		if(coordx && coordy){
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public String toString(){
 		return "Mole x: "+x+", y: "+y+", width: "+width+", height: "+height;
 	}

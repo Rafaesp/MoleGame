@@ -22,7 +22,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	
 	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;
-	private MoleSprite moleClicked;
 
 	private ArrayList<MoleSprite> moles;
 
@@ -94,40 +93,25 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	}
 
-
-	private boolean isMoleClicked(float x, float y){
-		for(MoleSprite mole : moles){
-			boolean coordx = mole.getX() <= x && mole.getX()+mole.getMoleWidth() >= x;
-			boolean coordy = mole.getY() <=y && mole.getY()+mole.getMoleHeight() >= y;
-
-			if(coordx && coordy){
-				moleClicked = mole;
-				return true;
-			}
-		}
-		return false;		
-	}
-
-
-	
-
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			if(isMoleClicked(event.getX(), event.getY())){
-				moleClicked.turnMole(MoleSprite.BEATEN);
-				try {
-					Thread.sleep(301); //TODO esto no esta bien hecho, pero hay que conseguir algo asi, hoy no estoy muy lucido.
-				} catch (InterruptedException e) {
-					throw new RuntimeException("Check onTouch(View,MotionEvent) in ToposGameView.class");
-					
+			for(MoleSprite mole : moles){
+				if(mole.isClicked(event.getX(), event.getY())){
+					mole.turnMole(MoleSprite.BEATEN);
+					try {
+						Thread.sleep(301); //TODO esto no esta bien hecho, pero hay que conseguir algo asi, hoy no estoy muy lucido.
+					} catch (InterruptedException e) {
+						throw new RuntimeException("Check onTouch(View,MotionEvent) in ToposGameView.class");
+						
+					}
+					mole.turnMole(MoleSprite.HOLE);
 				}
-				moleClicked.turnMole(MoleSprite.HOLE);
-				return true;
-			}
+			}	
 		}
 		return false;
 	}
+
 
 
 }
