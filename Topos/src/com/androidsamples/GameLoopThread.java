@@ -1,5 +1,6 @@
 package com.androidsamples;
 
+
 import android.graphics.Canvas;
 
 public class GameLoopThread extends Thread {
@@ -30,6 +31,7 @@ public class GameLoopThread extends Thread {
 			Canvas c = null;
 			startTime = System.currentTimeMillis();
 			try {
+				
 				c = view.getHolder().lockCanvas();
 				synchronized (view.getHolder()) {
 					view.onDraw(c);
@@ -50,6 +52,7 @@ public class GameLoopThread extends Thread {
 			
 		}
 	}
+
 	
 
 }

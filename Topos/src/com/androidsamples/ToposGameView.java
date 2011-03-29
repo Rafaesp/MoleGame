@@ -108,9 +108,11 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 					}
 				}	
 			}
+
 		}
 		return false;
 	}
+
 
 	//	public void play() throws InterruptedException{ TODO                BOCETO
 	//		long time=System.currentTimeMillis();
@@ -133,6 +135,37 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	//			}
 	//		}		
 	//	}
+
+	public void setMoles(ArrayList<MoleSprite> moles) {
+		this.moles=moles;
+		
+	}
+	
+	public ArrayList<MoleSprite> getMoles(){
+		return moles;
+	}
+	
+//	public void play() throws InterruptedException{ TODO                BOCETO
+//		long time=System.currentTimeMillis();
+//		long actual=time;
+//		int level=1;
+//		while(true){ // While true muy peligroso jaja
+//			Thread.sleep(80);
+//		for(int i=level-1;i<level;i++){
+//			int indexMole =(int) (Math.random()*11);
+//			MoleSprite mol=moles.get(indexMole);
+//			mol.turnMole(MoleSprite.DIGUP1);
+//			Thread.sleep(200);//TODO esto y todos los sleep es un boceto no podemos usar sleep.
+//			mol.turnMole(MoleSprite.DIGUP2);
+//			Thread.sleep(200);
+//			//TODO Implementar: Restar una vida por haber fallado
+//			actual=System.currentTimeMillis();
+//		}
+//			if(actual-time<level*30000){
+//				level++;
+//			}
+//		}		
+//	}
 
 
 
