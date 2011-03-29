@@ -14,7 +14,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Settings">        </activity>
-        <activity android:name=".ToposGameActivity"></activity>
+        <activity android:name=".ToposGameActivity"
+        		  android:screenOrientation="portrait"></activity>
 
     </application>
 </manifest>
