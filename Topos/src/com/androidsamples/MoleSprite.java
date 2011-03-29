@@ -27,7 +27,7 @@ public class MoleSprite extends View{
 	private int animation = 1; //Each column, for example entering hole or being hit
 	private boolean isHit = false;
 	private long hitStartTime;
-	private final long ANIMATION_TIME = 1000;
+	private final long ANIMATION_TIME = 500;
 	
 	private static final String tag = "TAG";
 
