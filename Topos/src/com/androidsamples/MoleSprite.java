@@ -31,6 +31,7 @@ public class MoleSprite extends View{
 	private int status; //Each row, each frame of the animation
 	private int animation = 0; //Each column, for example entering hole or being hit
 	private boolean isHit = false;
+
 	private boolean isDigging;
 	private long animationHitStartTime;
 	private long animationDigStartTime;
@@ -103,6 +104,7 @@ public class MoleSprite extends View{
 		if(animationHitStartTime+ANIMATION_HIT_TIME >= System.currentTimeMillis()){
 			isHit = false;
 			this.changeStatus(DIGUPFULL);
+
 		}
 		return isHit;
 	}
@@ -146,6 +148,40 @@ public class MoleSprite extends View{
 		animationDigStartTime = System.currentTimeMillis();
 		isDigging = true;
 	}
+
+
+//	public int getStatus() {
+//		return status;
+//	}
+//
+//
+//	public boolean isDigUp1(){
+//		if(digUp1StartTime+ANIMATION_TIME -System.currentTimeMillis()<=0){
+//			isDigUp1=false;
+//			isDigUp2=true;
+//			this.turnMole(DIGUP2);
+//		}
+//		return isDigUp1;
+//	}
+//	
+//	public boolean isDigUp2(){
+//		if(digUp2StartTime+ANIMATION_TIME -System.currentTimeMillis()<=0){
+//			
+////			isDigUp2=false;
+////			isDigOut1=true;
+//			this.turnMole(DIGUP1);
+//			
+//		}
+//		return isDigUp1;
+//		
+//	}
+//	public void digUp() {		
+//		
+//		digUp1StartTime =System.currentTimeMillis();
+//		isDigUp1=true;
+//		this.turnMole(DIGUP1);
+//		
+//	}
 
 
 
