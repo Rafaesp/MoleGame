@@ -75,6 +75,11 @@ public class MoleSprite extends View{
 	}
 
 
+	public int getStatus() {
+		return status;
+	}
+
+
 	public void onDraw(Canvas canvas) {
 		isHit();
 		isDigging();
