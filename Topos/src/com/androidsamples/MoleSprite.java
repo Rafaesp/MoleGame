@@ -13,12 +13,12 @@ public class MoleSprite extends View{
 	public static final int DIGUP2 = 2;
 	public static final int BEATEN = 3;
 
-	private static final int BMP_ROWS = 4;
+	private static final int BMP_ROWS = 1;
 	private static final int BMP_COLUMNS = 1;
 	private int x = 0;
 	private int y = 0;
 
-	
+	private ToposGameView gameView;
 	private Bitmap bmp;
 	private int width;
 	private int height;	
@@ -29,7 +29,8 @@ public class MoleSprite extends View{
 
 	public MoleSprite(ToposGameView gameView, int x, int y, int status) {
 		super(gameView.getContext());
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.prueba);
+		this.gameView = gameView;
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.png100x120);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 		
@@ -65,7 +66,7 @@ public class MoleSprite extends View{
 		int srcy = status * height;
 		int srcx = animation * width;
 		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
-		Rect dst = new Rect(x, y, x + width, y+height);
+		Rect dst = new Rect(x, y, x + gameView.getWidth()/3, y+gameView.getHeight()/4);
 		canvas.drawBitmap(bmp, src, dst, null);   
 	}
 
@@ -96,7 +97,7 @@ public class MoleSprite extends View{
 	}
 	
 	public String toString(){
-		return "Mole x: "+x+", y: "+y+", width: "+width+", height: "+height;
+		return "Mole x: "+x+", y: "+y+", width: "+width+", \nheight: "+height+" ,dstWidth: "+gameView.getWidth()/3+", dstHeight: "+gameView.getHeight()/4;
 	}
 
 }

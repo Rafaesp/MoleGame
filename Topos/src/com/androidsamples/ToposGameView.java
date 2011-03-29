@@ -18,8 +18,8 @@ import android.view.View.OnTouchListener;
 public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	private static final String tag = "TAG";
-	private static final int WIDTH =topos.getWidth()+50; // TODO hay que hacer bien los calculos para que salga centrado en pantalla, no esta resta cutre, (100 es el tamaño de la imagen)
-	private static final int HEIGHT=topos.getHeight();
+	private static int gameviewWidth;
+	private static int gameViewHeight;
 	
 	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;
@@ -34,24 +34,17 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	public ToposGameView(Context context, AttributeSet attrs){
 		super(context, attrs);
 		initToposGameView();
+		
 	}
 	
 	private void initToposGameView(){
+		gameViewHeight = getHeight();
+		gameviewWidth = getWidth();
 		moles = new ArrayList<MoleSprite>();
 		setFocusable(true);
 		setOnTouchListener(this);
 
 		gameLoopThread = new GameLoopThread(this);
-
-		for(int x = 0; x<3; x++){ 
-			for(int y = 0; y<4 ; y++){
-
-				MoleSprite mole = new MoleSprite(this, (WIDTH/40)+(x*WIDTH)/3, y*HEIGHT/4, MoleSprite.HOLE); // TODO el centrado de la pantalla estaria mal para otras resoluciones.
-																											 // hay que saber cuales son las resoluciones mhdpi y ldpi
-				moles.add(mole);
-				Log.i(tag, mole.toString());
-			}
-		}
 
 		holder = getHolder();
 		holder.addCallback(new Callback() {
@@ -73,6 +66,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 			@Override
 			public void surfaceCreated(SurfaceHolder arg0) {
+				Log.i(tag, "GameView width: "+getWidth()+" GameView height: "+getHeight());
+				createMoles();
 				gameLoopThread.setRunning(true);
 				gameLoopThread.start();
 
@@ -85,8 +80,18 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 			}
 		});
 		
-		
+	}
+	
+	private void createMoles(){
+		for(int x = 0; x<3; x++){ 
+			for(int y = 0; y<4 ; y++){
 
+				MoleSprite mole = new MoleSprite(this, x*getWidth()/3, y*getHeight()/4, MoleSprite.HOLE); // TODO el centrado de la pantalla estaria mal para otras resoluciones.
+																											 // hay que saber cuales son las resoluciones mhdpi y ldpi
+				moles.add(mole);
+				Log.i(tag, mole.toString());
+			}
+		}
 	}
 
 	protected void onDraw(Canvas canvas) {
