@@ -105,24 +105,35 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 				if(mole.isClicked(event.getX(), event.getY())){
 				
 					mole.turnMole(MoleSprite.BEATEN);
+					
 					try {
-						Thread.sleep(301); //TODO esto no esta bien hecho, pero hay que conseguir algo asi, hoy no estoy muy lucido.
+						Thread.sleep(300);
 					} catch (InterruptedException e) {
-						throw new RuntimeException("Check onTouch(View,MotionEvent) in ToposGameView.class");
-						
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+					
 					mole.turnMole(MoleSprite.HOLE);
 				}
 			}	
 		}
 		return false;
 	}
+
+	public void setMoles(ArrayList<MoleSprite> moles) {
+		this.moles=moles;
+		
+	}
+	public ArrayList<MoleSprite> getMoles() {
+		return moles;
+		
+	}
 	
 //	public void play() throws InterruptedException{ TODO                BOCETO
 //		long time=System.currentTimeMillis();
 //		long actual=time;
 //		int level=1;
-//		while(true){
+//		while(true){ // While true muy peligroso jaja
 //			Thread.sleep(80);
 //		for(int i=level-1;i<level;i++){
 //			int indexMole =(int) (Math.random()*11);
