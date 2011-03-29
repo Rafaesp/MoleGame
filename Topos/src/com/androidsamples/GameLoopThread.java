@@ -1,12 +1,16 @@
 package com.androidsamples;
 
 
+import java.util.ArrayList;
+
 import android.graphics.Canvas;
 
 public class GameLoopThread extends Thread {
 	private final long FPS=10;
 	private ToposGameView view;
 	private boolean running = false;
+	
+	
 	
 	
 	public GameLoopThread(ToposGameView view) {
@@ -52,6 +56,17 @@ public class GameLoopThread extends Thread {
 			
 		}
 	}
+	
+//	private void play(){
+//		ArrayList<MoleSprite> moles=view.getMoles();
+//		int chosenMole = (int) Math.floor(12*Math.random()-0.01);
+//		MoleSprite mole=moles.get(chosenMole);
+//		if(mole.getStatus()==0){
+//			mole.digUp();
+//		}
+//		
+//	}
+	
 
 	
 

@@ -26,7 +26,11 @@ public class MoleSprite extends View{
 	private int status; //Each row, each frame of the animation
 	private int animation = 1; //Each column, for example entering hole or being hit
 	private boolean isHit = false;
+	private boolean isDigUp1 =false;
+	private boolean isDigUp2 =false;
 	private long hitStartTime;
+	private long digUp1StartTime;
+	private long digUp2StartTime;
 	private final long ANIMATION_TIME = 500;
 	
 	private static final String tag = "TAG";
@@ -68,6 +72,8 @@ public class MoleSprite extends View{
 
 	public void onDraw(Canvas canvas) {
 		isHit();
+//		isDigUp1();
+//		isDigUp2();
 		int srcy = status * height;
 		int srcx = animation * width;
 		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
@@ -95,7 +101,7 @@ public class MoleSprite extends View{
 	public boolean isHit(){
 		if(hitStartTime+ANIMATION_TIME - System.currentTimeMillis() <= 0){
 			isHit = false;
-			this.turnMole(DIGUP2);
+			this.turnMole(HOLE);
 		}
 		return isHit;
 	}
@@ -110,6 +116,40 @@ public class MoleSprite extends View{
 		this.turnMole(HIT);
 		
 	}
+
+
+//	public int getStatus() {
+//		return status;
+//	}
+//
+//
+//	public boolean isDigUp1(){
+//		if(digUp1StartTime+ANIMATION_TIME -System.currentTimeMillis()<=0){
+//			isDigUp1=false;
+//			isDigUp2=true;
+//			this.turnMole(DIGUP2);
+//		}
+//		return isDigUp1;
+//	}
+//	
+//	public boolean isDigUp2(){
+//		if(digUp2StartTime+ANIMATION_TIME -System.currentTimeMillis()<=0){
+//			
+////			isDigUp2=false;
+////			isDigOut1=true;
+//			this.turnMole(DIGUP1);
+//			
+//		}
+//		return isDigUp1;
+//		
+//	}
+//	public void digUp() {		
+//		
+//		digUp1StartTime =System.currentTimeMillis();
+//		isDigUp1=true;
+//		this.turnMole(DIGUP1);
+//		
+//	}
 
 
 
