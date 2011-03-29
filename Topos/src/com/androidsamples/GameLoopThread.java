@@ -4,7 +4,7 @@ package com.androidsamples;
 import android.graphics.Canvas;
 
 public class GameLoopThread extends Thread {
-	private final long FPS=10;
+	private final long FPS=30;
 	private ToposGameView view;
 	private boolean running = false;
 	
