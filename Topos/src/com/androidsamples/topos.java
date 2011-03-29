@@ -3,7 +3,6 @@ package com.androidsamples;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +15,6 @@ public class topos extends Activity implements OnClickListener{
 	private static final int SETTINGS = Menu.FIRST;
 	private static final int SALIR = Menu.FIRST + 1;
 	
-	public DisplayMetrics metrics;
-	public static int width;
-	public static int height;
-	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,24 +25,8 @@ public class topos extends Activity implements OnClickListener{
         
         Button btnPlay = (Button) findViewById(R.id.btnPlay);
         btnPlay.setOnClickListener(this);
-        
-        metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        width=metrics.widthPixels;
-        height=metrics.heightPixels;
- 
-       
-        
-        }
-    
-    public static int getWidth(){
-    	return width;
-    }
-    public static int getHeight(){
-    	return height;
-    }
 
-    
+        }
 
 	public void onClick(View v) {
 		int id = v.getId();
