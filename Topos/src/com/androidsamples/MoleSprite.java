@@ -54,24 +54,21 @@ public class MoleSprite extends View{
 
 	}
 
-
 	public int getX() {
 		return x;
 	}
-
 
 	public int getY() {
 		return y;
 	}
 
-
 	public int getMoleWidth() {
-		return width;
+		return x + gameView.getWidth()/3;
 	}
 
 
 	public int getMoleHeight() {
-		return height;
+		return y+gameView.getHeight()/4;
 	}
 
 
@@ -95,8 +92,8 @@ public class MoleSprite extends View{
 	}
 
 	public boolean isClicked(float eventx, float eventy){
-		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;
-		boolean coordy = getY() <=eventy && getY()+getMoleHeight() >= eventy;
+		boolean coordx = getX() <= eventx && getX()+getWidth() >= eventx;
+		boolean coordy = getY() <=eventy && getY()+getHeight() >= eventy;
 
 		if(coordx && coordy){
 			return true;
@@ -153,41 +150,5 @@ public class MoleSprite extends View{
 		animationDigStartTime = System.currentTimeMillis();
 		isDigging = true;
 	}
-
-
-//	public int getStatus() {
-//		return status;
-//	}
-//
-//
-//	public boolean isDigUp1(){
-//		if(digUp1StartTime+ANIMATION_TIME -System.currentTimeMillis()<=0){
-//			isDigUp1=false;
-//			isDigUp2=true;
-//			this.turnMole(DIGUP2);
-//		}
-//		return isDigUp1;
-//	}
-//	
-//	public boolean isDigUp2(){
-//		if(digUp2StartTime+ANIMATION_TIME -System.currentTimeMillis()<=0){
-//			
-////			isDigUp2=false;
-////			isDigOut1=true;
-//			this.turnMole(DIGUP1);
-//			
-//		}
-//		return isDigUp1;
-//		
-//	}
-//	public void digUp() {		
-//		
-//		digUp1StartTime =System.currentTimeMillis();
-//		isDigUp1=true;
-//		this.turnMole(DIGUP1);
-//		
-//	}
-
-
 
 }
