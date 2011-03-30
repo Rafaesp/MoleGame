@@ -62,12 +62,12 @@ public class MoleSprite extends View{
 		return y;
 	}
 
-	public int getMoleWidth() {
+	public int getMoleWidthInScreen() {
 		return x + gameView.getWidth()/3;
 	}
 
 
-	public int getMoleHeight() {
+	public int getMoleHeightInScreen() {
 		return y+gameView.getHeight()/4;
 	}
 
@@ -84,6 +84,7 @@ public class MoleSprite extends View{
 		int srcx = animation * width;
 		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
 		Rect dst = new Rect(x, y, x + gameView.getWidth()/3, y+gameView.getHeight()/4);
+		//Rect dst = new Rect(getX(), getY(), getMoleWidthInScreen(), getMoleHeightInScreen());
 		canvas.drawBitmap(bmp, src, dst, null);   
 	}
 
@@ -92,8 +93,8 @@ public class MoleSprite extends View{
 	}
 
 	public boolean isClicked(float eventx, float eventy){
-		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;
-		boolean coordy = getY() <=eventy && getY()+getMoleHeight() >= eventy;
+		boolean coordx = getX() <= eventx && getMoleWidthInScreen() >= eventx;
+		boolean coordy = getY() <=eventy && getMoleHeightInScreen() >= eventy;
 
 		if(coordx && coordy){
 			return true;
