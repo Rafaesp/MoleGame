@@ -20,11 +20,12 @@ public class MoleSprite extends View{
 	private static final int BMP_ROWS = 5;
 	private static final int BMP_COLUMNS = 1;
 
+	private int posx;
+	private int posy;
+	private int x;
+	private int y;
 
-	private int x = 0;
-	private int y = 0;
-
-	private ToposGameView gameView;
+	private ToposGameView view;
 	private Bitmap bmp;
 	private int width;
 	private int height;	
@@ -40,60 +41,52 @@ public class MoleSprite extends View{
 
 	private static final String tag = "TAG";
 
-	public MoleSprite(ToposGameView gameView, int x, int y, int status) {
-		super(gameView.getContext());
-		this.gameView = gameView;
+	public MoleSprite(ToposGameView view, int posx, int posy) {
+		super(view.getContext());
+		this.view = view;
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.topos75x90);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
+
+		this.posx=posx;
+		this.posy=posy;
 		
-		this.status=status;
-
-		this.x=x;
-		this.y= y;
-
+		status = HOLE;
 	}
 
 	public int getX() {
-		return x;
+		return (posx+1)*(view.getWidth()/4) - getMoleWidth()/2;
 	}
-
 	public int getY() {
-		return y;
+		return (posy+1)*view.getHeight()/5 - getMoleHeight()/2;
 	}
-
-	public int getMoleWidthInScreen() {
-		return x + gameView.getWidth()/3;
+	public int getMoleWidth() {
+		int gap_width = view.getWidth()/10;
+		return view.getWidth()/4-gap_width;
 	}
-
-
-	public int getMoleHeightInScreen() {
-		return y+gameView.getHeight()/4;
+	public int getMoleHeight() {
+		int gap_height = view.getHeight()/10;
+		return view.getHeight()/5-gap_height;
 	}
-
-
 	public int getStatus() {
 		return status;
 	}
-
-
+	public void changeStatus(int status){
+		this.status = status;
+	}
+	
 	public void onDraw(Canvas canvas) {
 		dig();
 		int srcy = status * height;
 		int srcx = animation * width;
 		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
-		Rect dst = new Rect(x, y, x + gameView.getWidth()/3, y+gameView.getHeight()/4);
-		//Rect dst = new Rect(getX(), getY(), getMoleWidthInScreen(), getMoleHeightInScreen());
+		//Rect dst = new Rect(x, y, x + view.getWidth()/3, y+view.getHeight()/4);
+		Rect dst = new Rect(getX(), getY(), getX()+getMoleWidth(), getY()+getMoleHeight());
 		canvas.drawBitmap(bmp, src, dst, null);   
 	}
-
-	public void changeStatus(int status){
-		this.status = status;
-	}
-
 	public boolean isClicked(float eventx, float eventy){
-		boolean coordx = getX() <= eventx && getMoleWidthInScreen() >= eventx;
-		boolean coordy = getY() <=eventy && getMoleHeightInScreen() >= eventy;
+		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;
+		boolean coordy = getY() <=eventy && getY()+getMoleHeight() >= eventy;
 
 		if(coordx && coordy){
 			return true;
@@ -112,7 +105,7 @@ public class MoleSprite extends View{
 	}
 
 	public String toString(){
-		return "Mole x: "+x+", y: "+y+", width: "+width+", \nheight: "+height+" ,dstWidth: "+gameView.getWidth()/3+", dstHeight: "+gameView.getHeight()/4;
+		return "Mole x: "+x+", y: "+y+", width: "+width+", \nheight: "+height+" ,dstWidth: "+view.getWidth()/3+", dstHeight: "+view.getHeight()/4;
 	}
 
 	public void hit(){ //TODO Shouldn't be able to click when already hit

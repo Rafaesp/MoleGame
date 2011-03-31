@@ -84,7 +84,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private void createMoles(){
 		for(int x = 0; x<3; x++){ 
 			for(int y = 0; y<4 ; y++){
-				MoleSprite mole = new MoleSprite(this, x*getWidth()/3, y*getHeight()/4, MoleSprite.DIGUPFULL);
+				MoleSprite mole = new MoleSprite(this, x, y);
 				moles.add(mole);
 				Log.i(tag, mole.toString());
 			}
