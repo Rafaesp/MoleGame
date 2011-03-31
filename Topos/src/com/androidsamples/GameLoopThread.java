@@ -1,13 +1,20 @@
 package com.androidsamples;
 
 
+
+import java.util.List;
+
 import android.graphics.Canvas;
 
 public class GameLoopThread extends Thread {
 	private final long FPS=30;
 	private ToposGameView view;
 	private boolean running = false;
-
+	private int level=1;
+	private long levelStartTime=System.currentTimeMillis();
+	private long levelTimeDuration=30000;
+	private long playLoopTime=1000;
+	private long playLoopStartTime=System.currentTimeMillis();
 
 
 	public GameLoopThread(ToposGameView view) {
@@ -29,6 +36,7 @@ public class GameLoopThread extends Thread {
 		long sleepTime;
 
 		while (running) {
+			play();
 			Canvas canvas = null;
 			startTime = System.currentTimeMillis();
 			for(MoleSprite mole : view.getMoles()){
@@ -61,15 +69,37 @@ public class GameLoopThread extends Thread {
 		}
 	}
 
-	//	private void play(){
-	//		ArrayList<MoleSprite> moles=view.getMoles();
-	//		int chosenMole = (int) Math.floor(12*Math.random()-0.01);
-	//		MoleSprite mole=moles.get(chosenMole);
-	//		if(mole.getStatus()==0){
-	//			mole.digUp();
-	//		}
-	//		
-	//	}
+	private void play(){
+
+		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){	// la idea es k en los primeros niveles no tngamos k tocar el playLoopTime
+													
+			List<MoleSprite> moles=view.getMoles();
+
+			if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
+				
+				level++;
+				levelStartTime=System.currentTimeMillis();
+				levelTimeDuration=levelTimeDuration+10000;
+				playLoopTime=playLoopTime/2;
+				
+			}		
+			
+			if(level<=7){
+				int chosenMole = (int) Math.floor(12*Math.random()-0.01);
+				MoleSprite mole=moles.get(chosenMole);
+
+				if(mole.getStatus()==4){
+					mole.digUp();
+				} else {
+					playLoopStartTime=System.currentTimeMillis();
+					play();
+				}
+
+			}
+
+		}
+
+	}
 
 
 
