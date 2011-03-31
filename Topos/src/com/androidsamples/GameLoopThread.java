@@ -19,6 +19,7 @@ public class GameLoopThread extends Thread {
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
 
+	
 
 	//TODO Hay que reparar un error que se produce al parecer, cuando se borra un elemento de la cola:
 	// Lanza FATAL ERROR: ConcurrentModificationException at next() LinkedList
