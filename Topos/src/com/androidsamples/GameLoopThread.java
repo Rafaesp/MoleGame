@@ -2,7 +2,9 @@ package com.androidsamples;
 
 
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import android.graphics.Canvas;
 
@@ -15,6 +17,8 @@ public class GameLoopThread extends Thread {
 	private long levelTimeDuration=30000;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
+
+	private Queue<MoleSprite> checkMoles= new LinkedList<MoleSprite>();
 
 
 	public GameLoopThread(ToposGameView view) {
@@ -71,37 +75,49 @@ public class GameLoopThread extends Thread {
 
 	private void play(){
 
-		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){	// la idea es k en los primeros niveles no tngamos k tocar el playLoopTime
-													
+		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
+
 			List<MoleSprite> moles=view.getMoles();
 
 			if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
-				
+
 				level++;
 				levelStartTime=System.currentTimeMillis();
 				levelTimeDuration=levelTimeDuration+10000;
 				playLoopTime=playLoopTime/2;
-				
+
 			}		
-			
-			if(level<=7){
+
+			if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez.
 				int chosenMole = (int) Math.floor(12*Math.random()-0.01);
 				MoleSprite mole=moles.get(chosenMole);
 
 				if(mole.getStatus()==4){
 					mole.digUp();
-				} else {
+					checkMoles.add(mole);
+					mole.setFullDigUpStartTime(System.currentTimeMillis()); // tambien recoje el tiempo que tarda en subir, no solo arriba, no creo que sea un problema.
+
+				}else{
+
 					playLoopStartTime=System.currentTimeMillis();
 					play();
+				}
+
+				for(MoleSprite moleCheck :checkMoles){
+					if(moleCheck.getStatus()==0){					
+						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
+							moleCheck.digDown();
+						}
+					}
+
 				}
 
 			}
 
 		}
 
+
+
+
 	}
-
-
-
-
 }

@@ -121,8 +121,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 						Log.i(tag, "Mole clicked: "+mole.toString());
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
-						}else if(mole.getStatus()==MoleSprite.HOLE){
-							mole.digUp();
+//						}else if(mole.getStatus()==MoleSprite.HOLE){
+//							mole.digUp();
 						}
 					}
 				}	

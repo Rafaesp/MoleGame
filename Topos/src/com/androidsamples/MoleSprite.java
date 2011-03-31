@@ -36,8 +36,10 @@ public class MoleSprite extends View{
 	private boolean isDigging;
 	private long animationHitStartTime;
 	private long animationDigStartTime;
+	private long fullDigUpStartTime;
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
 	private int diggingTick = 0; //How many frames have we already shown
+	
 
 	private static final String tag = "TAG";
 
@@ -147,4 +149,13 @@ public class MoleSprite extends View{
 		isDigging = true;
 	}
 
+	public long getFullDigUpStartTime() {
+		
+
+		return fullDigUpStartTime;
+	}
+
+	public void setFullDigUpStartTime(long time){
+		fullDigUpStartTime=time;
+	}
 }
