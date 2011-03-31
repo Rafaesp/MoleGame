@@ -2,13 +2,10 @@ package com.androidsamples;
 
 
 
-import java.util.AbstractQueue;
-import java.util.LinkedHashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
-
 import android.graphics.Canvas;
 import android.util.Log;
 
@@ -21,12 +18,13 @@ public class GameLoopThread extends Thread {
 	private long levelTimeDuration=30000;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
-	private long waitTime=80;
-	private long waitStartTime;
 
-	//private List<MoleSprite> checkMoles= new LinkedList<MoleSprite>();
-	private Queue<MoleSprite> checkMoles= new LinkedList<MoleSprite>();
-	//http://download.oracle.com/javase/1.4.2/docs/api/java/util/ConcurrentModificationException.html
+
+	//TODO Hay que reparar un error que se produce al parecer, cuando se borra un elemento de la cola:
+	// Lanza FATAL ERROR: ConcurrentModificationException at next() LinkedList
+	//Ver: //http://download.oracle.com/javase/1.4.2/docs/api/java/util/ConcurrentModificationException.html
+
+	private Queue<MoleSprite> checkMoles=new LinkedList<MoleSprite>();
 
 
 	public GameLoopThread(ToposGameView view) {
@@ -82,7 +80,7 @@ public class GameLoopThread extends Thread {
 	}
 
 	private void play(){
-		//Estas variables son para probar porque se cuelga, ya que el log muestra un error en el next() del iterator de LinkedList, quizas esta implementacion para la cola, no sea recomendable.
+		//Estas variables son para probar que no se cuelga, ya lo quitaremos si no salta nunca la excepcion de abajo.
 		boolean aux1=true;
 		boolean aux2=true;
 
@@ -100,16 +98,16 @@ public class GameLoopThread extends Thread {
 			}		
 
 
-			if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez.
+			if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez, pero aun hay que afinar valores.
 				int chosenMole = (int) Math.floor(12*Math.random()-0.01);
 				MoleSprite mole=moles.get(chosenMole);
 
 				if(mole.getStatus()==4){
 					mole.digUp();
 					aux1=checkMoles.add(mole);
-					waitStartTime=System.currentTimeMillis();
+
 					Log.i("El topo añandido a la cola es: ",mole.toString());
-					mole.setFullDigUpStartTime(System.currentTimeMillis()); // tambien recoje el tiempo que tarda en subir, no solo arriba, no creo que sea un problema.
+					mole.setFullDigUpStartTime(System.currentTimeMillis()); // tambien recoge el tiempo que tarda en subir, no solo arriba, no creo que sea un problema.
 
 				}else{
 
@@ -117,27 +115,59 @@ public class GameLoopThread extends Thread {
 					play();
 				}
 
-				for(MoleSprite moleCheck :checkMoles){
+				
+//				Iterator it = solicitudes.iterator();
+//				while(it.hasNext()){
+//				 if(!((SolicitudVO)it.next()).isSolutions())
+//				  it.remove();
+//				}	
+				Iterator<MoleSprite> it= checkMoles.iterator();
+				MoleSprite moleCheck;
+				while(it.hasNext()){
+					moleCheck=it.next();
 					if(moleCheck.getStatus()==0){					
 						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
-							
+
 							if(moleCheck.equals((checkMoles).peek())){//TODO esta comprobacion es necesaria? habra alguna vez que no se añada bien o borre bien?
-									
-								if(System.currentTimeMillis()-waitStartTime>waitTime){
-									moleCheck.digDown();
-									
-									aux2=checkMoles.remove(moleCheck); //poll quitaba el elemento de la cola o eso era peek? uso remove porque devuelve boolean
-									Log.i("El topo borrado de la cola es: ",moleCheck.toString());
-									
-									waitStartTime=System.currentTimeMillis();
-								}
-								
+
+
+								moleCheck.digDown();
+
+								it.remove(); //poll quitaba el elemento de la cola o eso era peek? al final uso remove porque devuelve boolean
+								Log.i("El topo borrado de la cola es: ",moleCheck.toString());
+
+
+
+
 							}
 
 						}
 					}
 
+					
+					
 				}
+//				for(MoleSprite moleCheck :checkMoles){
+//					if(moleCheck.getStatus()==0){					
+//						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
+//
+//							if(moleCheck.equals((checkMoles).peek())){//TODO esta comprobacion es necesaria? habra alguna vez que no se añada bien o borre bien?
+//
+//
+//								moleCheck.digDown();
+//
+//								aux2=checkMoles.remove(moleCheck); //poll quitaba el elemento de la cola o eso era peek? al final uso remove porque devuelve boolean
+//								Log.i("El topo borrado de la cola es: ",moleCheck.toString());
+//
+//
+//
+//
+//							}
+//
+//						}
+//					}
+//
+//				}
 
 			}
 
