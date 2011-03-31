@@ -88,6 +88,7 @@ public class GameLoopThread extends Thread {
 
 			}		
 
+			
 			if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez.
 				int chosenMole = (int) Math.floor(12*Math.random()-0.01);
 				MoleSprite mole=moles.get(chosenMole);
@@ -102,7 +103,7 @@ public class GameLoopThread extends Thread {
 					playLoopStartTime=System.currentTimeMillis();
 					play();
 				}
-
+			
 				for(MoleSprite moleCheck :checkMoles){
 					if(moleCheck.getStatus()==0){					
 						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
