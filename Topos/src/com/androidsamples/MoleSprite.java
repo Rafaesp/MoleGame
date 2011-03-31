@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 
 public class MoleSprite extends View{
@@ -17,14 +15,17 @@ public class MoleSprite extends View{
 	public static final int DIGUPFULL = 0;
 	public static final int HIT = -1;
 	private static final long ANIMATION_HIT_TIME = 500;
-	private static final long ANIMATION_DIGGING_TIME = 500;
-
+	private static final long ANIMATION_DIGGING_TIME = 300;
+	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int BMP_ROWS = 5;
 	private static final int BMP_COLUMNS = 1;
-	private int x = 0;
-	private int y = 0;
 
-	private ToposGameView gameView;
+	private int posx;
+	private int posy;
+	private int x;
+	private int y;
+
+	private ToposGameView view;
 	private Bitmap bmp;
 	private int width;
 	private int height;	
@@ -36,65 +37,56 @@ public class MoleSprite extends View{
 	private long animationHitStartTime;
 	private long animationDigStartTime;
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
-	private int diggingTick = 1; //How many frames have we already shown
+	private int diggingTick = 0; //How many frames have we already shown
 
 	private static final String tag = "TAG";
 
-	public MoleSprite(ToposGameView gameView, int x, int y, int status) {
-		super(gameView.getContext());
-		this.gameView = gameView;
+	public MoleSprite(ToposGameView view, int posx, int posy) {
+		super(view.getContext());
+		this.view = view;
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.topos75x90);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 
-		this.status=status;
-
-		this.x=x;
-		this.y= y;
-
+		this.posx=posx;
+		this.posy=posy;
+		
+		status = HOLE;
 	}
 
 	public int getX() {
-		return x;
+		return (posx+1)*(view.getWidth()/4) - getMoleWidth()/2;
 	}
-
 	public int getY() {
-		return y;
+		return (posy+1)*view.getHeight()/5 - getMoleHeight()/2;
 	}
-
-	public int getMoleWidthInScreen() {
-		return x + gameView.getWidth()/3;
+	public int getMoleWidth() {
+		int gap_width = view.getWidth()/10;
+		return view.getWidth()/4-gap_width;
 	}
-
-
-	public int getMoleHeightInScreen() {
-		return y+gameView.getHeight()/4;
+	public int getMoleHeight() {
+		int gap_height = view.getHeight()/10;
+		return view.getHeight()/5-gap_height;
 	}
-
-
 	public int getStatus() {
 		return status;
 	}
-
-
-	public void onDraw(Canvas canvas) {
-		isHit();
-		isDigging();
-		int srcy = status * height;
-		int srcx = animation * width;
-		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
-		Rect dst = new Rect(x, y, x + gameView.getWidth()/3, y+gameView.getHeight()/4);
-		//Rect dst = new Rect(getX(), getY(), getMoleWidthInScreen(), getMoleHeightInScreen());
-		canvas.drawBitmap(bmp, src, dst, null);   
-	}
-
 	public void changeStatus(int status){
 		this.status = status;
 	}
-
+	
+	public void onDraw(Canvas canvas) {
+		dig();
+		int srcy = status * height;
+		int srcx = animation * width;
+		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
+		//Rect dst = new Rect(x, y, x + view.getWidth()/3, y+view.getHeight()/4);
+		Rect dst = new Rect(getX(), getY(), getX()+getMoleWidth(), getY()+getMoleHeight());
+		canvas.drawBitmap(bmp, src, dst, null);   
+	}
 	public boolean isClicked(float eventx, float eventy){
-		boolean coordx = getX() <= eventx && getMoleWidthInScreen() >= eventx;
-		boolean coordy = getY() <=eventy && getMoleHeightInScreen() >= eventy;
+		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;
+		boolean coordy = getY() <=eventy && getY()+getMoleHeight() >= eventy;
 
 		if(coordx && coordy){
 			return true;
@@ -113,7 +105,7 @@ public class MoleSprite extends View{
 	}
 
 	public String toString(){
-		return "Mole x: "+x+", y: "+y+", width: "+width+", \nheight: "+height+" ,dstWidth: "+gameView.getWidth()/3+", dstHeight: "+gameView.getHeight()/4;
+		return "Mole x: "+x+", y: "+y+", width: "+width+", \nheight: "+height+" ,dstWidth: "+view.getWidth()/3+", dstHeight: "+view.getHeight()/4;
 	}
 
 	public void hit(){ //TODO Shouldn't be able to click when already hit
@@ -124,20 +116,23 @@ public class MoleSprite extends View{
 	}
 
 	public boolean isDigging(){
-		Long timeElapsed = System.currentTimeMillis() - animationDigStartTime;
-		if(timeElapsed <= ANIMATION_DIGGING_TIME){
-			Log.i(tag, "Enters in digging if1");
-			if(diggingTick <=4 && timeElapsed <= diggingTick*ANIMATION_DIGGING_TIME/4){
-				status = status+diggingDirection;
-				diggingTick++;
-				Log.i(tag, "timeElapsed: "+timeElapsed.intValue());
-			}
-		}else{
-			diggingTick = 1;	
-		}
-		isDigging = false;
-
 		return isDigging;
+	}
+
+	public void dig(){
+		if(isDigging){
+			Long timeElapsed = System.currentTimeMillis() - animationDigStartTime;
+				if(diggingTick != MAX_DIGGING_TICKS){
+					if(timeElapsed >= diggingTick*ANIMATION_DIGGING_TIME/4){
+						status = status+diggingDirection;
+						diggingTick++;
+					}
+				}else{
+					diggingTick = 0;
+					isDigging = false;
+				}
+			
+		}
 	}
 
 	public void digUp(){

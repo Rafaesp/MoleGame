@@ -1,6 +1,9 @@
 package com.androidsamples;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -20,9 +23,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;
-
-	private ArrayList<MoleSprite> moles;
-
+	private List<MoleSprite> moles;
+	private boolean needRedraw;
 
 	public ToposGameView(Context context){
 		super(context);
@@ -36,7 +38,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	}
 
 	private void initToposGameView(){
-		moles = new ArrayList<MoleSprite>();
+		moles = new LinkedList<MoleSprite>();
+		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
 
@@ -81,15 +84,28 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private void createMoles(){
 		for(int x = 0; x<3; x++){ 
 			for(int y = 0; y<4 ; y++){
-				MoleSprite mole = new MoleSprite(this, x*getWidth()/3, y*getHeight()/4, MoleSprite.DIGUPFULL);
+				MoleSprite mole = new MoleSprite(this, x, y);
 				moles.add(mole);
 				Log.i(tag, mole.toString());
 			}
 		}
 	}
+	
+	public List<MoleSprite> getMoles(){
+		return moles;
+	}
+	
+	public boolean needRedraw(){
+		return needRedraw;
+	}
+	
+	public void setRedraw(boolean need){
+		needRedraw = need;
+	}
 
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.GREEN);
+		needRedraw = false;
 		for(MoleSprite mole : moles){
 			mole.onDraw(canvas);
 		}
@@ -114,15 +130,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 		}
 		return false;
-	}
-
-	public void setMoles(ArrayList<MoleSprite> moles) {
-		this.moles=moles;
-
-	}
-
-	public ArrayList<MoleSprite> getMoles(){
-		return moles;
 	}
 
 }
