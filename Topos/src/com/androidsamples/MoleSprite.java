@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 
 public class MoleSprite extends View{
@@ -17,10 +15,12 @@ public class MoleSprite extends View{
 	public static final int DIGUPFULL = 0;
 	public static final int HIT = -1;
 	private static final long ANIMATION_HIT_TIME = 500;
-	private static final long ANIMATION_DIGGING_TIME = 500;
-
+	private static final long ANIMATION_DIGGING_TIME = 300;
+	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int BMP_ROWS = 5;
 	private static final int BMP_COLUMNS = 1;
+
+
 	private int x = 0;
 	private int y = 0;
 
@@ -36,7 +36,7 @@ public class MoleSprite extends View{
 	private long animationHitStartTime;
 	private long animationDigStartTime;
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
-	private int diggingTick = 1; //How many frames have we already shown
+	private int diggingTick = 0; //How many frames have we already shown
 
 	private static final String tag = "TAG";
 
@@ -46,7 +46,7 @@ public class MoleSprite extends View{
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.topos75x90);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
-
+		
 		this.status=status;
 
 		this.x=x;
@@ -78,8 +78,7 @@ public class MoleSprite extends View{
 
 
 	public void onDraw(Canvas canvas) {
-		isHit();
-		isDigging();
+		dig();
 		int srcy = status * height;
 		int srcx = animation * width;
 		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
@@ -124,20 +123,23 @@ public class MoleSprite extends View{
 	}
 
 	public boolean isDigging(){
-		Long timeElapsed = System.currentTimeMillis() - animationDigStartTime;
-		if(timeElapsed <= ANIMATION_DIGGING_TIME){
-			Log.i(tag, "Enters in digging if1");
-			if(diggingTick <=4 && timeElapsed <= diggingTick*ANIMATION_DIGGING_TIME/4){
-				status = status+diggingDirection;
-				diggingTick++;
-				Log.i(tag, "timeElapsed: "+timeElapsed.intValue());
-			}
-		}else{
-			diggingTick = 1;	
-		}
-		isDigging = false;
-
 		return isDigging;
+	}
+
+	public void dig(){
+		if(isDigging){
+			Long timeElapsed = System.currentTimeMillis() - animationDigStartTime;
+				if(diggingTick != MAX_DIGGING_TICKS){
+					if(timeElapsed >= diggingTick*ANIMATION_DIGGING_TIME/4){
+						status = status+diggingDirection;
+						diggingTick++;
+					}
+				}else{
+					diggingTick = 0;
+					isDigging = false;
+				}
+			
+		}
 	}
 
 	public void digUp(){
