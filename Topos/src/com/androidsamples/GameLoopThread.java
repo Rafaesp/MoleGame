@@ -77,6 +77,7 @@ public class GameLoopThread extends Thread {
 
 	private void play(){
 		//Estas variables son para probar que no se cuelga, ya lo quitaremos si no salta nunca la excepcion de abajo.
+		
 		boolean aux1=true;
 
 		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
@@ -113,7 +114,7 @@ public class GameLoopThread extends Thread {
 				while(it.hasNext()){
 					moleCheck=it.next();
 					if(moleCheck.getStatus()==0){					
-						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
+						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado.
 
 							if(moleCheck.equals((checkMoles).peek())){//TODO esta comprobacion es necesaria? habra alguna vez que no se añada bien o borre bien?
 
