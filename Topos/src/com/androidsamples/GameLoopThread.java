@@ -2,11 +2,15 @@ package com.androidsamples;
 
 
 
+import java.util.AbstractQueue;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class GameLoopThread extends Thread {
 	private final long FPS=30;
@@ -17,8 +21,12 @@ public class GameLoopThread extends Thread {
 	private long levelTimeDuration=30000;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
+	private long waitTime=80;
+	private long waitStartTime;
 
+	//private List<MoleSprite> checkMoles= new LinkedList<MoleSprite>();
 	private Queue<MoleSprite> checkMoles= new LinkedList<MoleSprite>();
+	//http://download.oracle.com/javase/1.4.2/docs/api/java/util/ConcurrentModificationException.html
 
 
 	public GameLoopThread(ToposGameView view) {
@@ -74,6 +82,9 @@ public class GameLoopThread extends Thread {
 	}
 
 	private void play(){
+		//Estas variables son para probar porque se cuelga, ya que el log muestra un error en el next() del iterator de LinkedList, quizas esta implementacion para la cola, no sea recomendable.
+		boolean aux1=true;
+		boolean aux2=true;
 
 		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
 
@@ -88,14 +99,16 @@ public class GameLoopThread extends Thread {
 
 			}		
 
-			
+
 			if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez.
 				int chosenMole = (int) Math.floor(12*Math.random()-0.01);
 				MoleSprite mole=moles.get(chosenMole);
 
 				if(mole.getStatus()==4){
 					mole.digUp();
-					checkMoles.add(mole);
+					aux1=checkMoles.add(mole);
+					waitStartTime=System.currentTimeMillis();
+					Log.i("El topo añandido a la cola es: ",mole.toString());
 					mole.setFullDigUpStartTime(System.currentTimeMillis()); // tambien recoje el tiempo que tarda en subir, no solo arriba, no creo que sea un problema.
 
 				}else{
@@ -103,17 +116,32 @@ public class GameLoopThread extends Thread {
 					playLoopStartTime=System.currentTimeMillis();
 					play();
 				}
-			
+
 				for(MoleSprite moleCheck :checkMoles){
 					if(moleCheck.getStatus()==0){					
 						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
-							moleCheck.digDown();
+							
+							if(moleCheck.equals((checkMoles).peek())){//TODO esta comprobacion es necesaria? habra alguna vez que no se añada bien o borre bien?
+									
+								if(System.currentTimeMillis()-waitStartTime>waitTime){
+									moleCheck.digDown();
+									
+									aux2=checkMoles.remove(moleCheck); //poll quitaba el elemento de la cola o eso era peek? uso remove porque devuelve boolean
+									Log.i("El topo borrado de la cola es: ",moleCheck.toString());
+									
+									waitStartTime=System.currentTimeMillis();
+								}
+								
+							}
+
 						}
 					}
 
 				}
 
 			}
+
+			if(!aux1 || !aux2) throw new IllegalArgumentException("Failure to add or remove a mole from the queue");
 
 		}
 

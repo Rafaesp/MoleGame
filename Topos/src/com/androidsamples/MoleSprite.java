@@ -158,4 +158,14 @@ public class MoleSprite extends View{
 	public void setFullDigUpStartTime(long time){
 		fullDigUpStartTime=time;
 	}
+	
+	public boolean equals(Object o){
+		boolean resX=false;
+		boolean resY=false;
+		if(o instanceof MoleSprite){
+			resX=this.posx==((MoleSprite) o).posx;
+			resY=this.posy==((MoleSprite) o).posy;
+		}
+		return resX && resY;
+	}
 }
