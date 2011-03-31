@@ -19,11 +19,6 @@ public class GameLoopThread extends Thread {
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
 
-	
-
-	//TODO Hay que reparar un error que se produce al parecer, cuando se borra un elemento de la cola:
-	// Lanza FATAL ERROR: ConcurrentModificationException at next() LinkedList
-	//Ver: //http://download.oracle.com/javase/1.4.2/docs/api/java/util/ConcurrentModificationException.html
 
 	private Queue<MoleSprite> checkMoles=new LinkedList<MoleSprite>();
 
@@ -83,19 +78,16 @@ public class GameLoopThread extends Thread {
 	private void play(){
 		//Estas variables son para probar que no se cuelga, ya lo quitaremos si no salta nunca la excepcion de abajo.
 		boolean aux1=true;
-		boolean aux2=true;
 
 		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
 
 			List<MoleSprite> moles=view.getMoles();
 
 			if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
-
 				level++;
 				levelStartTime=System.currentTimeMillis();
 				levelTimeDuration=levelTimeDuration+10000;
 				playLoopTime=playLoopTime/2;
-
 			}		
 
 
@@ -116,12 +108,6 @@ public class GameLoopThread extends Thread {
 					play();
 				}
 
-				
-//				Iterator it = solicitudes.iterator();
-//				while(it.hasNext()){
-//				 if(!((SolicitudVO)it.next()).isSolutions())
-//				  it.remove();
-//				}	
 				Iterator<MoleSprite> it= checkMoles.iterator();
 				MoleSprite moleCheck;
 				while(it.hasNext()){
@@ -134,7 +120,7 @@ public class GameLoopThread extends Thread {
 
 								moleCheck.digDown();
 
-								it.remove(); //poll quitaba el elemento de la cola o eso era peek? al final uso remove porque devuelve boolean
+								it.remove(); 
 								Log.i("El topo borrado de la cola es: ",moleCheck.toString());
 
 
@@ -145,34 +131,11 @@ public class GameLoopThread extends Thread {
 						}
 					}
 
-					
-					
 				}
-//				for(MoleSprite moleCheck :checkMoles){
-//					if(moleCheck.getStatus()==0){					
-//						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado
-//
-//							if(moleCheck.equals((checkMoles).peek())){//TODO esta comprobacion es necesaria? habra alguna vez que no se añada bien o borre bien?
-//
-//
-//								moleCheck.digDown();
-//
-//								aux2=checkMoles.remove(moleCheck); //poll quitaba el elemento de la cola o eso era peek? al final uso remove porque devuelve boolean
-//								Log.i("El topo borrado de la cola es: ",moleCheck.toString());
-//
-//
-//
-//
-//							}
-//
-//						}
-//					}
-//
-//				}
-
+			
 			}
 
-			if(!aux1 || !aux2) throw new IllegalArgumentException("Failure to add or remove a mole from the queue");
+			if(!aux1) throw new IllegalArgumentException("Failure to add or remove a mole from the queue");
 
 		}
 
