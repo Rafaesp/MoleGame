@@ -86,9 +86,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 			for(int y = 0; y<4 ; y++){
 				MoleSprite mole = new MoleSprite(this, x, y);
 				moles.add(mole);
-				Log.i(tag, mole.toString());
 			}
 		}
+		Log.i(tag, "Moles created");
 	}
 	
 	public List<MoleSprite> getMoles(){
@@ -121,8 +121,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 						Log.i(tag, "Mole clicked: "+mole.toString());
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
-//						}else if(mole.getStatus()==MoleSprite.HOLE){
-//							mole.digUp();
 						}
 					}
 				}	

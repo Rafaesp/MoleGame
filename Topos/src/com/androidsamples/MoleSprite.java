@@ -56,18 +56,20 @@ public class MoleSprite extends View{
 	}
 
 	public int getX() {
-		return (posx+1)*(view.getWidth()/4) - getMoleWidth()/2;
+		int gap_width = view.getWidth()/10;
+		return gap_width/2+(posx)*(view.getWidth()/3);
 	}
 	public int getY() {
-		return (posy+1)*view.getHeight()/5 - getMoleHeight()/2;
+		int gap_height = view.getHeight()/10;
+		return gap_height/2+(posy)*view.getHeight()/4;
 	}
 	public int getMoleWidth() {
 		int gap_width = view.getWidth()/10;
-		return view.getWidth()/4-gap_width;
+		return view.getWidth()/3-gap_width;
 	}
 	public int getMoleHeight() {
 		int gap_height = view.getHeight()/10;
-		return view.getHeight()/5-gap_height;
+		return view.getHeight()/4-gap_height;
 	}
 	public int getStatus() {
 		return status;
@@ -81,7 +83,6 @@ public class MoleSprite extends View{
 		int srcy = status * height;
 		int srcx = animation * width;
 		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
-		//Rect dst = new Rect(x, y, x + view.getWidth()/3, y+view.getHeight()/4);
 		Rect dst = new Rect(getX(), getY(), getX()+getMoleWidth(), getY()+getMoleHeight());
 		canvas.drawBitmap(bmp, src, dst, null);   
 	}
