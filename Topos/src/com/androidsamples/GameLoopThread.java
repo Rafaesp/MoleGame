@@ -19,15 +19,11 @@ public class GameLoopThread extends Thread {
 	private long levelTimeDuration=30000;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
-	private Random rand;
 
 
 	public GameLoopThread(ToposGameView view) {
 		this.view = view;
-		rand = new Random(System.nanoTime());
 	}
-
-
 
 
 	public void setRunning(boolean run) {
@@ -49,10 +45,8 @@ public class GameLoopThread extends Thread {
 			Canvas canvas = null;
 			startTime = System.currentTimeMillis();
 
-			Iterator<MoleSprite> it= view.getMoles().iterator();
-			MoleSprite mole;
-			while(it.hasNext()){
-				mole=it.next();
+			List<MoleSprite> moles= view.getMoles();
+			for(MoleSprite mole : moles){
 				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
 					if(System.currentTimeMillis()-mole.getDigStartTime()>1500){//TODO probar tiempo adecuado.
 						mole.digDown();
@@ -94,19 +88,22 @@ public class GameLoopThread extends Thread {
 		playLoopStartTime = System.currentTimeMillis();
 		if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
 			level++;
+			//TODO Change level. Intent 
 			levelStartTime=System.currentTimeMillis();
-			levelTimeDuration=levelTimeDuration+10000;
-			playLoopTime=playLoopTime/2;
-		}		
+			levelTimeDuration+=10000;
+			playLoopTime/=2;
 
+		}
 
 		if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez, pero aun hay que afinar valores.
-			int chosenMole = new Random(System.nanoTime()).nextInt(moles.size());
-			MoleSprite mole=moles.get(chosenMole);
+			MoleSprite mole;
+			do{
+				int chosenMole = new Random(System.nanoTime()).nextInt(moles.size());
+				mole=moles.get(chosenMole);
+			}while(mole.getStatus()!=MoleSprite.HOLE);
 
-			if(mole.getStatus()==MoleSprite.HOLE){
-				mole.digUp();
-			}
+			mole.digUp();
+
 		}
 	}
 

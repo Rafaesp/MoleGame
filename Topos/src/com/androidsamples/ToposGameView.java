@@ -1,9 +1,7 @@
 package com.androidsamples;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -38,7 +36,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	}
 
 	private void initToposGameView(){
-		moles = new LinkedList<MoleSprite>();
+		moles = new ArrayList<MoleSprite>();
 		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
