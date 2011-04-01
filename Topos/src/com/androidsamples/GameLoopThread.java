@@ -20,8 +20,6 @@ public class GameLoopThread extends Thread {
 	private long playLoopStartTime=System.currentTimeMillis();
 
 
-	private Queue<MoleSprite> checkMoles=new LinkedList<MoleSprite>();
-
 
 	public GameLoopThread(ToposGameView view) {
 		this.view = view;
@@ -42,13 +40,25 @@ public class GameLoopThread extends Thread {
 		long sleepTime;
 
 		while (running) {
+			if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
 			play();
+			}
 			Canvas canvas = null;
 			startTime = System.currentTimeMillis();
-			for(MoleSprite mole : view.getMoles()){
+			
+			Iterator<MoleSprite> it= view.getMoles().iterator();
+			MoleSprite mole;
+			while(it.hasNext()){
+				mole=it.next();
+				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
+					if(System.currentTimeMillis()-mole.getDigStartTime()>1500){//TODO probar tiempo adecuado.
+							mole.digDown();
+					}
+				}
 				if(mole.isDigging() || mole.isHit())
 					view.setRedraw(view.needRedraw() || true);
 			}
+			
 			if(view.needRedraw()){
 				try {
 
@@ -76,12 +86,6 @@ public class GameLoopThread extends Thread {
 	}
 
 	private void play(){
-		//Estas variables son para probar que no se cuelga, ya lo quitaremos si no salta nunca la excepcion de abajo.
-		
-		boolean aux1=true;
-
-		if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
-
 			List<MoleSprite> moles=view.getMoles();
 
 			if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
@@ -96,52 +100,19 @@ public class GameLoopThread extends Thread {
 				int chosenMole = (int) Math.floor(12*Math.random()-0.01);
 				MoleSprite mole=moles.get(chosenMole);
 
-				if(mole.getStatus()==4){
+				if(mole.getStatus()==MoleSprite.HOLE){
 					mole.digUp();
-					aux1=checkMoles.add(mole);
-
-					Log.i("El topo añandido a la cola es: ",mole.toString());
-					mole.setFullDigUpStartTime(System.currentTimeMillis()); // tambien recoge el tiempo que tarda en subir, no solo arriba, no creo que sea un problema.
-
 				}else{
 
 					playLoopStartTime=System.currentTimeMillis();
 					play();
 				}
-
-				Iterator<MoleSprite> it= checkMoles.iterator();
-				MoleSprite moleCheck;
-				while(it.hasNext()){
-					moleCheck=it.next();
-					if(moleCheck.getStatus()==0){					
-						if(System.currentTimeMillis()-moleCheck.getFullDigUpStartTime()>1500){//TODO probar tiempo adecuado.
-
-							if(moleCheck.equals((checkMoles).peek())){//TODO esta comprobacion es necesaria? habra alguna vez que no se añada bien o borre bien?
-
-
-								moleCheck.digDown();
-
-								it.remove(); 
-								Log.i("El topo borrado de la cola es: ",moleCheck.toString());
-
-
-
-
-							}
-
-						}
-					}
-
-				}
-			
+		
 			}
-
-			if(!aux1) throw new IllegalArgumentException("Failure to add or remove a mole from the queue");
-
 		}
 
 
 
 
 	}
-}
+

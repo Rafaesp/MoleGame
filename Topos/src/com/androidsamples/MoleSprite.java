@@ -36,7 +36,6 @@ public class MoleSprite extends View{
 	private boolean isDigging;
 	private long animationHitStartTime;
 	private long animationDigStartTime;
-	private long fullDigUpStartTime;
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
 	private int diggingTick = 0; //How many frames have we already shown
 	
@@ -148,16 +147,6 @@ public class MoleSprite extends View{
 		animationDigStartTime = System.currentTimeMillis();
 		isDigging = true;
 	}
-
-	public long getFullDigUpStartTime() {
-		
-
-		return fullDigUpStartTime;
-	}
-
-	public void setFullDigUpStartTime(long time){
-		fullDigUpStartTime=time;
-	}
 	
 	public boolean equals(Object o){
 		boolean resX=false;
@@ -167,5 +156,9 @@ public class MoleSprite extends View{
 			resY=this.posy==((MoleSprite) o).posy;
 		}
 		return resX && resY;
+	}
+
+	public long getDigStartTime() {
+		return animationDigStartTime+ANIMATION_DIGGING_TIME;
 	}
 }
