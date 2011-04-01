@@ -55,6 +55,7 @@ public class GameLoopThread extends Thread {
 							mole.digDown();
 					}
 				}
+				
 				if(mole.isDigging() || mole.isHit())
 					view.setRedraw(view.needRedraw() || true);
 			}
