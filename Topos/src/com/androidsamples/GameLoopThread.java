@@ -39,7 +39,6 @@ public class GameLoopThread extends Thread {
 
 		while (running) {
 			if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
-				Log.i("TAG", "Enters play. playLoopStartTime: "+playLoopStartTime);
 				play();
 			}
 			Canvas canvas = null;
@@ -98,7 +97,7 @@ public class GameLoopThread extends Thread {
 		if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez, pero aun hay que afinar valores.
 			MoleSprite mole;
 			do{
-				int chosenMole = new Random(System.nanoTime()).nextInt(moles.size());
+				int chosenMole = (int) Math.floor(Math.random()*moles.size());
 				mole=moles.get(chosenMole);
 			}while(mole.getStatus()!=MoleSprite.HOLE);
 
