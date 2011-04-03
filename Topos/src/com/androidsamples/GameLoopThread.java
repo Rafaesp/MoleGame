@@ -2,13 +2,12 @@ package com.androidsamples;
 
 
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import android.graphics.Canvas;
-import android.util.Log;
-import android.widget.CheckBox;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 
 public class GameLoopThread extends Thread {
 	private final long FPS=30;
@@ -19,12 +18,27 @@ public class GameLoopThread extends Thread {
 	private long levelTimeDuration=30000;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
+	
+	private Handler txtHandler;
+	private Integer lives;
 
 
-	public GameLoopThread(ToposGameView view) {
+	public GameLoopThread(ToposGameView view, Handler txtHandler) {
 		this.view = view;
+		this.txtHandler = txtHandler;
+		setLives(50);
 	}
 
+	public void setLives(int newlives){
+		lives = newlives;
+		synchronized (view.getHolder()) {
+			Message m = txtHandler.obtainMessage();
+			Bundle data = new Bundle();
+			data.putString("lives", lives.toString());
+			m.setData(data);
+			txtHandler.sendMessage(m);
+		}
+	}
 
 	public void setRunning(boolean run) {
 		running = run;
@@ -49,6 +63,7 @@ public class GameLoopThread extends Thread {
 				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
 					if(System.currentTimeMillis()-mole.getDigStartTime()>1500){//TODO probar tiempo adecuado.
 						mole.digDown();
+						setLives(--lives);
 					}
 				}
 

@@ -6,6 +6,8 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,6 +16,7 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.TextView;
 
 public class ToposGameView extends SurfaceView implements OnTouchListener{
 
@@ -23,6 +26,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private GameLoopThread gameLoopThread;
 	private List<MoleSprite> moles;
 	private boolean needRedraw;
+	private TextView txtView;
 
 	public ToposGameView(Context context){
 		super(context);
@@ -41,7 +45,14 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		setFocusable(true);
 		setOnTouchListener(this);
 
-		gameLoopThread = new GameLoopThread(this);
+		Handler txtHandler = new Handler(){
+            @Override
+            public void handleMessage(Message m) {
+                txtView.setText(m.getData().getString("lives"));
+            }
+		};
+		
+		gameLoopThread = new GameLoopThread(this, txtHandler);
 
 		holder = getHolder();
 		holder.addCallback(new Callback() {
@@ -93,6 +104,14 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		return moles;
 	}
 	
+	public void setTxtView(TextView txtView) {
+		this.txtView = txtView;
+	}
+
+	public TextView getTxtView() {
+		return txtView;
+	}
+
 	public boolean needRedraw(){
 		return needRedraw;
 	}

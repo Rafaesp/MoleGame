@@ -7,11 +7,12 @@
     	android:layout_weight="0.93" 
     	android:orientation="horizontal">
         <TextView android:text="@string/txtFailed" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-        <TextView android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/txtLives"></TextView>
+        <TextView android:id="@+id/txtLives" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/txtLives"></TextView>
         <LinearLayout android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:layout_height="wrap_content">
         </LinearLayout>
     </LinearLayout>
 	<com.androidsamples.ToposGameView 
+		android:id="@+id/toposview"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
 		android:layout_weight="0.07" 
