@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -26,7 +27,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private GameLoopThread gameLoopThread;
 	private List<MoleSprite> moles;
 	private boolean needRedraw;
-	private TextView txtView;
+	private TextView livesTxtView;
+	private TextView pointsTxtView;
+	private TextView timeTxtView;
 
 	public ToposGameView(Context context){
 		super(context);
@@ -46,12 +49,18 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		setOnTouchListener(this);
 
 		Handler txtHandler = new Handler(){
-            @Override
-            public void handleMessage(Message m) {
-                txtView.setText(m.getData().getString("lives"));
-            }
+			@Override
+			public void handleMessage(Message m) {
+				Bundle b = m.getData();
+				if(b.getString("lives") != null)
+					livesTxtView.setText(m.getData().getString("lives"));
+				if(b.getString("points") != null)
+					pointsTxtView.setText(b.getString("points"));
+				if(b.getString("time") != null)
+					timeTxtView.setText(b.getString("time"));
+			}
 		};
-		
+
 		gameLoopThread = new GameLoopThread(this, txtHandler);
 
 		holder = getHolder();
@@ -99,23 +108,39 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		}
 		Log.i(tag, "Moles created");
 	}
-	
+
 	public List<MoleSprite> getMoles(){
 		return moles;
 	}
-	
-	public void setTxtView(TextView txtView) {
-		this.txtView = txtView;
+
+	public void setLivesTxtView(TextView txtView) {
+		this.livesTxtView = txtView;
 	}
 
-	public TextView getTxtView() {
-		return txtView;
+	public TextView getLivesTxtView() {
+		return livesTxtView;
+	}
+
+	public TextView getPointsTxtView() {
+		return pointsTxtView;
+	}
+
+	public void setPointsTxtView(TextView pointsTxtView) {
+		this.pointsTxtView = pointsTxtView;
+	}
+
+	public TextView getTimeTxtView() {
+		return timeTxtView;
+	}
+
+	public void setTimeTxtView(TextView timeTxtView) {
+		this.timeTxtView = timeTxtView;
 	}
 
 	public boolean needRedraw(){
 		return needRedraw;
 	}
-	
+
 	public void setRedraw(boolean need){
 		needRedraw = need;
 	}

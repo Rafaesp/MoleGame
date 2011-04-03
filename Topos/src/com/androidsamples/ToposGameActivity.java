@@ -13,8 +13,11 @@ public class ToposGameActivity extends Activity {
         setContentView(R.layout.gameview);
         
         ToposGameView toposview = (ToposGameView) findViewById(R.id.toposview);
-        TextView txtView = (TextView) findViewById(R.id.txtLives);
-        txtView.setText("prueba");
-        toposview.setTxtView(txtView);
+        TextView txtLivesView = (TextView) findViewById(R.id.txtLives);
+        toposview.setLivesTxtView(txtLivesView);
+        TextView txtTimeView = (TextView) findViewById(R.id.txtTime);
+        toposview.setTimeTxtView(txtTimeView);
+        TextView txtPointsView = (TextView) findViewById(R.id.txtPoints);
+        toposview.setPointsTxtView(txtPointsView);
 	}
 }
