@@ -156,6 +156,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		boolean clicked = false;
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
 			synchronized(getHolder()){
 				for(MoleSprite mole : moles){
@@ -163,13 +164,14 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 						Log.i(tag, "Mole clicked: "+mole.toString());
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
+							clicked = true;
 						}
 					}
-				}	
+				}
 			}
-
 		}
-		return false;
+		gameLoopThread.click(clicked);
+		return clicked;
 	}
 
 }
