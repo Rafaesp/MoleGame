@@ -4,6 +4,8 @@ package com.androidsamples;
 
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -20,14 +22,14 @@ public class GameLoopThread extends Thread {
 	private boolean levelFinish;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
-	
+	private long levelTimeDigDown=1500;
 	private Handler txtHandler;
 	private Integer lives;
 	private Integer points;
 	private Integer time;
 
 
-	public GameLoopThread(ToposGameView view, Handler txtHandler) {
+	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
 		this.txtHandler = txtHandler;
 		setPoints(0);
@@ -41,6 +43,7 @@ public class GameLoopThread extends Thread {
 
 		     public void onFinish() {
 		         levelFinish= true;
+		         view.throwAlertFinalLevel(level,levelTimeDuration);//He puesto la view como constante, si no no andaba =S
 		     }
 		  };
 		  
@@ -107,7 +110,7 @@ public class GameLoopThread extends Thread {
 			List<MoleSprite> moles= view.getMoles();
 			for(MoleSprite mole : moles){
 				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
-					if(System.currentTimeMillis()-mole.getDigStartTime()>1500){//TODO probar tiempo adecuado.
+					if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){//TODO probar tiempo adecuado.
 						mole.digDown();
 						setLives(--lives);
 					}
@@ -166,6 +169,8 @@ public class GameLoopThread extends Thread {
 
 		}
 	}
+	
+
 
 
 

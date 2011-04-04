@@ -3,7 +3,9 @@ package com.androidsamples;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,12 +13,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class ToposGameView extends SurfaceView implements OnTouchListener{
@@ -173,5 +177,36 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		gameLoopThread.click(clicked);
 		return clicked;
 	}
+
+	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration
+		AlertDialog.Builder builder;
+		AlertDialog alertDialog;
+
+		LayoutInflater inflater =(LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
+
+		builder = new AlertDialog.Builder(this.getContext());
+		builder.setTitle("Finished level");
+		builder.setView(layout);
+
+
+		//		AlertDialog.Builder builderVentana = new AlertDialog.Builder(this.getContext());
+		//		builderVentana.setTitle("Aviso");
+		//				View window= (View) findViewById(R.layout.levelview);
+		//				builderVentana.setView(layout);
+		//		builderVentana.setNeutralButton("Next Level", new DialogInterface.OnClickListener() {
+		//			public void onClick(DialogInterface dialog, int id) {		        	   
+		//
+		//			}
+		//		});    		 	      			
+		//
+		//		AlertDialog alert = builderVentana.create();
+		//		alert.show();       	
+
+		alertDialog = builder.create();
+		alertDialog.show();
+	}
+
+
 
 }

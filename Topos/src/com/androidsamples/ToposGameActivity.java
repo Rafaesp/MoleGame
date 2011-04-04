@@ -20,4 +20,6 @@ public class ToposGameActivity extends Activity {
         TextView txtPointsView = (TextView) findViewById(R.id.txtPoints);
         toposview.setPointsTxtView(txtPointsView);
 	}
+    
+    
 }
