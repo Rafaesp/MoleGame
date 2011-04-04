@@ -181,28 +181,15 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration
 		AlertDialog.Builder builder;
 		AlertDialog alertDialog;
-
 		LayoutInflater inflater =(LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
-
 		builder = new AlertDialog.Builder(this.getContext());
-		builder.setTitle("Finished level");
+				builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 		builder.setView(layout);
-
-
-		//		AlertDialog.Builder builderVentana = new AlertDialog.Builder(this.getContext());
-		//		builderVentana.setTitle("Aviso");
-		//				View window= (View) findViewById(R.layout.levelview);
-		//				builderVentana.setView(layout);
-		//		builderVentana.setNeutralButton("Next Level", new DialogInterface.OnClickListener() {
-		//			public void onClick(DialogInterface dialog, int id) {		        	   
-		//
-		//			}
-		//		});    		 	      			
-		//
-		//		AlertDialog alert = builderVentana.create();
-		//		alert.show();       	
-
+		builder.setNeutralButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {		        	   
+			
+						}});
 		alertDialog = builder.create();
 		alertDialog.show();
 	}
