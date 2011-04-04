@@ -27,6 +27,8 @@ public class GameLoopThread extends Thread {
 	private Integer lives;
 	private Integer points;
 	private Integer time;
+	private Double playVelocity=1.25;
+	private CountDownTimer secondsTimer;
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
@@ -35,7 +37,7 @@ public class GameLoopThread extends Thread {
 		setPoints(0);
 		setLives(50);
 		levelFinish = false;
-		CountDownTimer secondsTimer = new CountDownTimer(levelTimeDuration, 1000) {
+		secondsTimer = new CountDownTimer(levelTimeDuration, 1000) {
 
 		     public void onTick(long millisUntilFinished) {
 		         setTime(millisUntilFinished / 1000);
@@ -149,16 +151,16 @@ public class GameLoopThread extends Thread {
 	private void play(){
 		List<MoleSprite> moles=view.getMoles();
 		playLoopStartTime = System.currentTimeMillis();
-		if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
-			level++;
-			//TODO Change level. Intent 
-			levelStartTime=System.currentTimeMillis();
-			levelTimeDuration+=10000;
-			playLoopTime/=2;
+//		if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
+//			//level++;
+//			//TODO Change level. Intent 
+//			//levelStartTime=System.currentTimeMillis();
+//			//levelTimeDuration+=10000;
+////			playLoopTime/=2;
+//
+//		}
 
-		}
-
-		if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez, pero aun hay que afinar valores.
+//		if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez, pero aun hay que afinar valores.
 			MoleSprite mole;
 			do{
 				int chosenMole = (int) Math.floor(Math.random()*moles.size());
@@ -168,10 +170,25 @@ public class GameLoopThread extends Thread {
 			mole.digUp();
 
 		}
-	}
+//	}
 	
 
-
+public void startNextLevel(){//Metodo ejecutado por el boton del la advertencia al final de nivel, reestablece los valores, para el siguiente nivel y lo ejecuta.
+	// ¿Donde se le dice que siga redibujando de nuevo la barra superior tambien?
+	level++;
+	levelStartTime=System.currentTimeMillis();
+	if(levelTimeDuration<120000){	//TODO 2 min, crear variable, aunque no creo que se vaya a modificar el valor mas de una vez;
+		levelTimeDuration+=10000;
+		setTime(time+10000);
+		playLoopTime/=playVelocity;
+	}else{
+		//TODO levelTimeDigDown-=
+		
+	}
+	secondsTimer.start();
+	levelFinish=false;
+	run();	
+}
 
 
 

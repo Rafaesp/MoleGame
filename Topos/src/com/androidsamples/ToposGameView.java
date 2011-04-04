@@ -35,6 +35,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private TextView pointsTxtView;
 	private TextView timeTxtView;
 
+	private AlertDialog alertDialog;
+
 	public ToposGameView(Context context){
 		super(context);
 		initToposGameView();
@@ -178,22 +180,25 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		return clicked;
 	}
 
-	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration
+	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
+		//TODO hacer un Alert "bonito" este es de pruebas
 		AlertDialog.Builder builder;
-		AlertDialog alertDialog;
 		LayoutInflater inflater =(LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
 		builder = new AlertDialog.Builder(this.getContext());
-				builder.setTitle(R.string.txtAlertDialogFinishedLevel);
+		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 		builder.setView(layout);
-		builder.setNeutralButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {		        	   
-			
-						}});
+		builder.setNegativeButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+			public void onClick(DialogInterface dialog, int id) {		        	   
+				gameLoopThread.startNextLevel();
+				closeAlertDialog();
+			}});
 		alertDialog = builder.create();
 		alertDialog.show();
 	}
-
+	private void closeAlertDialog(){
+		alertDialog.dismiss(); //TODO no consigo hacer que se cierre el dialog
+	}
 
 
 }
