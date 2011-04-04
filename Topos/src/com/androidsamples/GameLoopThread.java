@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 
@@ -16,17 +17,35 @@ public class GameLoopThread extends Thread {
 	private int level=1;
 	private long levelStartTime=System.currentTimeMillis();
 	private long levelTimeDuration=30000;
+	private boolean levelFinish;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
 	
 	private Handler txtHandler;
 	private Integer lives;
+	private Integer points;
+	private Integer time;
 
 
 	public GameLoopThread(ToposGameView view, Handler txtHandler) {
 		this.view = view;
 		this.txtHandler = txtHandler;
+		setPoints(0);
 		setLives(50);
+		levelFinish = false;
+		CountDownTimer secondsTimer = new CountDownTimer(levelTimeDuration, 1000) {
+
+		     public void onTick(long millisUntilFinished) {
+		         setTime(millisUntilFinished / 1000);
+		     }
+
+		     public void onFinish() {
+		         levelFinish= true;
+		     }
+		  };
+		  
+		  secondsTimer.start();
+
 	}
 
 	public void setLives(int newlives){
@@ -38,6 +57,33 @@ public class GameLoopThread extends Thread {
 			m.setData(data);
 			txtHandler.sendMessage(m);
 		}
+	}
+	
+	public void setTime(long seconds){
+		time = new Integer((int) seconds);
+		synchronized (view.getHolder()) {
+			Message m = txtHandler.obtainMessage();
+			Bundle data = new Bundle();
+			data.putString("time", time.toString());
+			m.setData(data);
+			txtHandler.sendMessage(m);
+		}
+	}
+	
+	public void setPoints(Integer points){
+		this.points = points;
+		synchronized (view.getHolder()) {
+			Message m = txtHandler.obtainMessage();
+			Bundle data = new Bundle();
+			data.putString("points", points.toString());
+			m.setData(data);
+			txtHandler.sendMessage(m);
+		}
+	}
+	
+	public void click(boolean clicked){
+		if(clicked)
+			setPoints(points+100);
 	}
 
 	public void setRunning(boolean run) {
@@ -51,7 +97,7 @@ public class GameLoopThread extends Thread {
 		long startTime;
 		long sleepTime;
 
-		while (running) {
+		while (running && !levelFinish) {
 			if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
 				play();
 			}
