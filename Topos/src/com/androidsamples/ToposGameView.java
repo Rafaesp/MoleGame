@@ -159,6 +159,11 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		}
 
 	}
+	public void reset(){
+		for(MoleSprite mole :moles)
+			mole.reset();
+		needRedraw = true;
+	}
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {

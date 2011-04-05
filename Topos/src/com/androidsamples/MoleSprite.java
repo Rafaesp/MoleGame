@@ -162,4 +162,11 @@ public class MoleSprite extends View{
 	public long getDigStartTime() {
 		return animationDigStartTime+ANIMATION_DIGGING_TIME;
 	}
+	
+	public void reset(){
+		changeStatus(HOLE);
+		diggingTick=0;
+		isDigging = false;
+		isHit = false;
+	}
 }

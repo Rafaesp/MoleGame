@@ -45,17 +45,18 @@ public class GameLoopThread extends Thread {
 		levelFinish = false;
 		secondsTimer = new CountDownTimer(levelTimeDuration, 1000) {
 
-		     public void onTick(long millisUntilFinished) {
-		         setTime(millisUntilFinished / 1000);
-		     }
+			public void onTick(long millisUntilFinished) {
+				setTime(millisUntilFinished / 1000);
+			}
 
-		     public void onFinish() {
-		         levelFinish= true;
-		         throwAlertFinalLevel(level,levelTimeDuration);//He puesto la view como constante, si no no andaba =S
-		     }
-		  };
-		  
-		  secondsTimer.start();
+			public void onFinish() {
+				view.reset();
+				levelFinish= true;
+				throwAlertFinalLevel(level,levelTimeDuration);//He puesto la view como constante, si no no andaba =S
+			}
+		};
+
+		secondsTimer.start();
 
 	}
 
@@ -69,7 +70,7 @@ public class GameLoopThread extends Thread {
 			txtHandler.sendMessage(m);
 		}
 	}
-	
+
 	public void setTime(long seconds){
 		time = new Integer((int) seconds);
 		synchronized (view.getHolder()) {
@@ -80,7 +81,7 @@ public class GameLoopThread extends Thread {
 			txtHandler.sendMessage(m);
 		}
 	}
-	
+
 	public void setPoints(Integer points){
 		this.points = points;
 		synchronized (view.getHolder()) {
@@ -91,7 +92,7 @@ public class GameLoopThread extends Thread {
 			txtHandler.sendMessage(m);
 		}
 	}
-	
+
 	public void click(boolean clicked){
 		if(clicked)
 			setPoints(points+100);
@@ -108,8 +109,8 @@ public class GameLoopThread extends Thread {
 		long startTime;
 		long sleepTime;
 
-		while (running && !levelFinish) {
-			if(System.currentTimeMillis()-playLoopStartTime>playLoopTime){
+		while (running) {
+			if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
 				play();
 			}
 			Canvas canvas = null;
@@ -157,74 +158,65 @@ public class GameLoopThread extends Thread {
 	private void play(){
 		List<MoleSprite> moles=view.getMoles();
 		playLoopStartTime = System.currentTimeMillis();
-//		if(System.currentTimeMillis()-levelStartTime>levelTimeDuration){
-//			//level++;
-//			//TODO Change level. Intent 
-//			//levelStartTime=System.currentTimeMillis();
-//			//levelTimeDuration+=10000;
-////			playLoopTime/=2;
-//
-//		}
 
-//		if(level<=7){//a partir del nivel 7, tardaran menos en bajarse, aun no implementado, en teoria con nivel 7 tendrian que salir 7 topos "casi" a la vez, pero aun hay que afinar valores.
-			MoleSprite mole;
-			do{
-				int chosenMole = (int) Math.floor(Math.random()*moles.size());
-				mole=moles.get(chosenMole);
-			}while(mole.getStatus()!=MoleSprite.HOLE);
+		MoleSprite mole;
+		do{
+			int chosenMole = (int) Math.floor(Math.random()*moles.size());
+			mole=moles.get(chosenMole);
+		}while(mole.getStatus()!=MoleSprite.HOLE);
 
-			mole.digUp();
+		mole.digUp();
+
+	}
+
+
+	public void startNextLevel(){//Metodo ejecutado por el boton del la advertencia al final de nivel, reestablece los valores, para el siguiente nivel y lo ejecuta.
+		// ¿Donde se le dice que siga redibujando de nuevo la barra superior tambien?
+		if(alertDialog.isShowing())
+			alertDialog.dismiss();
+		level++;
+		levelStartTime=System.currentTimeMillis();
+		if(levelTimeDuration<120000){	//TODO 2 min, crear variable, aunque no creo que se vaya a modificar el valor mas de una vez;
+			levelTimeDuration+=10000;
+			setTime(time+10000);
+			playLoopTime/=playVelocity;
+		}else{
+			//TODO levelTimeDigDown-=
 
 		}
-//	}
-	
-
-public void startNextLevel(){//Metodo ejecutado por el boton del la advertencia al final de nivel, reestablece los valores, para el siguiente nivel y lo ejecuta.
-	// ¿Donde se le dice que siga redibujando de nuevo la barra superior tambien?
-	level++;
-	levelStartTime=System.currentTimeMillis();
-	if(levelTimeDuration<120000){	//TODO 2 min, crear variable, aunque no creo que se vaya a modificar el valor mas de una vez;
-		levelTimeDuration+=10000;
-		setTime(time+10000);
-		playLoopTime/=playVelocity;
-	}else{
-		//TODO levelTimeDigDown-=
-		
+		secondsTimer.start();
+		levelFinish=false;
+		setRunning(true);
 	}
-	secondsTimer.start();
-	levelFinish=false;
-	run();	
-}
 
-public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
-	//TODO hacer un Alert "bonito" este es de pruebas
-	AlertDialog.Builder builder;
-	LayoutInflater inflater =(LayoutInflater)view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	//View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
-	View layout = inflater.inflate(R.layout.levelview, null);
-	TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
-	levelScore.setText(points);
-	TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
-	txtLevel.setText("Level");
-	builder = new AlertDialog.Builder(view.getContext());
-	builder.setTitle(R.string.txtAlertDialogFinishedLevel);
-	builder.setView(layout);
-	builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
-		public void onClick(DialogInterface dialog, int id) {		        	   
-			startNextLevel();
-			closeAlertDialog();
-		}});
-	builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
-		public void onClick(DialogInterface dialog, int id) {		        	   
+	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
+		//TODO hacer un Alert "bonito" este es de pruebas
+		AlertDialog.Builder builder;
 
-		}});
-	alertDialog = builder.create();
-	alertDialog.show();
-	
-}
-public void closeAlertDialog(){
-	alertDialog.dismiss(); //TODO no consigo hacer que se cierre el dialog
-}
+		LayoutInflater inflater =(LayoutInflater)view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.levelview, null);
+
+		TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
+		levelScore.setText(points.toString());
+		TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
+		txtLevel.setText("Level");
+
+		builder = new AlertDialog.Builder(view.getContext());
+		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
+		builder.setView(layout);
+
+		builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+			public void onClick(DialogInterface dialog, int id) {	
+				startNextLevel();
+			}});
+		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+			public void onClick(DialogInterface dialog, int id) {		        	   
+
+			}});
+		alertDialog = builder.create();
+		alertDialog.show();
+
+	}
 
 
 }
