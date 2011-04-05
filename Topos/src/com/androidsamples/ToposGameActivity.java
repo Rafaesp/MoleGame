@@ -3,21 +3,24 @@ package com.androidsamples;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
 import android.os.Vibrator;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.widget.TextView;
 
 public class ToposGameActivity extends Activity {
 	
 	private static Vibrator vibrator;
+	private ToposGameView toposview;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.gameview);
         
-        ToposGameView toposview = (ToposGameView) findViewById(R.id.toposview);
+        toposview = (ToposGameView) findViewById(R.id.toposview);
         TextView txtLivesView = (TextView) findViewById(R.id.txtLives);
         toposview.setLivesTxtView(txtLivesView);
         TextView txtTimeView = (TextView) findViewById(R.id.txtTime);
@@ -32,5 +35,13 @@ public class ToposGameActivity extends Activity {
     public static Vibrator getVibrator(){
     	return vibrator;
     }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+    	toposview.getGameLoopThread().stopGame();
+    	super.onKeyDown(keyCode, event);
+    	return true;    	
+    }
+    
+    
     
 }

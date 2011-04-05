@@ -13,14 +13,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class ToposGameView extends SurfaceView implements OnTouchListener{
@@ -152,6 +153,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 			}
 		}
 		Log.i(tag, "Moles created");
+	}
+	
+	public GameLoopThread getGameLoopThread(){
+		return gameLoopThread;
 	}
 
 	public List<MoleSprite> getMoles(){
