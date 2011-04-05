@@ -4,11 +4,18 @@
     <string name="app_name">Topos</string>
     <string name="txtTitleSetting">Sonido</string>
     <string name="textView1">Topos Game</string>
-    <string name="btnPlay">Play</string><string name="btnExit">Exit</string>
+    <string name="btnPlay">Play</string>
+    <string name="btnExit">Exit</string>
     <string name="btnSettings">Settings</string>
     <string name="txtSound">Sound</string>
     <string name="txtFailed">Carrots remaining:</string>
     <string name="points">Points:</string>
-    <string name="NO_BORRAR">peta</string>
+    
     <string name="txtTime">Time</string>
+    <string name="txtLevelX">Level X</string>
+    <string name="txtScore">Score:</string>
+    <string name="txtValueScore">0</string>
+    <string name="txtAlertDialogFinishedLevel">Finished level</string>
+  	<string name="txtButtonNextLevel">Next Level</string>
+    <string name="NO_BORRAR">peta</string>
 </resources>

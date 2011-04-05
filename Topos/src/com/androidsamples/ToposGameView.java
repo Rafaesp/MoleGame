@@ -3,7 +3,9 @@ package com.androidsamples;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,12 +13,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class ToposGameView extends SurfaceView implements OnTouchListener{
@@ -30,6 +34,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private TextView livesTxtView;
 	private TextView pointsTxtView;
 	private TextView timeTxtView;
+
+	private AlertDialog alertDialog;
 
 	public ToposGameView(Context context){
 		super(context);
@@ -173,5 +179,26 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		gameLoopThread.click(clicked);
 		return clicked;
 	}
+
+	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
+		//TODO hacer un Alert "bonito" este es de pruebas
+		AlertDialog.Builder builder;
+		LayoutInflater inflater =(LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
+		builder = new AlertDialog.Builder(this.getContext());
+		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
+		builder.setView(layout);
+		builder.setNegativeButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+			public void onClick(DialogInterface dialog, int id) {		        	   
+				gameLoopThread.startNextLevel();
+				closeAlertDialog();
+			}});
+		alertDialog = builder.create();
+		alertDialog.show();
+	}
+	private void closeAlertDialog(){
+		alertDialog.dismiss(); //TODO no consigo hacer que se cierre el dialog
+	}
+
 
 }
