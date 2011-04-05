@@ -37,7 +37,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private TextView timeTxtView;
 	private AlertDialog alertDialog;
 	private static Vibrator vibrator;
-	
+	private SoundManager soundManagerLoops;
 
 
 	public ToposGameView(Context context){
@@ -52,6 +52,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	}
 
 	private void initToposGameView(){
+		soundManagerLoops= new SoundManager("loops",this.getContext());
 		moles = new ArrayList<MoleSprite>();
 		needRedraw = true;
 		setFocusable(true);
@@ -218,6 +219,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
 							clicked = true;
+							soundManagerLoops.start();
 							vibrator.vibrate(30);//TODO creo que este valor es bueno, sino 45 estaria bien.
 						}
 					}
