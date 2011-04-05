@@ -8,32 +8,47 @@ import android.content.Context;
 import android.media.MediaPlayer;
 
 
-public class SoundManager {
+public class SoundManager {//NO FUNCIONA BIEN PERO COMPILA Y NO SE USA FUERA
 	
-	 private MediaPlayer mp;
-	 private List<Integer> listLoop;
+	
+	 private List<MediaPlayer> listLoops;
 	 private Context context;
 	 private String type;
+	 private MediaPlayer music1;
+	 private MediaPlayer actual;
 	 
 	 public SoundManager(String idSound,Context con){//idSound=loops idSound=music1
 		 this.type=idSound;
 		 if(idSound.equals(type)){
 			 context=con;
-			 listLoop= new LinkedList<Integer>();
-			 listLoop.add(R.raw.hit01);
-			 listLoop.add(R.raw.hit02);
-			 mp= MediaPlayer.create(context,R.raw.hit01);	//Aun posible null pointer exception 
+			 listLoops= new LinkedList<MediaPlayer>();
+			 listLoops.add(MediaPlayer.create(context,R.raw.hit01));
+			 listLoops.add(MediaPlayer.create(context,R.raw.hit02));
+			 listLoops.add(MediaPlayer.create(context,R.raw.hit03));
+			 listLoops.add(MediaPlayer.create(context,R.raw.hit04));
+			 listLoops.add(MediaPlayer.create(context,R.raw.hit05));
+		 }else if(idSound.equals(type)){
+			// actual =MediaPlayer.create(context,R.raw.music1); // TODO no tenemos el recurso aun.
 		 }
 	 }
 	 
 	 public void start(){
+		 
 		 if(type.equals("loops")){
-			 
-			 int i=listLoop.get((int) (2*Math.random()));
-			 		 
-			// mp.setDataSource(context, i); // Esta mal hecho, pero lo dejo asi para que se vea la idea, aun solo hay dos tipos de golpes;
+			actual=listLoops.get((int) (5*Math.random()));//puede saltar fuera del indice, pero asi comprobamos que el ramdom va bien porque nose si puede salir 5 y la lista tiene indice 4	 			
+			actual.start();
+		 }else if(type.equals("music1")){
+			// actual.start();
 		 }
-		 mp.start();
+		 actual.start();
 	 }
-	
+	 
+	 public boolean isPlaying(){
+		 return actual.isPlaying();
+	 }
+	 
+	 public void stop(){
+		 actual.stop();		 
+	 }
+	 
 }
