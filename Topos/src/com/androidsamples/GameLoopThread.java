@@ -5,12 +5,17 @@ package com.androidsamples;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class GameLoopThread extends Thread {
 	private final long FPS=30;
@@ -29,6 +34,7 @@ public class GameLoopThread extends Thread {
 	private Integer time;
 	private Double playVelocity=1.25;
 	private CountDownTimer secondsTimer;
+	private AlertDialog alertDialog;
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
@@ -45,7 +51,7 @@ public class GameLoopThread extends Thread {
 
 		     public void onFinish() {
 		         levelFinish= true;
-		         view.throwAlertFinalLevel(level,levelTimeDuration);//He puesto la view como constante, si no no andaba =S
+		         throwAlertFinalLevel(level,levelTimeDuration);//He puesto la view como constante, si no no andaba =S
 		     }
 		  };
 		  
@@ -190,6 +196,35 @@ public void startNextLevel(){//Metodo ejecutado por el boton del la advertencia 
 	run();	
 }
 
+public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
+	//TODO hacer un Alert "bonito" este es de pruebas
+	AlertDialog.Builder builder;
+	LayoutInflater inflater =(LayoutInflater)view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	//View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
+	View layout = inflater.inflate(R.layout.levelview, null);
+	TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
+	levelScore.setText(points);
+	TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
+	txtLevel.setText("Level");
+	builder = new AlertDialog.Builder(view.getContext());
+	builder.setTitle(R.string.txtAlertDialogFinishedLevel);
+	builder.setView(layout);
+	builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+		public void onClick(DialogInterface dialog, int id) {		        	   
+			startNextLevel();
+			closeAlertDialog();
+		}});
+	builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+		public void onClick(DialogInterface dialog, int id) {		        	   
+
+		}});
+	alertDialog = builder.create();
+	alertDialog.show();
+	
+}
+public void closeAlertDialog(){
+	alertDialog.dismiss(); //TODO no consigo hacer que se cierre el dialog
+}
 
 
 }
