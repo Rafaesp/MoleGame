@@ -188,13 +188,18 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		builder = new AlertDialog.Builder(this.getContext());
 		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 		builder.setView(layout);
-		builder.setNegativeButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+		builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
 			public void onClick(DialogInterface dialog, int id) {		        	   
 				gameLoopThread.startNextLevel();
 				closeAlertDialog();
 			}});
+		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+			public void onClick(DialogInterface dialog, int id) {		        	   
+	
+			}});
 		alertDialog = builder.create();
 		alertDialog.show();
+		
 	}
 	private void closeAlertDialog(){
 		alertDialog.dismiss(); //TODO no consigo hacer que se cierre el dialog
