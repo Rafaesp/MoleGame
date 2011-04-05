@@ -215,6 +215,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
 							clicked = true;
+							ToposGameActivity.getVibrator().vibrate(30);//TODO creo que este valor es bueno, sino 45 estaria bien.
 						}
 					}
 				}
