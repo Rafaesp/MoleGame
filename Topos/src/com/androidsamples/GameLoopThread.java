@@ -114,7 +114,10 @@ public class GameLoopThread extends Thread {
 		long sleepTime;
 
 		while (running) {
-			if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
+			if(lives<=0){
+				gameOver();
+			}
+			else if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
 				play();
 			}
 			Canvas canvas = null;
@@ -123,7 +126,7 @@ public class GameLoopThread extends Thread {
 			List<MoleSprite> moles= view.getMoles();
 			for(MoleSprite mole : moles){
 				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
-					if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){//TODO probar tiempo adecuado.
+					if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
 						mole.digDown();
 						setLives(--lives);
 					}
@@ -159,6 +162,34 @@ public class GameLoopThread extends Thread {
 		}
 	}
 
+	private void gameOver() {
+		AlertDialog.Builder builder;
+
+		LayoutInflater inflater =(LayoutInflater)view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.levelview, null);
+
+		TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
+		levelScore.setText(points.toString());
+		TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
+		txtLevel.setText("Level "+this.level);
+
+		builder = new AlertDialog.Builder(view.getContext());
+		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
+		builder.setView(layout);
+
+		builder.setPositiveButton("Submit score", new DialogInterface.OnClickListener() { //TODO Enviar puntuacion
+			public void onClick(DialogInterface dialog, int id) {	
+				
+			}});
+		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO Volver menu
+			public void onClick(DialogInterface dialog, int id) {		        	   
+				
+			}});
+		alertDialog = builder.create();
+		alertDialog.show();
+		
+	}
+
 	private void play(){
 		List<MoleSprite> moles=view.getMoles();
 		playLoopStartTime = System.currentTimeMillis();
@@ -168,7 +199,7 @@ public class GameLoopThread extends Thread {
 			int chosenMole = (int) Math.floor(Math.random()*moles.size());
 			mole=moles.get(chosenMole);
 		}while(mole.getStatus()!=MoleSprite.HOLE);
-
+		//TODO Elegir tipo del topo (dificultad)
 		mole.digUp();
 
 	}
@@ -185,7 +216,7 @@ public class GameLoopThread extends Thread {
 			time = levelTimeDuration;
 			playLoopTime/=playVelocity;
 		}else{
-			//TODO levelTimeDigDown-=
+			levelTimeDigDown-=100;
 
 		}
 		secondsTimer = doSecondsTimer();
@@ -209,13 +240,13 @@ public class GameLoopThread extends Thread {
 		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 		builder.setView(layout);
 
-		builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+		builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {	
 				startNextLevel();
 			}});
-		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO boton positivo para seguir jugando y negativo para ir al menu
+		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO negativo para guardar partida y volver menu
 			public void onClick(DialogInterface dialog, int id) {		        	   
-
+				
 			}});
 		alertDialog = builder.create();
 		alertDialog.show();
