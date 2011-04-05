@@ -2,15 +2,16 @@ package com.androidsamples;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +36,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private TextView pointsTxtView;
 	private TextView timeTxtView;
 	private AlertDialog alertDialog;
-
+	private static Vibrator vibrator;
+	
 
 
 	public ToposGameView(Context context){
@@ -54,6 +56,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
+
 
 		Handler handler = new Handler(){
 			@Override
@@ -215,7 +218,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
 							clicked = true;
-							ToposGameActivity.getVibrator().vibrate(30);//TODO creo que este valor es bueno, sino 45 estaria bien.
+							vibrator.vibrate(30);//TODO creo que este valor es bueno, sino 45 estaria bien.
 						}
 					}
 				}
@@ -224,5 +227,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		gameLoopThread.click(clicked);
 		return clicked;
 	}
-
+	public static void setVibrator(Vibrator v){
+		vibrator=v;
+	}
+	
 }

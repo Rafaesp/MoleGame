@@ -10,8 +10,7 @@ import android.widget.TextView;
 
 public class ToposGameActivity extends Activity {
 	
-	private static Vibrator vibrator;
-	
+		
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -25,12 +24,10 @@ public class ToposGameActivity extends Activity {
         TextView txtPointsView = (TextView) findViewById(R.id.txtPoints);
         toposview.setPointsTxtView(txtPointsView);
         
-        vibrator =(Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator vibrator =(Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        ToposGameView.setVibrator(vibrator);
        
 	}
     
-    public static Vibrator getVibrator(){
-    	return vibrator;
-    }
-    
+       
 }
