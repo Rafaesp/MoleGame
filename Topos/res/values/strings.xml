@@ -17,5 +17,6 @@
     <string name="txtValueScore">0</string>
     <string name="txtAlertDialogFinishedLevel">Finished level</string>
   	<string name="txtButtonNextLevel">Next Level</string>
+  	<string name="txtButtonMain">Back Menu</string>
     <string name="NO_BORRAR">peta</string>
 </resources>
