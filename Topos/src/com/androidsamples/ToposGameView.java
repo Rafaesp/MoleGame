@@ -185,6 +185,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		AlertDialog.Builder builder;
 		LayoutInflater inflater =(LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.levelview,(ViewGroup)findViewById(R.layout.levelview));
+		TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
+		levelScore.setText(pointsTxtView.getText());
 		builder = new AlertDialog.Builder(this.getContext());
 		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 		builder.setView(layout);
@@ -201,7 +203,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		alertDialog.show();
 		
 	}
-	private void closeAlertDialog(){
+	public void closeAlertDialog(){
 		alertDialog.dismiss(); //TODO no consigo hacer que se cierre el dialog
 	}
 

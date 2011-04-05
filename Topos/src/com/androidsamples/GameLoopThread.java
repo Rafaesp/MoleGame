@@ -18,7 +18,7 @@ public class GameLoopThread extends Thread {
 	private boolean running = false;
 	private int level=1;
 	private long levelStartTime=System.currentTimeMillis();
-	private long levelTimeDuration=30000;
+	private long levelTimeDuration=5000;
 	private boolean levelFinish;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
