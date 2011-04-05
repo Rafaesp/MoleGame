@@ -2,6 +2,13 @@
 <LinearLayout
   android:layout_width="fill_parent"
   android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical">
-    <TextView android:text="@string/txtSound" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"></TextView>
-    <ToggleButton android:id="@+id/tbtnSound" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="ToggleButton" android:layout_gravity="center_horizontal"></ToggleButton>
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:paddingTop="15dip" android:paddingBottom="10dip">
+        <TextView android:text="@string/txtSound" android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:paddingLeft="10dip"></TextView>
+        <ToggleButton android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:width="100dip" android:text="ToggleButton" android:textOn="Enabled" android:id="@+id/tbtnSound" android:layout_height="wrap_content" android:textOff="Disabled"></ToggleButton>
+    </LinearLayout>
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:paddingBottom="10dip">
+        <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:text="@string/txtVibration" android:paddingLeft="10dip"></TextView>
+        <ToggleButton android:text="ToggleButton" android:layout_height="wrap_content" android:id="@+id/tbtnVibration" android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:textOff="Disabled" android:textOn="Enabled" android:width="100dip"></ToggleButton>
+    </LinearLayout>
+    <Button android:id="@+id/btnCredits" android:layout_width="wrap_content" android:text="@string/btnCredits" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"></Button>
 </LinearLayout>
