@@ -31,7 +31,7 @@ public class GameLoopThread extends Thread {
 	private Handler txtHandler;
 	private Integer lives;
 	private Integer points;
-	private Integer time;
+	private Long time;
 	private Double playVelocity=1.25;
 	private CountDownTimer secondsTimer;
 	private AlertDialog alertDialog;
@@ -43,19 +43,8 @@ public class GameLoopThread extends Thread {
 		setPoints(0);
 		setLives(50);
 		levelFinish = false;
-		secondsTimer = new CountDownTimer(levelTimeDuration, 1000) {
-
-			public void onTick(long millisUntilFinished) {
-				setTime(millisUntilFinished / 1000);
-			}
-
-			public void onFinish() {
-				view.reset();
-				levelFinish= true;
-				throwAlertFinalLevel(level,levelTimeDuration);//He puesto la view como constante, si no no andaba =S
-			}
-		};
-
+		
+		secondsTimer = doSecondsTimer();
 		secondsTimer.start();
 
 	}
@@ -72,7 +61,7 @@ public class GameLoopThread extends Thread {
 	}
 
 	public void setTime(long seconds){
-		time = new Integer((int) seconds);
+		time = seconds;
 		synchronized (view.getHolder()) {
 			Message m = txtHandler.obtainMessage();
 			Bundle data = new Bundle();
@@ -100,6 +89,21 @@ public class GameLoopThread extends Thread {
 
 	public void setRunning(boolean run) {
 		running = run;
+	}
+	
+	private CountDownTimer doSecondsTimer(){
+		 return new CountDownTimer(levelTimeDuration, 1000) {
+
+			public void onTick(long millisUntilFinished) {
+				setTime(millisUntilFinished / 1000);
+			}
+
+			public void onFinish() {
+				view.reset();
+				levelFinish= true;
+				throwAlertFinalLevel();//He puesto la view como constante, si no no andaba =S
+			}
+		};
 	}
 
 	@Override
@@ -178,18 +182,18 @@ public class GameLoopThread extends Thread {
 		levelStartTime=System.currentTimeMillis();
 		if(levelTimeDuration<120000){	//TODO 2 min, crear variable, aunque no creo que se vaya a modificar el valor mas de una vez;
 			levelTimeDuration+=10000;
-			setTime(time+10000);
+			time = levelTimeDuration;
 			playLoopTime/=playVelocity;
 		}else{
 			//TODO levelTimeDigDown-=
 
 		}
+		secondsTimer = doSecondsTimer();
 		secondsTimer.start();
 		levelFinish=false;
-		setRunning(true);
 	}
 
-	public void throwAlertFinalLevel(int level, long levelTimeDuration){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
+	public void throwAlertFinalLevel(){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
 		//TODO hacer un Alert "bonito" este es de pruebas
 		AlertDialog.Builder builder;
 
@@ -199,7 +203,7 @@ public class GameLoopThread extends Thread {
 		TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
 		levelScore.setText(points.toString());
 		TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
-		txtLevel.setText("Level");
+		txtLevel.setText("Level "+this.level);
 
 		builder = new AlertDialog.Builder(view.getContext());
 		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
