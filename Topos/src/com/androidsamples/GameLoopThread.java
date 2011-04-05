@@ -45,6 +45,7 @@ public class GameLoopThread extends Thread {
 		secondsTimer.cancel();
 		setRunning(false);
 	}
+	
 
 	public void setLives(int newlives){
 		lives = newlives;

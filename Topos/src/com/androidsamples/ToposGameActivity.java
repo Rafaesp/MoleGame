@@ -9,9 +9,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 public class ToposGameActivity extends Activity {
-	
 
-	private static Vibrator vibrator;
 	private ToposGameView toposview;
 	
 
