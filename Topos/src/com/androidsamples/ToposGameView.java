@@ -34,8 +34,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 	private TextView livesTxtView;
 	private TextView pointsTxtView;
 	private TextView timeTxtView;
+	private AlertDialog alertDialog;
 
-	
+
 
 	public ToposGameView(Context context){
 		super(context);
@@ -54,20 +55,58 @@ public class ToposGameView extends SurfaceView implements OnTouchListener{
 		setFocusable(true);
 		setOnTouchListener(this);
 
-		Handler txtHandler = new Handler(){
+		Handler handler = new Handler(){
 			@Override
 			public void handleMessage(Message m) {
 				Bundle b = m.getData();
 				if(b.getString("lives") != null)
 					livesTxtView.setText(m.getData().getString("lives"));
-				if(b.getString("points") != null)
+				 if(b.getString("points") != null)
 					pointsTxtView.setText(b.getString("points"));
-				if(b.getString("time") != null)
+				 if(b.getString("time") != null)
 					timeTxtView.setText(b.getString("time"));
+				 if(b.getString("type") != null){
+					AlertDialog.Builder builder;
+
+					LayoutInflater inflater =(LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					View layout = inflater.inflate(R.layout.levelview, null);
+
+					TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
+					levelScore.setText(m.getData().getString("points"));
+					TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
+					txtLevel.setText("Level "+m.getData().getInt("level"));
+
+					builder = new AlertDialog.Builder(getContext());
+					builder.setView(layout);
+					if(m.getData().getString("type") == "gameover"){
+						builder.setTitle(R.string.txtAlertDialogGameOver);
+						builder.setPositiveButton(R.string.submitScore, new DialogInterface.OnClickListener() { //TODO Enviar puntuacion
+							public void onClick(DialogInterface dialog, int id) {	
+
+							}});
+						builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO Volver menu
+							public void onClick(DialogInterface dialog, int id) {		        	   
+
+							}});
+					}else{
+						builder.setTitle(R.string.txtAlertDialogFinishedLevel);
+						builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {	
+								alertDialog.dismiss();
+								gameLoopThread.startNextLevel();
+							}});
+						builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO negativo para guardar partida y volver menu
+							public void onClick(DialogInterface dialog, int id) {		        	   
+
+							}});
+					}
+					alertDialog = builder.create();
+					alertDialog.show();
+				}
 			}
 		};
 
-		gameLoopThread = new GameLoopThread(this, txtHandler);
+		gameLoopThread = new GameLoopThread(this, handler);
 
 		holder = getHolder();
 		holder.addCallback(new Callback() {

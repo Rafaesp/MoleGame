@@ -4,44 +4,36 @@ package com.androidsamples;
 
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class GameLoopThread extends Thread {
 	private final long FPS=30;
 	private ToposGameView view;
 	private boolean running = false;
 	private int level=1;
-	private long levelStartTime=System.currentTimeMillis();
 	private long levelTimeDuration=5000;
 	private boolean levelFinish;
+	private boolean gameOver;
 	private long playLoopTime=1000;
 	private long playLoopStartTime=System.currentTimeMillis();
 	private long levelTimeDigDown=1500;
-	private Handler txtHandler;
+	private Handler handler;
 	private Integer lives;
 	private Integer points;
 	private Long time;
 	private Double playVelocity=1.25;
 	private CountDownTimer secondsTimer;
-	private AlertDialog alertDialog;
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
-		this.txtHandler = txtHandler;
+		this.handler = txtHandler;
 		setPoints(0);
-		setLives(50);
+		setLives(10);
 		levelFinish = false;
 		
 		secondsTimer = doSecondsTimer();
@@ -52,33 +44,33 @@ public class GameLoopThread extends Thread {
 	public void setLives(int newlives){
 		lives = newlives;
 		synchronized (view.getHolder()) {
-			Message m = txtHandler.obtainMessage();
+			Message m = handler.obtainMessage();
 			Bundle data = new Bundle();
 			data.putString("lives", lives.toString());
 			m.setData(data);
-			txtHandler.sendMessage(m);
+			handler.sendMessage(m);
 		}
 	}
 
 	public void setTime(long seconds){
 		time = seconds;
 		synchronized (view.getHolder()) {
-			Message m = txtHandler.obtainMessage();
+			Message m = handler.obtainMessage();
 			Bundle data = new Bundle();
 			data.putString("time", time.toString());
 			m.setData(data);
-			txtHandler.sendMessage(m);
+			handler.sendMessage(m);
 		}
 	}
 
 	public void setPoints(Integer points){
 		this.points = points;
 		synchronized (view.getHolder()) {
-			Message m = txtHandler.obtainMessage();
+			Message m = handler.obtainMessage();
 			Bundle data = new Bundle();
 			data.putString("points", points.toString());
 			m.setData(data);
-			txtHandler.sendMessage(m);
+			handler.sendMessage(m);
 		}
 	}
 
@@ -101,7 +93,8 @@ public class GameLoopThread extends Thread {
 			public void onFinish() {
 				view.reset();
 				levelFinish= true;
-				throwAlertFinalLevel();//He puesto la view como constante, si no no andaba =S
+				if(!gameOver)
+				throwAlertFinalLevel();
 			}
 		};
 	}
@@ -114,7 +107,10 @@ public class GameLoopThread extends Thread {
 		long sleepTime;
 
 		while (running) {
-			if(lives<=0){
+			if(lives<=0 && !gameOver){
+				view.reset();
+				levelFinish= true;
+				gameOver = true;
 				gameOver();
 			}
 			else if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
@@ -163,31 +159,15 @@ public class GameLoopThread extends Thread {
 	}
 
 	private void gameOver() {
-		AlertDialog.Builder builder;
-
-		LayoutInflater inflater =(LayoutInflater)view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.levelview, null);
-
-		TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
-		levelScore.setText(points.toString());
-		TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
-		txtLevel.setText("Level "+this.level);
-
-		builder = new AlertDialog.Builder(view.getContext());
-		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
-		builder.setView(layout);
-
-		builder.setPositiveButton("Submit score", new DialogInterface.OnClickListener() { //TODO Enviar puntuacion
-			public void onClick(DialogInterface dialog, int id) {	
-				
-			}});
-		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO Volver menu
-			public void onClick(DialogInterface dialog, int id) {		        	   
-				
-			}});
-		alertDialog = builder.create();
-		alertDialog.show();
-		
+		synchronized (view.getHolder()) {
+			Message m = handler.obtainMessage();
+			Bundle data = new Bundle();
+			data.putString("type", "gameover");
+			data.putInt("level", level);
+			data.putString("points", points.toString());
+			m.setData(data);
+			handler.sendMessage(m);
+		}		
 	}
 
 	private void play(){
@@ -205,13 +185,9 @@ public class GameLoopThread extends Thread {
 	}
 
 
-	public void startNextLevel(){//Metodo ejecutado por el boton del la advertencia al final de nivel, reestablece los valores, para el siguiente nivel y lo ejecuta.
-		// ¿Donde se le dice que siga redibujando de nuevo la barra superior tambien?
-		if(alertDialog.isShowing())
-			alertDialog.dismiss();
+	public void startNextLevel(){
 		level++;
-		levelStartTime=System.currentTimeMillis();
-		if(levelTimeDuration<120000){	//TODO 2 min, crear variable, aunque no creo que se vaya a modificar el valor mas de una vez;
+		if(levelTimeDuration<120000){
 			levelTimeDuration+=10000;
 			time = levelTimeDuration;
 			playLoopTime/=playVelocity;
@@ -224,33 +200,16 @@ public class GameLoopThread extends Thread {
 		levelFinish=false;
 	}
 
-	public void throwAlertFinalLevel(){//no se usa aun level y levelTimeDuration, no se como cambiar su valor si esta hecho en xml
-		//TODO hacer un Alert "bonito" este es de pruebas
-		AlertDialog.Builder builder;
-
-		LayoutInflater inflater =(LayoutInflater)view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.levelview, null);
-
-		TextView levelScore = (TextView) layout.findViewById(R.id.txtValueScore);
-		levelScore.setText(points.toString());
-		TextView txtLevel = (TextView) layout.findViewById(R.id.txtLevelX);
-		txtLevel.setText("Level "+this.level);
-
-		builder = new AlertDialog.Builder(view.getContext());
-		builder.setTitle(R.string.txtAlertDialogFinishedLevel);
-		builder.setView(layout);
-
-		builder.setPositiveButton(R.string.txtButtonNextLevel, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {	
-				startNextLevel();
-			}});
-		builder.setNegativeButton(R.string.txtButtonMain, new DialogInterface.OnClickListener() {//TODO negativo para guardar partida y volver menu
-			public void onClick(DialogInterface dialog, int id) {		        	   
-				
-			}});
-		alertDialog = builder.create();
-		alertDialog.show();
-
+	public void throwAlertFinalLevel(){
+		synchronized (view.getHolder()) {
+			Message m = handler.obtainMessage();
+			Bundle data = new Bundle();
+			data.putString("type", "level");
+			data.putInt("level", level);
+			data.putString("points", points.toString());
+			m.setData(data);
+			handler.sendMessage(m);
+		}
 	}
 
 
