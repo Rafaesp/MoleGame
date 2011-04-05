@@ -44,7 +44,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	private static Vibrator vibrator;
 	private Context context;
 	private ProgressDialog progressd;
-	private SoundManager soundManagerLoops;
+	
 
 
 	public ToposGameView(Context context){
@@ -61,7 +61,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	}
 
 	private void initToposGameView(){
-		soundManagerLoops= new SoundManager("loops",this.getContext());
+		
 		moles = new ArrayList<MoleSprite>();
 		needRedraw = true;
 		setFocusable(true);
@@ -239,7 +239,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 							mole.digDown();
 							clicked = true;
 
-							soundManagerLoops.start();
+							
 							vibrator.vibrate(30);
 
 						}
