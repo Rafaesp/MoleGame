@@ -1,7 +1,6 @@
 package com.androidsamples;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,7 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.scoreloop.client.android.ui.EntryScreenActivity;
 import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
 
@@ -24,8 +27,14 @@ public class topos extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 
 		ScoreloopManagerSingleton.init(this);
-
 		setContentView(R.layout.main);
+		
+		AdView adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
+	    LinearLayout layout = (LinearLayout)findViewById(R.id.linearLayoutMain);
+	    layout.addView(adView);
+	    adView.loadAd(new AdRequest());
+
+	
 
 		Button btnSettings = (Button) findViewById(R.id.btnSettings);
 		btnSettings.setOnClickListener(this);
@@ -35,6 +44,9 @@ public class topos extends Activity implements OnClickListener{
 
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
+		
+		 
+
 
 	}
 
