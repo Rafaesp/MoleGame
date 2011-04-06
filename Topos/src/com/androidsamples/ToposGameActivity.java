@@ -31,6 +31,8 @@ public class ToposGameActivity extends Activity {
         toposview.setVibrator(vibrator);
         SoundManager hitFx= new SoundManager("hitFx", this.getApplicationContext());
         toposview.setSoundManager(hitFx);
+        SoundManager missFx= new SoundManager("missFx", this.getApplicationContext());
+        toposview.setSoundManager(missFx);
 
        
 	}

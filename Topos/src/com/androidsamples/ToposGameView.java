@@ -260,7 +260,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	public void setSoundManager(SoundManager sound){
 		if(sound.getType().equals("hitFx")){//TODO poner como constantes
 			hitFx=sound;
-		}		
+		}else if(sound.getType().equals("missFx")){
+			missFx=sound;
+		}
 	}
 
 	@Override
@@ -287,6 +289,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 		gameLoopThread.stopGame();
 		ScoreloopManagerSingleton.destroy();
 		context.startActivity(new Intent(context, topos.class));
+	}
+	
+	public void startMissFx(){
+		missFx.start();
 	}
 	
 }

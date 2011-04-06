@@ -133,7 +133,7 @@ public class GameLoopThread extends Thread {
 				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
 					if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
 						mole.digDown();
-						
+						view.startMissFx();
 						setLives(--lives);
 					}
 				}
