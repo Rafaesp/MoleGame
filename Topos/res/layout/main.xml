@@ -10,4 +10,9 @@
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnRanking" android:layout_gravity="center_horizontal" android:text="@string/btnRanking"></Button>
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnSettings" android:layout_gravity="center_horizontal" android:text="@string/btnSettings"></Button>
     </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:orientation="horizontal">
+</LinearLayout>
 </LinearLayout>

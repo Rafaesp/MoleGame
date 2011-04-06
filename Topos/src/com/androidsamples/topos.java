@@ -30,7 +30,7 @@ public class topos extends Activity implements OnClickListener{
 		setContentView(R.layout.main);
 		
 		AdView adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
-	    LinearLayout layout = (LinearLayout)findViewById(R.id.linearLayoutMain);
+	    LinearLayout layout = (LinearLayout)findViewById(R.id.linearLayout);
 	    layout.addView(adView);
 	    adView.loadAd(new AdRequest());
 
