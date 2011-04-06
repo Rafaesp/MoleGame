@@ -12,6 +12,7 @@ public class ToposGameActivity extends Activity {
 
 	private ToposGameView toposview;
 	
+	
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +28,9 @@ public class ToposGameActivity extends Activity {
         toposview.setPointsTxtView(txtPointsView);
         
         Vibrator vibrator =(Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        ToposGameView.setVibrator(vibrator);
+        toposview.setVibrator(vibrator);
+        SoundManager hitFx= new SoundManager("hitFx", this.getApplicationContext());
+        toposview.setSoundManager(hitFx);
        
 	}
 

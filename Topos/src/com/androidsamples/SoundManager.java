@@ -1,11 +1,15 @@
 package com.androidsamples;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.util.Log;
 
 
 public class SoundManager {//NO FUNCIONA BIEN PERO COMPILA Y NO SE USA FUERA
@@ -14,41 +18,43 @@ public class SoundManager {//NO FUNCIONA BIEN PERO COMPILA Y NO SE USA FUERA
 	 private List<MediaPlayer> listLoops;
 	 private Context context;
 	 private String type;
-	 private MediaPlayer music1;
-	 private MediaPlayer actual;
+	 private SoundPool current;
+	 private int currentInt;
+	 private List<Integer> listHitFX;
 	 
 	 public SoundManager(String idSound,Context con){//idSound=loops idSound=music1
 		 this.type=idSound;
-		 if(idSound.equals(type)){
-			 context=con;
-			 listLoops= new LinkedList<MediaPlayer>();
-			 listLoops.add(MediaPlayer.create(context,R.raw.hit01));
-			 listLoops.add(MediaPlayer.create(context,R.raw.hit02));
-			 listLoops.add(MediaPlayer.create(context,R.raw.hit03));
-			 listLoops.add(MediaPlayer.create(context,R.raw.hit04));
-			 listLoops.add(MediaPlayer.create(context,R.raw.hit05));
-		 }else if(idSound.equals(type)){
-			// actual =MediaPlayer.create(context,R.raw.music1); // TODO no tenemos el recurso aun.
+		 context=con;		 	 
+		 if(idSound.equals("hitFx")){
+			 Log.i("Entra", "en hitFx");
+			listHitFX= new ArrayList<Integer>();
+			current=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);	
+			listHitFX.add(R.raw.hit01);
+			listHitFX.add(R.raw.hit02);
+			listHitFX.add(R.raw.hit03);
+			listHitFX.add(R.raw.hit04);
+			listHitFX.add(R.raw.hit05);
+			
 		 }
 	 }
 	 
+	 
 	 public void start(){
-		 
-		 if(type.equals("loops")){
-			actual=listLoops.get((int) (5*Math.random()));//puede saltar fuera del indice, pero asi comprobamos que el ramdom va bien porque nose si puede salir 5 y la lista tiene indice 4	 			
-			actual.start();
-		 }else if(type.equals("music1")){
-			// actual.start();
-		 }
-		 actual.start();
+		 //int i1=(int) (listHitFX.size()*Math.random());
+		
+		 //int i=listHitFX.get(i1);
+		int i = listHitFX.get(0);
+		 currentInt=current.load(context, R.raw.hit01, 1);
+		 Log.i("currentINT", currentInt+"");
+		 current.play(currentInt, 1.0f, 1.0f, 0, 0, 1.5f);
 	 }
 	 
 	 public boolean isPlaying(){
-		 return actual.isPlaying();
+		 return false;//NADA
 	 }
 	 
 	 public void stop(){
-		 actual.stop();		 
+		 	 
 	 }
 	 
 }
