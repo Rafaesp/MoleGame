@@ -1,60 +1,61 @@
 package com.androidsamples;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.util.Log;
 
 
-public class SoundManager {//NO FUNCIONA BIEN PERO COMPILA Y NO SE USA FUERA
+public class SoundManager {
 	
-	
-	 private List<MediaPlayer> listLoops;
+	private static final String HITFX="hitFx";
+	private static final String MUSIC1FX="music1";
+	private static final String MISSFX="missFx";
 	 private Context context;
-	 private String type;
 	 private SoundPool current;
-	 private int currentInt;
 	 private List<Integer> listHitFX;
+	 private String type;
+	 private Integer missFxInt;
+	
 	 
-	 public SoundManager(String idSound,Context con){//idSound=loops idSound=music1
-		 this.type=idSound;
-		 context=con;		 	 
-		 if(idSound.equals("hitFx")){
-			 Log.i("Entra", "en hitFx");
-			listHitFX= new ArrayList<Integer>();
-			current=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);	
-			listHitFX.add(R.raw.hit01);
-			listHitFX.add(R.raw.hit02);
-			listHitFX.add(R.raw.hit03);
-			listHitFX.add(R.raw.hit04);
-			listHitFX.add(R.raw.hit05);
-			
+	 public SoundManager(String idSound,Context con){//idSound=ver constantes
+		 type=idSound;
+		 context=con;	
+		 current=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
+		 if(idSound.equals(HITFX)){
+			 listHitFX= new ArrayList<Integer>();	 		
+			 listHitFX.add(current.load(context, R.raw.hit01, 1));
+			 listHitFX.add(current.load(context, R.raw.hit02, 1));
+			 listHitFX.add(current.load(context, R.raw.hit03, 1));
+			 listHitFX.add(current.load(context, R.raw.hit04, 1));
+			 listHitFX.add(current.load(context, R.raw.hit05, 1));
+		 }else if(type.equals(MISSFX)){
+			 
+			 missFxInt=current.load(context, R.raw.laugh01, 1);//TODO recurso de prueba
+			 
+		 }else if(type.equals(MUSIC1FX)){
+			 
 		 }
 	 }
 	 
 	 
-	 public void start(){
-		 //int i1=(int) (listHitFX.size()*Math.random());
+	 public void start(){//Lo dejamos asi, o hacemos distintos starts? startHiFx startMusic1Fx startMissFx o hacer un switch case
+		 if(type.equals(HITFX)){
+			 current.play(listHitFX.get((int) (listHitFX.size()*Math.random())), 1.0f, 1.0f, 0, 0, 1.5f);	 
+		 }else if(type.equals(MISSFX)){
+			 current.play(missFxInt, 1.0f, 1.0f, 0, 0, 1.5f);	 
+		 }else if(type.equals(MUSIC1FX)){
+			 
+		 }
 		
-		 //int i=listHitFX.get(i1);
-		int i = listHitFX.get(0);
-		 currentInt=current.load(context, R.raw.hit01, 1);
-		 Log.i("currentINT", currentInt+"");
-		 current.play(currentInt, 1.0f, 1.0f, 0, 0, 1.5f);
 	 }
+
+
+	public String getType() {
+		return type;
+	}
 	 
-	 public boolean isPlaying(){
-		 return false;//NADA
-	 }
-	 
-	 public void stop(){
-		 	 
-	 }
+
 	 
 }

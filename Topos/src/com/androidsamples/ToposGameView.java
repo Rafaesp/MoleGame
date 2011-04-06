@@ -45,6 +45,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	private Context context;
 	private ProgressDialog progressd;
 	private SoundManager hitFx;
+	private SoundManager missFx;
 
 	
 
@@ -64,6 +65,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	
 	
 	private void initToposGameView(){
+
 		moles = new ArrayList<MoleSprite>();
 		needRedraw = true;
 		setFocusable(true);
@@ -256,7 +258,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	}
 	
 	public void setSoundManager(SoundManager sound){
-		hitFx=sound;
+		if(sound.getType().equals("hitFx")){//TODO poner como constantes
+			hitFx=sound;
+		}		
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 
 public class GameLoopThread extends Thread {
+	private static SoundManager missFx;
 	private final long FPS=30;
 	private ToposGameView view;
 	private boolean running = false;
@@ -38,6 +39,8 @@ public class GameLoopThread extends Thread {
 		
 		secondsTimer = doSecondsTimer();
 		secondsTimer.start();
+		
+		
 
 	}
 	
@@ -130,6 +133,7 @@ public class GameLoopThread extends Thread {
 				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
 					if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
 						mole.digDown();
+						
 						setLives(--lives);
 					}
 				}
@@ -217,6 +221,7 @@ public class GameLoopThread extends Thread {
 			handler.sendMessage(m);
 		}
 	}
+
 
 
 }
