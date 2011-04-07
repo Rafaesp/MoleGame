@@ -18,6 +18,8 @@
 		</activity>
 		<activity android:name=".Settings">
 		</activity>
+		<activity android:name=".Preferences">
+		</activity>
 		<activity android:name=".ToposGameActivity"
 			android:screenOrientation="portrait"></activity>
 

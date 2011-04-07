@@ -46,10 +46,13 @@ public class topos extends Activity implements OnClickListener{
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
 		
+		Button prefBtn = (Button) findViewById(R.id.prefButton);
+        prefBtn.setOnClickListener(this);}
+		
 		 
 
 
-	}
+	
 
 	public void onClick(View v) {
 		int id = v.getId();
@@ -69,6 +72,10 @@ public class topos extends Activity implements OnClickListener{
 			startActivity(new Intent(getApplicationContext(), EntryScreenActivity.class));
 			break;
 
+		case R.id.prefButton:
+			startActivity(new Intent(getApplicationContext(), Preferences.class));
+			break;
+		
 		default:
 			break;
 		}
