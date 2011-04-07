@@ -2,6 +2,7 @@ package com.androidsamples;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
@@ -35,8 +37,10 @@ public class topos extends Activity implements OnClickListener{
 	    layout.addView(adView);
 	    adView.loadAd(new AdRequest());
 
-	
-
+	    TextView title= (TextView) findViewById(R.id.textView1);
+        Typeface tf = Typeface.createFromAsset(getAssets(),
+        "fonts/aggstock.ttf");
+        title.setTypeface(tf);
 		Button btnSettings = (Button) findViewById(R.id.btnSettings);
 		btnSettings.setOnClickListener(this);
 
@@ -45,6 +49,9 @@ public class topos extends Activity implements OnClickListener{
 
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
+		
+       
+		
 		
 		 
 
