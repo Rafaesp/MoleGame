@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -46,6 +47,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	private ProgressDialog progressd;
 	private SoundManager hitFx;
 	private SoundManager missFx;
+	private boolean soundEnabled;
+	private boolean vibrationEnabled;
 
 
 
@@ -70,6 +73,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
+		
+		SharedPreferences sp = context.getSharedPreferences("TOPOS", context.MODE_PRIVATE);
+		soundEnabled = sp.getBoolean("sound", true);
+		vibrationEnabled = sp.getBoolean("vibration", true);
 
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
@@ -244,8 +251,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 							clicked = true;		
 							if(soundEnabled)
 								hitFx.start();
-							if(vibrateEnabled)
-								vibrator.vibrate(30);
+							if(vibrationEnabled)
+								vibrator.vibrate(35);
 
 						}
 					}
