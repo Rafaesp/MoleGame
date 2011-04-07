@@ -47,6 +47,17 @@ public class GameLoopThread extends Thread {
 	public void stopGame(){
 		secondsTimer.cancel();
 		setRunning(false);
+		boolean retry=true;
+		setRunning(false);
+		while(retry){
+			try{
+				join();
+				retry=false;
+
+			}catch(InterruptedException i){
+
+			}
+		}
 	}
 	
 

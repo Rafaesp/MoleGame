@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -46,8 +47,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	private ProgressDialog progressd;
 	private SoundManager hitFx;
 	private SoundManager missFx;
+	private boolean soundEnabled;
+	private boolean vibrationEnabled;
 
-	
+
 
 
 	public ToposGameView(Context context){
@@ -62,14 +65,18 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 		initToposGameView();
 
 	}
-	
-	
+
+
 	private void initToposGameView(){
 
 		moles = new ArrayList<MoleSprite>();
 		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
+		
+		SharedPreferences sp = context.getSharedPreferences("TOPOS", Context.MODE_PRIVATE);
+		soundEnabled = sp.getBoolean("sound", true);
+		vibrationEnabled = sp.getBoolean("vibration", true);
 
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
@@ -136,17 +143,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 
 			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
-				boolean retry=true;
-				gameLoopThread.setRunning(false);
-				while(retry){
-					try{
-						gameLoopThread.join();
-						retry=false;
-
-					}catch(InterruptedException i){
-
-					}
-				}
+				gameLoopThread.stopGame();
 			}
 
 			@Override
@@ -242,8 +239,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 						if(mole.getStatus() == MoleSprite.DIGUPFULL){
 							mole.digDown();
 							clicked = true;		
-							hitFx.start();
-							vibrator.vibrate(30);
+							if(soundEnabled)
+								hitFx.start();
+							if(vibrationEnabled)
+								vibrator.vibrate(35);
 
 						}
 					}
@@ -256,7 +255,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 	public void setVibrator(Vibrator v){
 		vibrator=v;
 	}
-	
+
 	public void setSoundManager(SoundManager sound){
 		if(sound.getType().equals("hitFx")){//TODO poner como constantes
 			hitFx=sound;
@@ -273,7 +272,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 		case OnScoreSubmitObserver.STATUS_ERROR_NETWORK:
 			result.setText(R.string.sl_networkError);
 			break;
-			
+
 		case OnScoreSubmitObserver.STATUS_SUCCESS_SCORE:
 			result.setText(R.string.sl_success);
 			break;
@@ -284,15 +283,16 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 		result.show();
 		goMainMenu();
 	}
-	
+
 	public void goMainMenu(){
 		gameLoopThread.stopGame();
 		ScoreloopManagerSingleton.destroy();
 		context.startActivity(new Intent(context, topos.class));
 	}
-	
+
 	public void startMissFx(){
-		missFx.start();
+		if(soundEnabled)
+			missFx.start();
 	}
-	
+
 }
