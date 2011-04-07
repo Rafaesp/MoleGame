@@ -74,7 +74,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 		setFocusable(true);
 		setOnTouchListener(this);
 		
-		SharedPreferences sp = context.getSharedPreferences("TOPOS", context.MODE_PRIVATE);
+		SharedPreferences sp = context.getSharedPreferences("TOPOS", Context.MODE_PRIVATE);
 		soundEnabled = sp.getBoolean("sound", true);
 		vibrationEnabled = sp.getBoolean("vibration", true);
 
@@ -143,17 +143,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener, OnSco
 
 			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
-				boolean retry=true;
-				gameLoopThread.setRunning(false);
-				while(retry){
-					try{
-						gameLoopThread.join();
-						retry=false;
-
-					}catch(InterruptedException i){
-
-					}
-				}
+				gameLoopThread.stopGame();
 			}
 
 			@Override
