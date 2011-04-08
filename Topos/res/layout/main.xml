@@ -8,8 +8,7 @@
         <TextView android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:textSize="20dip" android:text="@string/app_name"></TextView>
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnPlay" android:layout_gravity="center_horizontal" android:text="@string/btnPlay"></Button>
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnRanking" android:layout_gravity="center_horizontal" android:text="@string/btnRanking"></Button>
-        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnSettings" android:layout_gravity="center_horizontal" android:text="@string/btnSettings"></Button>
-        <Button android:text="@+string/pref" android:id="@+id/prefButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/prefButton" android:layout_gravity="center_horizontal" android:text="@+string/pref"></Button>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearLayout"

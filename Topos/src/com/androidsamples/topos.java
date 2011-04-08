@@ -16,10 +16,10 @@ import com.google.ads.AdView;
 import com.scoreloop.client.android.ui.EntryScreenActivity;
 import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
 
-public class topos extends Activity implements OnClickListener{
+public class topos extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 
-	private static final int SETTINGS = Menu.FIRST;
+	private static final int PREFERENCES = Menu.FIRST;
 	private static final int SALIR = Menu.FIRST + 1;
 
 	@Override
@@ -29,53 +29,40 @@ public class topos extends Activity implements OnClickListener{
 		ScoreloopManagerSingleton.destroy();
 		ScoreloopManagerSingleton.init(this);
 		setContentView(R.layout.main);
-		
+
 		AdView adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
-	    LinearLayout layout = (LinearLayout)findViewById(R.id.linearLayout);
-	    layout.addView(adView);
-	    adView.loadAd(new AdRequest());
-
-	
-
-		Button btnSettings = (Button) findViewById(R.id.btnSettings);
-		btnSettings.setOnClickListener(this);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.linearLayout);
+		layout.addView(adView);
+		adView.loadAd(new AdRequest());
 
 		Button btnPlay = (Button) findViewById(R.id.btnPlay);
 		btnPlay.setOnClickListener(this);
 
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
-		
+
 		Button prefBtn = (Button) findViewById(R.id.prefButton);
-        prefBtn.setOnClickListener(this);}
-		
-		 
-
-
-	
+		prefBtn.setOnClickListener(this);
+	}
 
 	public void onClick(View v) {
 		int id = v.getId();
 
-		Intent i=null;
+		Intent i = null;
 		switch (id) {
-		case R.id.btnSettings:
-			i = new Intent(getApplicationContext(), Settings.class);
-			startActivity(i);
-			break;
-
 		case R.id.btnPlay:
 			i = new Intent(getApplicationContext(), ToposGameActivity.class);
 			startActivity(i);
 			break;
-		case R.id.btnRanking:		
-			startActivity(new Intent(getApplicationContext(), EntryScreenActivity.class));
+		case R.id.btnRanking:
+			startActivity(new Intent(getApplicationContext(),
+					EntryScreenActivity.class));
 			break;
 
 		case R.id.prefButton:
 			startActivity(new Intent(getApplicationContext(), Preferences.class));
 			break;
-		
+
 		default:
 			break;
 		}
@@ -84,17 +71,17 @@ public class topos extends Activity implements OnClickListener{
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, SETTINGS, 0, R.string.btnSettings);
+		menu.add(Menu.NONE, PREFERENCES, 0, R.string.pref);
 		menu.add(Menu.NONE, SALIR, 1, R.string.btnExit);
-		//menu.add(Menu.NONE, SETTINGS, 0, R.string.btnExit);
+		// menu.add(Menu.NONE, SETTINGS, 0, R.string.btnExit);
 		return true;
 	}
 
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		super.onMenuItemSelected(featureId, item);
-		switch(item.getItemId()) {
-		case SETTINGS:
-			settings();
+		switch (item.getItemId()) {
+		case PREFERENCES:
+			startActivity(new Intent(getApplicationContext(), Preferences.class));
 			break;
 		case SALIR:
 			exit();
@@ -103,16 +90,9 @@ public class topos extends Activity implements OnClickListener{
 		return true;
 	}
 
-	private void settings(){
-		Intent i=null;
-		i = new Intent(getApplicationContext(), Settings.class);
-		startActivity(i);
-	}
-
-	private void exit(){
+	private void exit() {
 		setResult(RESULT_OK);
 		finish();
 	}
-
 
 }
