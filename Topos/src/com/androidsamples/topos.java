@@ -2,6 +2,7 @@ package com.androidsamples;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
@@ -30,11 +32,17 @@ public class topos extends Activity implements OnClickListener {
 		ScoreloopManagerSingleton.init(this);
 		setContentView(R.layout.main);
 
+
 		AdView adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
 		LinearLayout layout = (LinearLayout) findViewById(R.id.linearLayout);
 		layout.addView(adView);
 		adView.loadAd(new AdRequest());
-
+	
+	    TextView title= (TextView) findViewById(R.id.textView1);
+        Typeface tf = Typeface.createFromAsset(getAssets(),
+        "fonts/aggstock.ttf");
+        title.setTypeface(tf);
+		
 		Button btnPlay = (Button) findViewById(R.id.btnPlay);
 		btnPlay.setOnClickListener(this);
 
