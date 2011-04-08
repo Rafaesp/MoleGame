@@ -38,8 +38,7 @@ public class SoundManager {
 			 
 		 }
 	 }
-	 
-	 
+
 	 public void start(){//Lo dejamos asi, o hacemos distintos starts? startHiFx startMusic1Fx startMissFx o hacer un switch case
 		 if(type.equals(HITFX)){
 			 current.play(listHitFX.get((int) (listHitFX.size()*Math.random())), 1.0f, 1.0f, 0, 0, 1.5f);	 
