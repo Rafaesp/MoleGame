@@ -12,7 +12,7 @@ import android.os.Message;
 
 public class GameLoopThread extends Thread {
 	private static SoundManager missFx;
-	private final long FPS=30;
+	private final long FPS=13;
 	private ToposGameView view;
 	private boolean running = false;
 	private int level=1;
