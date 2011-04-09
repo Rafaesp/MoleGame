@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="Sound Settings">
+		<CheckBoxPreference android:title="Music"
+			android:defaultValue="true" android:summary="Plays music while playing"
+			android:key="MusicPref" />
+		<CheckBoxPreference android:title="Hit Sound"
+			android:defaultValue="true" android:summary="Plays a sound when hit a mole"
+			android:key="HitPref" />
+		<CheckBoxPreference android:title="Miss Sound"
+			android:defaultValue="true" android:summary="Plays a sound when miss a mole"
+			android:key="MissPref" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Misc Settings">
+		<CheckBoxPreference android:title="Vibration"
+			android:defaultValue="true" android:summaryOn="Touch to disable"
+			android:summaryOff="Touch to enable" android:key="VibrationPref" android:shouldDisableView="false"/>
+	<!--  <Preference android:title="Custom Preference"
+		  	android:summary="This works almost like a button" android:key="customPref" />-->	
+
+	</PreferenceCategory>
+
+</PreferenceScreen>
