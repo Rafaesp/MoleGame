@@ -46,19 +46,17 @@ public class ToposGameActivity extends Activity {
         	Vibrator vibrator =(Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             toposview.setVibrator(vibrator);
         }
-        
-        
-        
 
-       
 	}
 
 
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-    	toposview.getGameLoopThread().stopGame();
-    	super.onKeyDown(keyCode, event);
-    	return true;    	
-    }
+
+	@Override
+	protected void onPause() {
+		finish();
+		super.onPause();
+	}
+    
     
 
 }

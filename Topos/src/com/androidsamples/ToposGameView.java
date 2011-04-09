@@ -116,7 +116,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int id) {
-										gameLoopThread.stopGame();
 										ScoreloopManagerSingleton.get()
 												.onGamePlayEnded(sc, null);
 										progressd = new ProgressDialog(context);
@@ -315,8 +314,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	public void goMainMenu() {
-		gameLoopThread.stopGame();
-		ScoreloopManagerSingleton.destroy();
 		context.startActivity(new Intent(context, topos.class));
 	}
 
