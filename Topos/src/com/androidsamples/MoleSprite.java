@@ -32,7 +32,6 @@ public class MoleSprite extends View{
 	private int status; //Each row, each frame of the animation
 	private int animation = 0; //Each column, for example entering hole or being hit
 	private boolean isHit = false;
-
 	private boolean isDigging;
 	private long animationHitStartTime;
 	private long animationDigStartTime;
