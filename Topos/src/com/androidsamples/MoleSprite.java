@@ -18,7 +18,7 @@ public class MoleSprite extends View{
 	private static final long ANIMATION_DIGGING_TIME = 300;
 	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int BMP_ROWS = 5;
-	private static final int BMP_COLUMNS = 1;
+	private static final int BMP_COLUMNS = 3;
 
 	private int posx;
 	private int posy;
@@ -45,7 +45,7 @@ public class MoleSprite extends View{
 	public MoleSprite(ToposGameView view, int posx, int posy) {
 		super(view.getContext());
 		this.view = view;
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.topos75x90);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.sprites75x90);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 
