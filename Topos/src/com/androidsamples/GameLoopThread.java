@@ -16,7 +16,7 @@ public class GameLoopThread extends Thread {
 	private ToposGameView view;
 	private boolean running = false;
 	private int level=1;
-	private long levelTimeDuration=5000;
+	private long levelTimeDuration=50000;
 	private boolean levelFinish;
 	private boolean gameOver;
 	private long playLoopTime=1000;
@@ -26,8 +26,9 @@ public class GameLoopThread extends Thread {
 	private Integer lives;
 	private Integer points;
 	private Long time;
-	private Double playVelocity=1.25;
+	private Double playVelocity=1.20;
 	private CountDownTimer secondsTimer;
+	
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
@@ -45,6 +46,7 @@ public class GameLoopThread extends Thread {
 	}
 	
 	public void stopGame(){
+		view.stopMusic1Fx();
 		secondsTimer.cancel();
 		setRunning(false);
 		boolean retry=true;
@@ -126,6 +128,7 @@ public class GameLoopThread extends Thread {
 		long startTime;
 		long sleepTime;
 
+		
 		while (running) {
 			if(lives<=0 && !gameOver){
 				view.reset();

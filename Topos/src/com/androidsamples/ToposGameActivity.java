@@ -32,7 +32,9 @@ public class ToposGameActivity extends Activity {
         
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         if(settings.getBoolean("MusicPref", true)){
-        	
+        	SoundManager music1Fx= new SoundManager("music1Fx", this.getApplicationContext());
+        	toposview.setSoundManager(music1Fx);
+        	toposview.startMusic1Fx();
         }
         if(settings.getBoolean("HitPref", true)){
         	SoundManager hitFx= new SoundManager("hitFx", this.getApplicationContext());
