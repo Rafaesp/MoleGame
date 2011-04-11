@@ -74,6 +74,8 @@ public class SoundManager {
 		}
 	}
 	 
-
+public Context getContext(){
+	return context;
+}
 	 
 }

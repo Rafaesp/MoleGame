@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources.Theme;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -335,6 +336,23 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		if(music1Fx.isPlaying()==true){
 			music1Fx.stop();
 		}
+	}
+	
+	public void startFinishVibrator(){
+		if(vibrationEnabled){
+		vibrator.vibrate(300);
+		try {
+			Thread.sleep(600);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		vibrator.vibrate(300);
+		}
+	}
+	
+	public boolean getStatusMissFx(){
+		return missEnabled;
 	}
 
 }
