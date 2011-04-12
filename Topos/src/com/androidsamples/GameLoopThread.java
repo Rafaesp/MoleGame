@@ -23,7 +23,7 @@ public class GameLoopThread extends Thread {
 	private boolean levelFinish;
 	private boolean gameOver;
 	private long playLoopTime=1000;
-	private long playLoopStartTime=System.currentTimeMillis();
+	private long playLoopStartTime;
 	private long levelTimeDigDown=1500;
 	private Handler handler;
 	private Integer lives;
@@ -131,7 +131,7 @@ public class GameLoopThread extends Thread {
 		long startTime;
 		long sleepTime;
 
-
+		playLoopStartTime=System.currentTimeMillis();
 		while (running) {
 			if(lives<=0 && !gameOver){
 				view.reset();
