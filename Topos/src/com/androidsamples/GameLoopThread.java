@@ -33,7 +33,7 @@ public class GameLoopThread extends Thread {
 	private Double playVelocity=1.20;
 	private CountDownTimer secondsTimer;
 	private int bigMolesCount;
-
+	private MediaPlayer mp; 
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
@@ -255,7 +255,7 @@ public class GameLoopThread extends Thread {
 	public void throwAlertFinalLevel(){
 	
 			try {// Yo lo veo bien aqui pero si quereis puedo meterlo en SoundManager
-				MediaPlayer mp=MediaPlayer.create(view.getContext(),R.raw.finish);
+				mp=MediaPlayer.create(view.getContext(),R.raw.finish);
 				if(view.getStatusEndingFx()){// el aviso sonoro de finish que hacemos lo activamos cuando se activa missFx como esta ahora, o aparte?
 				mp.start();
 				}
@@ -282,6 +282,9 @@ public class GameLoopThread extends Thread {
 		}
 	}
 
+	public void stopMusic(){
+		mp.stop();
+	}
 
 
 }
