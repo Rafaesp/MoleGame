@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources.Theme;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -53,6 +54,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	private boolean hitEnabled;
 	private boolean missEnabled;
 	private boolean vibrationEnabled;
+
+	private SoundManager music1Fx;
 
 	public ToposGameView(Context context) {
 		super(context);
@@ -267,7 +270,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 						if (mole.getStatus() == MoleSprite.DIGUPFULL) {
 							mole.digDown();
 							clicked = true;
-							if (hitEnabled)
+							if (hitEnabled)					
 								hitFx.start();
 							if (vibrationEnabled)
 								vibrator.vibrate(40);
@@ -290,6 +293,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 			hitFx = sound;
 		} else if (sound.getType().equals("missFx")) {
 			missFx = sound;
+		} else if (sound.getType().equals("music1Fx")){
+			music1Fx =sound;
 		}
 	}
 
@@ -320,6 +325,34 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	public void startMissFx() {
 		if (missEnabled)
 			missFx.start();
+	}
+	
+	public void startMusic1Fx(){
+		if(musicEnabled){
+			music1Fx.start();
+		}
+	}
+	public void stopMusic1Fx(){
+		if(music1Fx.isPlaying()==true){
+			music1Fx.stop();
+		}
+	}
+	
+	public void startFinishVibrator(){
+		if(vibrationEnabled){
+		vibrator.vibrate(300);
+		try {
+			Thread.sleep(600);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		vibrator.vibrate(300);
+		}
+	}
+	
+	public boolean getStatusMissFx(){
+		return missEnabled;
 	}
 
 }

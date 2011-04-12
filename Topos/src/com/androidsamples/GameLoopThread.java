@@ -5,6 +5,9 @@ package com.androidsamples;
 import java.util.List;
 
 import android.graphics.Canvas;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -26,8 +29,9 @@ public class GameLoopThread extends Thread {
 	private Integer lives;
 	private Integer points;
 	private Long time;
-	private Double playVelocity=1.25;
+	private Double playVelocity=1.20;
 	private CountDownTimer secondsTimer;
+
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
@@ -36,15 +40,16 @@ public class GameLoopThread extends Thread {
 		setPoints(0);
 		setLives(10);
 		levelFinish = false;
-		
+
 		secondsTimer = doSecondsTimer();
 		secondsTimer.start();
-		
-		
+
+
 
 	}
-	
+
 	public void stopGame(){
+		view.stopMusic1Fx();
 		secondsTimer.cancel();
 		setRunning(false);
 		boolean retry=true;
@@ -59,7 +64,7 @@ public class GameLoopThread extends Thread {
 			}
 		}
 	}
-	
+
 
 	public void setLives(int newlives){
 		lives = newlives;
@@ -102,9 +107,9 @@ public class GameLoopThread extends Thread {
 	public void setRunning(boolean run) {
 		running = run;
 	}
-	
+
 	private CountDownTimer doSecondsTimer(){
-		 return new CountDownTimer(levelTimeDuration, 1000) {
+		return new CountDownTimer(levelTimeDuration, 1000) {
 
 			public void onTick(long millisUntilFinished) {
 				setTime(millisUntilFinished / 1000);
@@ -114,7 +119,7 @@ public class GameLoopThread extends Thread {
 				view.reset();
 				levelFinish= true;
 				if(!gameOver)
-				throwAlertFinalLevel();
+					throwAlertFinalLevel();
 			}
 		};
 	}
@@ -125,6 +130,7 @@ public class GameLoopThread extends Thread {
 		long ticksPS = 1000 / FPS;
 		long startTime;
 		long sleepTime;
+
 
 		while (running) {
 			if(lives<=0 && !gameOver){
@@ -222,6 +228,21 @@ public class GameLoopThread extends Thread {
 	}
 
 	public void throwAlertFinalLevel(){
+	
+			try {// Yo lo veo bien aqui pero si quereis puedo meterlo en SoundManager
+				MediaPlayer mp=MediaPlayer.create(view.getContext(),R.raw.finish);
+				if(view.getStatusMissFx()){// el aviso sonoro de finish que hacemos lo activamos cuando se activa missFx como esta ahora, o aparte?
+				mp.start();
+				}
+				view.startFinishVibrator();
+				Thread.sleep(1000);
+				if(mp.isPlaying())
+					mp.stop();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 		synchronized (view.getHolder()) {
 			Message m = handler.obtainMessage();
 			Bundle data = new Bundle();
