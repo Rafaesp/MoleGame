@@ -259,11 +259,14 @@ public class GameLoopThread extends Thread {
 	
 			try {// Yo lo veo bien aqui pero si quereis puedo meterlo en SoundManager
 				MediaPlayer mp=MediaPlayer.create(view.getContext(),R.raw.finish);
-				if(view.getStatusMissFx()){// el aviso sonoro de finish que hacemos lo activamos cuando se activa missFx como esta ahora, o aparte?
+				if(view.getStatusEndingFx()){// el aviso sonoro de finish que hacemos lo activamos cuando se activa missFx como esta ahora, o aparte?
 				mp.start();
 				}
-				view.startFinishVibrator();
-				Thread.sleep(1000);
+				if( view.getStatusEndingVibration()){
+					Thread.sleep(200);
+					view.startFinishVibrator();
+				}				
+				Thread.sleep(800);
 				if(mp.isPlaying())
 					mp.stop();
 			} catch (InterruptedException e) {

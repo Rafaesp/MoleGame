@@ -10,14 +10,23 @@
 		<CheckBoxPreference android:title="Miss Sound"
 			android:defaultValue="true" android:summary="Plays a sound when miss a mole"
 			android:key="MissPref" />
+		<CheckBoxPreference android:title="Ending Sound"
+			android:defaultValue="true" android:summary="Plays a sound to warn of the end of a level"
+			android:key="EndingPref" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Misc Settings">
 		<CheckBoxPreference android:title="Vibration"
 			android:defaultValue="true" android:summaryOn="Touch to disable"
-			android:summaryOff="Touch to enable" android:key="VibrationPref" android:shouldDisableView="false"/>
-	<!--  <Preference android:title="Custom Preference"
-		  	android:summary="This works almost like a button" android:key="customPref" />-->	
+			android:summaryOff="Touch to enable" android:key="VibrationPref"
+			android:shouldDisableView="false" />
+		<CheckBoxPreference android:title="Ending Vibration"
+			android:summary="Toogle vibration to warn of the end of a level"
+			android:defaultValue="true" android:key="EndingVibrationPref"
+			android:shouldDisableView="false" />
+		<!-- <Preference android:title="Custom Preference" android:summary="This 
+			works almost like a button" android:key="customPref" /> -->
 
 	</PreferenceCategory>
+
 
 </PreferenceScreen>
