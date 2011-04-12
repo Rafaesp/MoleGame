@@ -271,7 +271,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 			synchronized (getHolder()) {
 				for (MoleSprite mole : moles) {
 					if (mole.isClicked(event.getX(), event.getY())) {
-						if (mole.getStatus() != MoleSprite.HOLE && !mole.isDiggingDown()) {
+						if (mole.getStatus() != MoleSprite.HOLE && !mole.isDiggingDown() && !mole.isHit()) {
 							clicked = true;
 							gameLoopThread.click(mole);
 							if (hitEnabled)					
