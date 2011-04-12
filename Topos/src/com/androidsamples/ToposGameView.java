@@ -115,6 +115,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					txtLevel.setText("Level " + m.getData().getInt("level"));
 
 					builder = new AlertDialog.Builder(getContext());
+					builder.setCancelable(false);
 					builder.setView(layout);
 					if (m.getData().getString("type") == "gameover") {
 						builder.setTitle(R.string.txtAlertDialogGameOver);

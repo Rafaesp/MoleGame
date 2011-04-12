@@ -5,14 +5,11 @@ package com.androidsamples;
 import java.util.List;
 
 import android.graphics.Canvas;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class GameLoopThread extends Thread {
 	private static final int BIGCLICKS = 3;
@@ -107,11 +104,11 @@ public class GameLoopThread extends Thread {
 			else{
 				mole.resetBigClicks();
 				setPoints(points+300);
-				mole.digDown(); //TODO hit()
+				mole.doHit();
 			}
 				
 		}else
-			mole.digDown(); //TODO hit()
+			mole.doHit();
 			setPoints(points+100);
 	}
 
