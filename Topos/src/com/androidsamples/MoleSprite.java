@@ -16,7 +16,7 @@ public class MoleSprite extends View{
 	public static final int HIT1 = 3;
 	public static final int HITFULL = 2;
 	public static final int ANIMATIONHIT = 1;
-	private static final long ANIMATION_HIT_TIME = 300;
+	private static final long ANIMATION_HIT_TIME = 400;
 	private static final long ANIMATION_DIGGING_TIME = 300;
 	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int MAX_HIT_TICKS = 2;
@@ -140,6 +140,8 @@ public class MoleSprite extends View{
 			status = HITFULL;
 			if(timeElapsed >= ANIMATION_HIT_TIME/MAX_HIT_TICKS){
 				status = HIT1;
+			}else if(timeElapsed >= ANIMATION_HIT_TIME){
+				status = HOLE;
 				isHit = false;
 				animation = 0;
 			}
