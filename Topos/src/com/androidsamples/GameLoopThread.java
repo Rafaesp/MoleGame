@@ -231,7 +231,7 @@ public class GameLoopThread extends Thread {
 		}while(mole.getStatus()!=MoleSprite.HOLE);
 
 		if(bigMolesCount < level){
-			if(Math.random()*100>=90.0){
+			if(Math.random()*100>=98.0){
 				mole.setBig();
 				bigMolesCount++;
 			}
