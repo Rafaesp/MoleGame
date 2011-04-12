@@ -140,7 +140,8 @@ public class MoleSprite extends View{
 			status = HITFULL;
 			if(timeElapsed >= ANIMATION_HIT_TIME/MAX_HIT_TICKS){
 				status = HIT1;
-			}else if(timeElapsed >= ANIMATION_HIT_TIME){
+			}
+			if(timeElapsed >= ANIMATION_HIT_TIME){
 				status = HOLE;
 				isHit = false;
 				animation = 0;
