@@ -282,10 +282,5 @@ public class GameLoopThread extends Thread {
 		}
 	}
 
-	public void stopMusic(){
-		mp.stop();
-	}
-
-
 }
 

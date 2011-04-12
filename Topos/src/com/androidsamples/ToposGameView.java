@@ -136,7 +136,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int id) {
-										gameLoopThread.stopMusic();
+										
 										goMainMenu();
 										
 									}
@@ -338,7 +338,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		}
 	}
 	public void stopMusic1Fx(){
-		if(music1Fx.isPlaying()==true){
+		if(music1Fx!=null && music1Fx.isPlaying()){
 			music1Fx.stop();
 		}
 	}
