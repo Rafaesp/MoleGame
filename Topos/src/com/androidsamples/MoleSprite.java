@@ -19,6 +19,7 @@ public class MoleSprite extends View{
 	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int BMP_ROWS = 5;
 	private static final int BMP_COLUMNS = 3;
+	public static final int BIGMOLE = 1;
 
 	private int posx;
 	private int posy;
@@ -37,6 +38,7 @@ public class MoleSprite extends View{
 	private long animationDigStartTime;
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
 	private int diggingTick = 0; //How many frames have we already shown
+	private int bigClicks;
 	
 
 	private static final String tag = "TAG";
@@ -52,6 +54,8 @@ public class MoleSprite extends View{
 		this.posy=posy;
 		
 		status = HOLE;
+		
+		bigClicks = 0;
 	}
 
 	public int getX() {
@@ -77,6 +81,26 @@ public class MoleSprite extends View{
 		this.status = status;
 	}
 	
+	public boolean isBig() {
+		return animation == BIGMOLE;
+	}
+
+	public void setBig() {
+		this.animation = BIGMOLE;
+	}
+	
+	public void resetBigClicks(){
+		bigClicks = 0;
+	}
+	
+	public void addBigClick(){
+		bigClicks++;
+	}
+	
+	public Integer getBigClicks(){
+		return bigClicks;
+	}
+
 	public void onDraw(Canvas canvas) {
 		dig();
 		int srcy = status * height;
@@ -109,7 +133,7 @@ public class MoleSprite extends View{
 		return "Mole x: "+x+", y: "+y+", width: "+width+", \nheight: "+height+" ,dstWidth: "+view.getWidth()/3+", dstHeight: "+view.getHeight()/4;
 	}
 
-	public void hit(){ //TODO Shouldn't be able to click when already hit
+	public void hit(){
 		animationHitStartTime = System.currentTimeMillis();
 		isHit = true;
 		this.changeStatus(HIT);
@@ -119,17 +143,24 @@ public class MoleSprite extends View{
 	public boolean isDigging(){
 		return isDigging;
 	}
+	
+	public boolean isDiggingDown(){
+		return isDigging && diggingDirection == 1;
+	}
 
 	public void dig(){
 		if(isDigging){
 			Long timeElapsed = System.currentTimeMillis() - animationDigStartTime;
 				if(diggingTick != MAX_DIGGING_TICKS){
-					if(timeElapsed >= diggingTick*ANIMATION_DIGGING_TIME/4){
+					if(timeElapsed >= diggingTick*ANIMATION_DIGGING_TIME/MAX_DIGGING_TICKS){
 						status = status+diggingDirection;
 						diggingTick++;
 					}
 				}else{
 					diggingTick = 0;
+					if(isDiggingDown()){
+						animation = 0;
+					}
 					isDigging = false;
 				}
 			
@@ -143,6 +174,7 @@ public class MoleSprite extends View{
 	}
 
 	public void digDown(){
+		//diggingTick = MAX_DIGGING_TICKS-diggingTick;
 		diggingDirection = 1;
 		animationDigStartTime = System.currentTimeMillis();
 		isDigging = true;
@@ -163,6 +195,7 @@ public class MoleSprite extends View{
 	}
 	
 	public void reset(){
+		animation = 0;
 		changeStatus(HOLE);
 		diggingTick=0;
 		isDigging = false;

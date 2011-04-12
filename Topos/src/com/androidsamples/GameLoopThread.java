@@ -12,25 +12,30 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class GameLoopThread extends Thread {
+	private static final int BIGCLICKS = 3;
+	
 	private static SoundManager missFx;
 	private final long FPS=13;
 	private ToposGameView view;
 	private boolean running = false;
 	private int level=1;
-	private long levelTimeDuration=5000;
+	private long levelTimeDuration=30000;
 	private boolean levelFinish;
 	private boolean gameOver;
 	private long playLoopTime=1000;
 	private long playLoopStartTime;
 	private long levelTimeDigDown=1500;
+	private long levelTimeBigDigDown = 4500;
 	private Handler handler;
 	private Integer lives;
 	private Integer points;
 	private Long time;
 	private Double playVelocity=1.20;
 	private CountDownTimer secondsTimer;
+	private int bigMolesCount;
 
 
 
@@ -42,10 +47,6 @@ public class GameLoopThread extends Thread {
 		levelFinish = false;
 
 		secondsTimer = doSecondsTimer();
-		secondsTimer.start();
-
-
-
 	}
 
 	public void stopGame(){
@@ -99,8 +100,18 @@ public class GameLoopThread extends Thread {
 		}
 	}
 
-	public void click(boolean clicked){
-		if(clicked)
+	public void click(MoleSprite mole){
+		if(mole.isBig()){
+			if(mole.getBigClicks() < BIGCLICKS-1)
+				mole.addBigClick();
+			else{
+				mole.resetBigClicks();
+				setPoints(points+300);
+				mole.digDown(); //TODO hit()
+			}
+				
+		}else
+			mole.digDown(); //TODO hit()
 			setPoints(points+100);
 	}
 
@@ -132,7 +143,11 @@ public class GameLoopThread extends Thread {
 		long sleepTime;
 
 		playLoopStartTime=System.currentTimeMillis();
+		secondsTimer.start();
+		
 		while (running) {
+			Canvas canvas = null;
+			startTime = System.currentTimeMillis();
 			if(lives<=0 && !gameOver){
 				view.reset();
 				levelFinish= true;
@@ -141,18 +156,26 @@ public class GameLoopThread extends Thread {
 			}
 			else if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
 				play();
-			}
-			Canvas canvas = null;
-			startTime = System.currentTimeMillis();
+			}			
 
 			List<MoleSprite> moles= view.getMoles();
 			for(MoleSprite mole : moles){
-				if(mole.getStatus()==MoleSprite.DIGUPFULL){					
-					if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
-						mole.digDown();
-						view.startMissFx();
-						setLives(--lives);
+				if(mole.getStatus()==MoleSprite.DIGUPFULL){		
+					if(mole.isBig()){
+						if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeBigDigDown){
+							mole.digDown();
+							view.startMissFx();
+							int newlives = lives-3;
+							setLives(newlives);
+						}
+					}else{
+						if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
+							mole.digDown();
+							view.startMissFx();
+							setLives(--lives);
+						}
 					}
+					
 				}
 
 				if(mole.isDigging() || mole.isHit())
@@ -206,7 +229,14 @@ public class GameLoopThread extends Thread {
 			int chosenMole = (int) Math.floor(Math.random()*moles.size());
 			mole=moles.get(chosenMole);
 		}while(mole.getStatus()!=MoleSprite.HOLE);
-		//TODO Elegir tipo del topo (dificultad)
+
+		if(bigMolesCount < level){
+			if(Math.random()*100>=90.0){
+				mole.setBig();
+				bigMolesCount++;
+			}
+		}
+		
 		mole.digUp();
 
 	}
@@ -214,14 +244,12 @@ public class GameLoopThread extends Thread {
 
 	public void startNextLevel(){
 		level++;
-		if(levelTimeDuration<120000){
-			levelTimeDuration+=10000;
-			time = levelTimeDuration;
-			playLoopTime/=playVelocity;
-		}else{
+		if(level>=7){
 			levelTimeDigDown-=100;
-
 		}
+		bigMolesCount = 0;
+		time = levelTimeDuration;
+		playLoopTime/=playVelocity;
 		secondsTimer = doSecondsTimer();
 		secondsTimer.start();
 		levelFinish=false;
