@@ -49,7 +49,7 @@ public class MoleSprite extends View{
 	public MoleSprite(ToposGameView view, int posx, int posy) {
 		super(view.getContext());
 		this.view = view;
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.digginghit);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.spritesdighit);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 
