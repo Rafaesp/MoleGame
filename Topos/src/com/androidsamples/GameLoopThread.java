@@ -4,6 +4,8 @@ package com.androidsamples;
 
 import java.util.List;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.VelocityTracker;
 
 public class GameLoopThread extends Thread {
 	private static final int BIGCLICKS = 3;
@@ -37,16 +40,39 @@ public class GameLoopThread extends Thread {
 	private int weaselCount;
 	private MediaPlayer mp;
 
+	private boolean saved;
+
 
 
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
 		this.handler = txtHandler;
-		setPoints(0);
-		setLives(10);
-		levelFinish = false;
+		SharedPreferences sp = view.getContext().getSharedPreferences(topos.PREFS, Context.MODE_PRIVATE);
+		saved = sp.getBoolean("saved", false);
+		Log.i("TAG", saved+"");
+		if(saved){
+			level = sp.getInt("level", 1);
+			points = sp.getInt("points", 0);
+			lives = sp.getInt("lives", 10);
+			Float aux = sp.getFloat("playVelocity", 1.20f);
+			playVelocity = aux.doubleValue();
+			synchronized (view.getHolder()) {
+				Message m = handler.obtainMessage();
+				Bundle data = new Bundle();
+				data.putString("type", "saved");
+				data.putInt("level", level);
+				data.putInt("lives", lives);
+				data.putString("points", points.toString());
+				m.setData(data);
+				handler.sendMessage(m);
+			}
+		}else{
+			setPoints(0);
+			setLives(10);
+		}
 
+		levelFinish = false;
 		secondsTimer = doSecondsTimer();
 	}
 
@@ -113,7 +139,6 @@ public class GameLoopThread extends Thread {
 				mole.doHit();
 			}		
 		}else if(mole.isWeasel()){
-			Log.i("TAG", "is weasel");
 			mole.doHit();
 			newpoints-=500;
 			setPoints(newpoints);
@@ -134,6 +159,21 @@ public class GameLoopThread extends Thread {
 			return true;
 		}
 		return false;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public Integer getLives() {
+		return lives;
+	}
+	public Integer getPoints() {
+		return lives;
+	}
+
+	public Double getPlayVelocity(){
+		return playVelocity;
 	}
 
 	private CountDownTimer doSecondsTimer(){
@@ -230,6 +270,7 @@ public class GameLoopThread extends Thread {
 			Bundle data = new Bundle();
 			data.putString("type", "gameover");
 			data.putInt("level", level);
+			data.putInt("time", 0);
 			data.putString("points", points.toString());
 			m.setData(data);
 			handler.sendMessage(m);
@@ -293,7 +334,6 @@ public class GameLoopThread extends Thread {
 			if(mp!=null && mp.isPlaying())
 				mp.stop();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

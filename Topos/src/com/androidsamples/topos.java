@@ -2,6 +2,7 @@ package com.androidsamples;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,6 +24,8 @@ public class topos extends Activity implements OnClickListener {
 
 	private static final int PREFERENCES = Menu.FIRST;
 	private static final int SALIR = Menu.FIRST + 1;
+	
+	public static final String PREFS = "prefs";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,16 @@ public class topos extends Activity implements OnClickListener {
 		
 		Button btnPlay = (Button) findViewById(R.id.btnPlay);
 		btnPlay.setOnClickListener(this);
-
+		
+		Button btnContinue = (Button) findViewById(R.id.btnContinue);
+		SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
+		if(sp.getBoolean(PREFS, false)){
+			btnContinue.setOnClickListener(this);
+		}else{
+			btnContinue.setEnabled(false);
+		}
+		btnPlay.setOnClickListener(this);
+		
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
 
@@ -62,6 +74,10 @@ public class topos extends Activity implements OnClickListener {
 			i = new Intent(getApplicationContext(), ToposGameActivity.class);
 			startActivity(i);
 			break;
+		case R.id.btnContinue:
+			i = new Intent(getApplicationContext(), ToposGameActivity.class);
+			startActivity(i);
+			break;			
 		case R.id.btnRanking:
 			startActivity(new Intent(getApplicationContext(),
 					EntryScreenActivity.class));

@@ -100,7 +100,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					pointsTxtView.setText(b.getString("points"));
 				if (b.getString("time") != null)
 					timeTxtView.setText(b.getString("time"));
-				if (b.getString("type") != null) {
+				if (b.getString("type") != null && b.getString("type")=="saved") {
 					AlertDialog.Builder builder;
 
 					LayoutInflater inflater = (LayoutInflater) getContext()
@@ -152,14 +152,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 									}
 								});
 						builder.setNegativeButton(R.string.txtButtonMain,
-								new DialogInterface.OnClickListener() {// TODO
-																		// negativo
-																		// para
-																		// guardar
-																		// partida
-																		// y
-																		// volver
-																		// menu
+								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int id) {
 										goMainMenu();
@@ -168,6 +161,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					}
 					alertDialog = builder.create();
 					alertDialog.show();
+				}else if (b.getString("type")=="saved"){
+					gameLoopThread.startNextLevel();
 				}
 			}
 		};

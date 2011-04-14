@@ -4,7 +4,8 @@
 	<string name="app_name">Moles Stealers</string>
 	<string name="txtTitleSetting">Sonido</string>
 	<string name="textView1">Topos Game</string>
-	<string name="btnPlay">Play</string>
+	<string name="btnPlay">Start</string>
+	<string name="btnContinue">Continue</string>
 	<string name="btnExit">Exit</string>
 	<string name="btnRanking">Ranking</string>
 	<string name="btnSettings">Settings</string>

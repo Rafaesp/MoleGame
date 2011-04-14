@@ -11,6 +11,7 @@
 	    android:layout_weight="0">
 	        <TextView android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:text="@string/app_name" android:textSize="50dip"></TextView>
 	        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnPlay" android:layout_gravity="center_horizontal" android:text="@string/btnPlay"></Button>
+	        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnContinue" android:layout_gravity="center_horizontal" android:text="@string/btnContinue"></Button>
 	        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnRanking" android:layout_gravity="center_horizontal" android:text="@string/btnRanking"></Button>
 	        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/prefButton" android:layout_gravity="center_horizontal" android:text="@+string/pref"></Button>
     </LinearLayout>

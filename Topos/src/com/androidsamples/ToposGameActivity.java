@@ -55,6 +55,19 @@ public class ToposGameActivity extends Activity {
 
 	@Override
 	protected void onPause() {
+		SharedPreferences prefs = getSharedPreferences(topos.PREFS, MODE_APPEND);
+		SharedPreferences.Editor editor= prefs.edit();
+		if(toposview.getGameLoopThread().canSave()){			
+			editor.putBoolean("saved", true);
+			editor.putInt("level", toposview.getGameLoopThread().getLevel());
+			editor.putInt("points", toposview.getGameLoopThread().getLives());
+			editor.putInt("points", toposview.getGameLoopThread().getPoints());
+			editor.putFloat("playVelocity", toposview.getGameLoopThread().getPlayVelocity().floatValue());
+		}else{
+			editor.putBoolean("saved", false);
+		}
+		
+		editor.commit();
 		finish();
 		super.onPause();
 	}
