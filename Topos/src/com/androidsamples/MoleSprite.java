@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 
 public class MoleSprite extends View{
@@ -15,14 +16,15 @@ public class MoleSprite extends View{
 	public static final int DIGUPFULL = 0;
 	public static final int HIT1 = 3;
 	public static final int HITFULL = 2;
-	public static final int ANIMATIONHIT = 1;
+	public static final int BIGMOLE = 1; //TODO
+	public static final int ANIMATIONHIT = 4;
+	public static final int ANIMATIONWEASEL = 2;
 	private static final long ANIMATION_HIT_TIME = 300;
 	private static final long ANIMATION_DIGGING_TIME = 300;
 	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int MAX_HIT_TICKS = 2;
 	private static final int BMP_ROWS = 5;
-	private static final int BMP_COLUMNS = 2;
-	public static final int BIGMOLE = 3; //TODO
+	private static final int BMP_COLUMNS = 3;
 
 	private int posx;
 	private int posy;
@@ -49,7 +51,7 @@ public class MoleSprite extends View{
 	public MoleSprite(ToposGameView view, int posx, int posy) {
 		super(view.getContext());
 		this.view = view;
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.spritesdighit);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.sprites75x90);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 
@@ -91,6 +93,14 @@ public class MoleSprite extends View{
 
 	public void setBig() {
 		this.animation = BIGMOLE;
+	}
+	
+	public boolean isWeasel() {
+		return animation == ANIMATIONWEASEL;
+	}
+
+	public void setWeasel() {
+		this.animation = ANIMATIONWEASEL;
 	}
 
 	public void resetBigClicks(){
@@ -135,6 +145,8 @@ public class MoleSprite extends View{
 
 	private void hit(){
 		if(isHit){
+			isDigging = false;
+			diggingTick = 0;
 			animation = ANIMATIONHIT;
 			Long timeElapsed = System.currentTimeMillis() - animationHitStartTime;
 			status = HITFULL;
@@ -172,7 +184,7 @@ public class MoleSprite extends View{
 				diggingTick = 0;
 				if(isDiggingDown()){
 					animation = 0;
-					diggingTick = -1;
+					diggingTick = 0;
 				}
 				isDigging = false;
 			}
