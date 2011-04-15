@@ -10,8 +10,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources.Theme;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -252,7 +255,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		canvas.drawColor(Color.GREEN);
+		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
+		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
