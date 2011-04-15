@@ -88,7 +88,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		missEnabled = sp.getBoolean("MissPref", true);
 		hitEnabled = sp.getBoolean("HitPref", true);
 		vibrationEnabled = sp.getBoolean("VibrationPref", true);
-		endingEnable = sp.getBoolean("EndingVibrationPref", true);
+		endingEnable = sp.getBoolean("EndingPref", true);
 		endingVibration  = sp.getBoolean("EndingVibrationPref", true);
 
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
@@ -361,6 +361,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 	
 	public boolean getStatusEndingFx(){
+		Log.i("Valor de endindEnable", endingEnable+"");
 		return endingEnable;
 	}
 	public boolean getStatusEndingVibration(){
