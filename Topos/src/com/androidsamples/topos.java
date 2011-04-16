@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,8 @@ public class topos extends Activity implements OnClickListener {
 	private static final int SALIR = Menu.FIRST + 1;
 	
 	public static final String PREFS = "prefs";
+	
+	private Button btnContinue;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,21 +52,31 @@ public class topos extends Activity implements OnClickListener {
 		Button btnPlay = (Button) findViewById(R.id.btnPlay);
 		btnPlay.setOnClickListener(this);
 		
-		Button btnContinue = (Button) findViewById(R.id.btnContinue);
-		SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
-		if(sp.getBoolean(PREFS, false)){
-			btnContinue.setOnClickListener(this);
-		}else{
-			btnContinue.setEnabled(false);
-		}
-		btnPlay.setOnClickListener(this);
-		
+		btnContinue = (Button) findViewById(R.id.btnContinue);
+		btnContinue.setOnClickListener(this);
+
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
 
 		Button prefBtn = (Button) findViewById(R.id.prefButton);
 		prefBtn.setOnClickListener(this);
 	}
+	
+	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
+		Log.i("TAG", "OnResume");
+		if(sp.getBoolean("saved", false)){
+			btnContinue.setEnabled(true);
+		}else{
+			btnContinue.setEnabled(false);
+		}
+	}
+
+
 
 	public void onClick(View v) {
 		int id = v.getId();
@@ -71,11 +84,14 @@ public class topos extends Activity implements OnClickListener {
 		Intent i = null;
 		switch (id) {
 		case R.id.btnPlay:
+			SharedPreferences.Editor edit= getSharedPreferences(PREFS, MODE_PRIVATE).edit();
+			edit.putBoolean("saved", false);
 			i = new Intent(getApplicationContext(), ToposGameActivity.class);
 			startActivity(i);
 			break;
 		case R.id.btnContinue:
 			i = new Intent(getApplicationContext(), ToposGameActivity.class);
+			
 			startActivity(i);
 			break;			
 		case R.id.btnRanking:

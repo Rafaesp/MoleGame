@@ -100,23 +100,24 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					pointsTxtView.setText(b.getString("points"));
 				if (b.getString("time") != null)
 					timeTxtView.setText(b.getString("time"));
-				if (b.getString("type") != null && b.getString("type")=="saved") {
+				
+				String type = b.getString("type");
+				if (type == "level" || type == "gameover"){
+					
 					AlertDialog.Builder builder;
-
 					LayoutInflater inflater = (LayoutInflater) getContext()
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					View layout = inflater.inflate(R.layout.levelview, null);
-
 					TextView levelScore = (TextView) layout
 							.findViewById(R.id.txtValueScore);
 					levelScore.setText(m.getData().getString("points"));
 					TextView txtLevel = (TextView) layout
 							.findViewById(R.id.txtLevelX);
 					txtLevel.setText("Level " + m.getData().getInt("level"));
-
 					builder = new AlertDialog.Builder(getContext());
 					builder.setCancelable(false);
 					builder.setView(layout);
+					
 					if (m.getData().getString("type") == "gameover") {
 						builder.setTitle(R.string.txtAlertDialogGameOver);
 						final Double sc = new Double(b.getString("points"));
@@ -141,7 +142,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 										
 									}
 								});
-					} else {
+					} else if(b.getString("type")=="level"){
 						builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 						builder.setPositiveButton(R.string.txtButtonNextLevel,
 								new DialogInterface.OnClickListener() {
@@ -161,7 +162,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					}
 					alertDialog = builder.create();
 					alertDialog.show();
-				}else if (b.getString("type")=="saved"){
+				}else if (type=="saved"){
 					gameLoopThread.startNextLevel();
 				}
 			}
@@ -174,6 +175,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 
 			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
+				Log.i(tag, "Surface destroyed");
 				gameLoopThread.stopGame();
 			}
 

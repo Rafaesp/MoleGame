@@ -13,15 +13,17 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.VelocityTracker;
 
 public class GameLoopThread extends Thread {
+	private static final String tag = "TAG";
+
 	private static final int BIGCLICKS = 3;
 
 	private static SoundManager missFx;
 	private final long FPS=13;
 	private ToposGameView view;
 	private boolean running = false;
+	private boolean pause;
 	private int level=1;
 	private long levelTimeDuration=10000; //TODO
 	private boolean levelFinish;
@@ -39,7 +41,7 @@ public class GameLoopThread extends Thread {
 	private int bigMolesCount;
 	private int weaselCount;
 	private MediaPlayer mp;
-
+	private boolean canSave;
 	private boolean saved;
 
 
@@ -48,9 +50,10 @@ public class GameLoopThread extends Thread {
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
 		this.handler = txtHandler;
+		pause = false;
 		SharedPreferences sp = view.getContext().getSharedPreferences(topos.PREFS, Context.MODE_PRIVATE);
 		saved = sp.getBoolean("saved", false);
-		Log.i("TAG", saved+"");
+		Log.i("TAG", "Saved?: "+saved+"");
 		if(saved){
 			level = sp.getInt("level", 1);
 			points = sp.getInt("points", 0);
@@ -154,28 +157,6 @@ public class GameLoopThread extends Thread {
 		running = run;
 	}
 
-	public boolean canSave(){
-		if(levelFinish && !gameOver){
-			return true;
-		}
-		return false;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public Integer getLives() {
-		return lives;
-	}
-	public Integer getPoints() {
-		return lives;
-	}
-
-	public Double getPlayVelocity(){
-		return playVelocity;
-	}
-
 	private CountDownTimer doSecondsTimer(){
 		return new CountDownTimer(levelTimeDuration, 1000) {
 
@@ -185,7 +166,9 @@ public class GameLoopThread extends Thread {
 
 			public void onFinish() {
 				view.reset();
+				canSave = true;
 				levelFinish= true;
+				pause = true;
 				if(!gameOver)
 					throwAlertFinalLevel();
 			}
@@ -203,64 +186,67 @@ public class GameLoopThread extends Thread {
 		secondsTimer.start();
 
 		while (running) {
-			Canvas canvas = null;
-			startTime = System.currentTimeMillis();
-			if(lives<=0 && !gameOver){
-				view.reset();
-				levelFinish= true;
-				gameOver = true;
-				gameOver();
-			}
-			else if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
-				play();
-			}			
+			while(!pause){
+				Canvas canvas = null;
+				startTime = System.currentTimeMillis();
+				if(lives<=0 && !gameOver){
+					view.reset();
+					levelFinish= true;
+					gameOver = true;
+					gameOver();
+				}
+				else if(System.currentTimeMillis()-playLoopStartTime>playLoopTime && !levelFinish){
+					play();
+				}			
 
-			List<MoleSprite> moles= view.getMoles();
-			for(MoleSprite mole : moles){
-				if(mole.getStatus()==MoleSprite.DIGUPFULL){		
-					if(mole.isBig()){
-						if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeBigDigDown){
+				List<MoleSprite> moles= view.getMoles();
+				for(MoleSprite mole : moles){
+					if(mole.getStatus()==MoleSprite.DIGUPFULL){		
+						if(mole.isBig()){
+							if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeBigDigDown){
+								mole.digDown();
+								view.startMissFx();
+								int newlives = lives-3;
+								setLives(newlives);
+							}
+						}else if(mole.isWeasel()){
 							mole.digDown();
-							view.startMissFx();
-							int newlives = lives-3;
-							setLives(newlives);
+						}else{
+							if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
+								mole.digDown();
+								view.startMissFx();
+								setLives(--lives);
+							}
 						}
-					}else{
-						if(System.currentTimeMillis()-mole.getDigStartTime()>levelTimeDigDown){
-							mole.digDown();
-							view.startMissFx();
-							setLives(--lives);
-						}
+
 					}
 
+					if(mole.isDigging() || mole.isHit())
+						view.setRedraw(view.needRedraw() || true);
+				}
+				if(view.needRedraw()){
+					try {
+
+						canvas = view.getHolder().lockCanvas();
+						synchronized (view.getHolder()) {
+							view.onDraw(canvas);
+						}
+
+					} finally {
+						if (canvas != null) {
+							view.getHolder().unlockCanvasAndPost(canvas);
+						}
+					}
 				}
 
-				if(mole.isDigging() || mole.isHit())
-					view.setRedraw(view.needRedraw() || true);
-			}
-			if(view.needRedraw()){
+				sleepTime = ticksPS-(System.currentTimeMillis() - startTime);
 				try {
-
-					canvas = view.getHolder().lockCanvas();
-					synchronized (view.getHolder()) {
-						view.onDraw(canvas);
-					}
-
-				} finally {
-					if (canvas != null) {
-						view.getHolder().unlockCanvasAndPost(canvas);
-					}
-				}
+					if (sleepTime > 0)
+						sleep(sleepTime);
+					else
+						sleep(10);
+				} catch (Exception e) {}
 			}
-
-			sleepTime = ticksPS-(System.currentTimeMillis() - startTime);
-			try {
-				if (sleepTime > 0)
-					sleep(sleepTime);
-				else
-					sleep(10);
-			} catch (Exception e) {}
-
 		}
 	}
 
@@ -306,6 +292,8 @@ public class GameLoopThread extends Thread {
 
 
 	public void startNextLevel(){
+		canSave = false;
+		secondsTimer.cancel();
 		level++;
 		if(level>=7){
 			levelTimeDigDown-=100;
@@ -315,11 +303,11 @@ public class GameLoopThread extends Thread {
 		playLoopTime/=playVelocity;
 		secondsTimer = doSecondsTimer();
 		secondsTimer.start();
-		levelFinish=false;
+		pause = false;
 	}
 
 	public void throwAlertFinalLevel(){
-
+		levelFinish = false;
 		try {// Yo lo veo bien aqui pero si quereis puedo meterlo en SoundManager
 
 			if(view.getStatusEndingFx()){// el aviso sonoro de finish que hacemos lo activamos cuando se activa missFx como esta ahora, o aparte?
@@ -346,6 +334,23 @@ public class GameLoopThread extends Thread {
 			m.setData(data);
 			handler.sendMessage(m);
 		}
+	}
+
+	public void saveGame(){
+		SharedPreferences prefs = view.getContext().getSharedPreferences(topos.PREFS, view.getContext().MODE_APPEND);
+		SharedPreferences.Editor editor= prefs.edit();
+		if(canSave){			
+			Log.i(tag, "saving game");
+			editor.putBoolean("saved", true);
+			editor.putInt("level", level);
+			editor.putInt("lives", lives);
+			editor.putInt("points", points);
+			editor.putFloat("playVelocity", playVelocity.floatValue());
+		}else{
+			editor.putBoolean("saved", false);
+		}
+
+		editor.commit();
 	}
 
 }

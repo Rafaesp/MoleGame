@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.TextView;
@@ -19,7 +20,17 @@ public class ToposGameActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.gameview);
+        
+
+	}
+
+    
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+setContentView(R.layout.gameview);
         
         toposview = (ToposGameView) findViewById(R.id.toposview);
         TextView txtLivesView = (TextView) findViewById(R.id.txtLives);
@@ -48,26 +59,15 @@ public class ToposGameActivity extends Activity {
         	Vibrator vibrator =(Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             toposview.setVibrator(vibrator);
         }
-
 	}
+
 
 
 
 	@Override
 	protected void onPause() {
-		SharedPreferences prefs = getSharedPreferences(topos.PREFS, MODE_APPEND);
-		SharedPreferences.Editor editor= prefs.edit();
-		if(toposview.getGameLoopThread().canSave()){			
-			editor.putBoolean("saved", true);
-			editor.putInt("level", toposview.getGameLoopThread().getLevel());
-			editor.putInt("points", toposview.getGameLoopThread().getLives());
-			editor.putInt("points", toposview.getGameLoopThread().getPoints());
-			editor.putFloat("playVelocity", toposview.getGameLoopThread().getPlayVelocity().floatValue());
-		}else{
-			editor.putBoolean("saved", false);
-		}
-		
-		editor.commit();
+		Log.i("TAG", "OnPauseGameActivity");
+		toposview.getGameLoopThread().saveGame();
 		finish();
 		super.onPause();
 	}
