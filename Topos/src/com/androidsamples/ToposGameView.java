@@ -248,8 +248,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
-		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
+//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
