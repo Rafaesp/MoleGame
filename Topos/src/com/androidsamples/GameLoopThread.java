@@ -17,7 +17,6 @@ public class GameLoopThread extends Thread {
 
 	private static final int BIGCLICKS = 3;
 
-	private static SoundManager missFx;
 	private final long FPS = 13;
 	private ToposGameView view;
 	private boolean running = false;
