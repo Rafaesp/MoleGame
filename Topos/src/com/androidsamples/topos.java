@@ -75,6 +75,12 @@ public class topos extends Activity implements OnClickListener {
 			btnContinue.setEnabled(false);
 		}
 	}
+	
+	@Override
+	protected void onPause() {
+		finish();
+		super.onPause();
+	}
 
 
 
@@ -86,6 +92,8 @@ public class topos extends Activity implements OnClickListener {
 		case R.id.btnPlay:
 			SharedPreferences.Editor edit= getSharedPreferences(PREFS, MODE_PRIVATE).edit();
 			edit.putBoolean("saved", false);
+			edit.commit();
+			Log.i("TAG", "topos: saved=false");
 			i = new Intent(getApplicationContext(), ToposGameActivity.class);
 			startActivity(i);
 			break;

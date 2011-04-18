@@ -56,6 +56,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	private boolean vibrationEnabled;
 	private boolean endingVibration;
 	private boolean endingEnable;
+	private boolean gameRunning;
 
 	private SoundManager music1Fx;
 
@@ -149,7 +150,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 									public void onClick(DialogInterface dialog,
 											int id) {
 										alertDialog.dismiss();
-										gameLoopThread.startNextLevel();
+										gameLoopThread.startNextLevel(false);
 									}
 								});
 						builder.setNegativeButton(R.string.txtButtonMain,
@@ -163,7 +164,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					alertDialog = builder.create();
 					alertDialog.show();
 				}else if (type=="saved"){
-					gameLoopThread.startNextLevel();
+					gameLoopThread.startNextLevel(false);
 				}
 			}
 		};
@@ -176,7 +177,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
 				Log.i(tag, "Surface destroyed");
-				gameLoopThread.stopGame();
+				//gameLoopThread.stopGame();
 			}
 
 			@Override
@@ -186,7 +187,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 				createMoles();
 				gameLoopThread.setRunning(true);
 				gameLoopThread.start();
-
+				
 			}
 
 			@Override
