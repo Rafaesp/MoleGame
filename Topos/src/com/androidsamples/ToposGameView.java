@@ -9,9 +9,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources.Theme;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -56,8 +57,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	private boolean vibrationEnabled;
 	private boolean endingVibration;
 	private boolean endingEnable;
-	private boolean gameRunning;
-
+	
 	private SoundManager music1Fx;
 
 	public ToposGameView(Context context) {
@@ -86,7 +86,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		missEnabled = sp.getBoolean("MissPref", true);
 		hitEnabled = sp.getBoolean("HitPref", true);
 		vibrationEnabled = sp.getBoolean("VibrationPref", true);
-		endingEnable = sp.getBoolean("EndingVibrationPref", true);
+		endingEnable = sp.getBoolean("EndingPref", true);
 		endingVibration  = sp.getBoolean("EndingVibrationPref", true);
 
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
@@ -176,8 +176,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 
 			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
-				Log.i(tag, "Surface destroyed");
-				//gameLoopThread.stopGame();
 			}
 
 			@Override
@@ -250,7 +248,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		canvas.drawColor(Color.GREEN);
+		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
+		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
@@ -355,6 +354,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 	
 	public boolean getStatusEndingFx(){
+		Log.i("Valor de endindEnable", endingEnable+"");
 		return endingEnable;
 	}
 	public boolean getStatusEndingVibration(){
