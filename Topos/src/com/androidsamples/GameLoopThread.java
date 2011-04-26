@@ -32,7 +32,7 @@ public class GameLoopThread extends Thread {
 	private Integer lives;
 	private Integer points;
 	private Long time;
-	private Float playVelocity = 1.20f;
+	private Double playVelocity = 1.20;
 	private CountDownTimer secondsTimer;
 	private int bigMolesCount;
 	private int weaselCount;
@@ -184,7 +184,7 @@ public class GameLoopThread extends Thread {
 			startTime = System.currentTimeMillis();
 			if (lives <= 0 && !gameOver) {
 				view.reset();
-				canSave = true;
+				canSave = false;
 				levelFinish = true;
 				gameOver = true;
 				gameOver();

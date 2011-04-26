@@ -2,7 +2,6 @@ package com.androidsamples;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -57,7 +56,6 @@ public class ToposGameActivity extends Activity {
 		Log.i("TAG", "OnPauseGameActivity");
 		toposview.getGameLoopThread().saveGame();
 		toposview.getGameLoopThread().stopGame();
-		finish();
 	}
 
 	@Override
@@ -66,7 +64,6 @@ public class ToposGameActivity extends Activity {
 		toposview.getGameLoopThread().saveGame();
 		toposview.getGameLoopThread().stopGame();
 		finish();
-		startActivity(new Intent(getApplicationContext(), topos.class));
 	}
 
 }

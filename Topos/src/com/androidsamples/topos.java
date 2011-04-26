@@ -76,13 +76,6 @@ public class topos extends Activity implements OnClickListener {
 		}
 	}
 	
-	@Override
-	protected void onPause() {
-		finish();
-		super.onPause();
-	}
-
-
 
 	public void onClick(View v) {
 		int id = v.getId();
