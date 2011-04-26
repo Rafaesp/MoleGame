@@ -29,6 +29,7 @@ public class topos extends Activity implements OnClickListener {
 	public static final String PREFS = "prefs";
 	
 	private Button btnContinue;
+	AdView adView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,10 @@ public class topos extends Activity implements OnClickListener {
 		AdView adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
 		LinearLayout layout = (LinearLayout) findViewById(R.id.linearLayout);
 		layout.addView(adView);
-		adView.loadAd(new AdRequest());
+		AdRequest request = new AdRequest();
+		request.setTesting(true);
+		adView.loadAd(request);
+		
 	
 	    TextView title= (TextView) findViewById(R.id.textView1);
         Typeface tf = Typeface.createFromAsset(getAssets(),
@@ -74,6 +78,7 @@ public class topos extends Activity implements OnClickListener {
 		}else{
 			btnContinue.setEnabled(false);
 		}
+	
 	}
 	
 

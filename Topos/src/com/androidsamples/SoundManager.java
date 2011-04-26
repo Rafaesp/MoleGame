@@ -38,7 +38,7 @@ public class SoundManager {
 			 
 		 }else if(type.equals(MUSIC1FX)){
 			
-			 mpMusci1=MediaPlayer.create(context, R.raw.music1_2);
+			 mpMusci1=MediaPlayer.create(context, R.raw.music1);
 			 mpMusci1.setLooping(true);
 		 }
 	 }
