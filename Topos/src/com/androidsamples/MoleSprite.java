@@ -16,15 +16,17 @@ public class MoleSprite extends View{
 	public static final int DIGUPFULL = 0;
 	public static final int HIT1 = 3;
 	public static final int HITFULL = 2;
-	public static final int BIGMOLE = 1; //TODO
+	public static final int ANIMATIONBIG = 2; //TODO
 	public static final int ANIMATIONHIT = 1;
-	public static final int ANIMATIONWEASEL = 2;
+	public static final int ANIMATIONWEASEL = 4;
+	public static final int ANIMATIONWEASELHIT = 5;
+	public static final int ANIMATIONBIGHIT = 3;
 	private static final long ANIMATION_HIT_TIME = 300;
 	private static final long ANIMATION_DIGGING_TIME = 300;
 	private static final int MAX_DIGGING_TICKS = 4; //total number frames of animation -1
 	private static final int MAX_HIT_TICKS = 2;
 	private static final int BMP_ROWS = 5;
-	private static final int BMP_COLUMNS = 2;
+	private static final int BMP_COLUMNS = 6;
 
 	private int posx;
 	private int posy;
@@ -51,7 +53,7 @@ public class MoleSprite extends View{
 	public MoleSprite(ToposGameView view, int posx, int posy) {
 		super(view.getContext());
 		this.view = view;
-		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.dighitsprites);
+		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.todos01);
 		this.width = bmp.getWidth() / BMP_COLUMNS;		
 		this.height = bmp.getHeight() / BMP_ROWS;
 
@@ -88,11 +90,11 @@ public class MoleSprite extends View{
 	}
 
 	public boolean isBig() {
-		return animation == BIGMOLE;
+		return animation == ANIMATIONBIG;
 	}
 
 	public void setBig() {
-		this.animation = BIGMOLE;
+		this.animation = ANIMATIONBIG;
 	}
 	
 	public boolean isWeasel() {
@@ -147,7 +149,14 @@ public class MoleSprite extends View{
 		if(isHit){
 			isDigging = false;
 			diggingTick = 0;
-			animation = ANIMATIONHIT;
+			
+			if(isBig())
+				animation = ANIMATIONBIGHIT;
+			else if(isWeasel())
+				animation = ANIMATIONWEASELHIT;
+			else
+				animation = ANIMATIONHIT;
+			
 			Long timeElapsed = System.currentTimeMillis() - animationHitStartTime;
 			status = HITFULL;
 			if(timeElapsed >= ANIMATION_HIT_TIME/MAX_HIT_TICKS){
