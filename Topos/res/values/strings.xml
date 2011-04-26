@@ -19,7 +19,7 @@
 	<string name="txtValueScore">0</string>
 	<string name="txtAlertDialogFinishedLevel">Finished level</string>
 	<string name="txtButtonNextLevel">Next level</string>
-	<string name="txtButtonMain">Back to menu</string>
+	<string name="txtButtonMain">Save and return</string>
 	<string name="txtAlertDialogGameOver">Game Over</string>
 	<string name="submitScore">Submit score</string>
 	<string name="pref">Preferences</string><string name="sl_networkError">Error while submitting score. Please, check your
