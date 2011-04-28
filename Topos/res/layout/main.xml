@@ -10,16 +10,16 @@
 			android:layout_height="wrap_content" android:layout_gravity="center_horizontal"></TextView>
 		<Button android:layout_width="wrap_content" android:text="@string/btnPlay"
 			android:id="@+id/btnPlay" android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"></Button>
+			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria"></Button>
 		<Button android:layout_width="wrap_content" android:text="@string/btnContinue"
 			android:id="@+id/btnContinue" android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"></Button>
+			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria"></Button>
 		<Button android:layout_width="wrap_content" android:text="@string/btnRanking"
 			android:id="@+id/btnRanking" android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"></Button>
+			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria"></Button>
 		<Button android:layout_width="wrap_content" android:text="@+string/pref"
 			android:id="@+id/prefButton" android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"></Button>
+			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria"></Button>
 	</LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:id="@+id/linearLayout"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
