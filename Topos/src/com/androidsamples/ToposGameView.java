@@ -246,7 +246,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
+		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
 		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
 //		canvas.drawColor(Color.GREEN);
 		needRedraw = false;
