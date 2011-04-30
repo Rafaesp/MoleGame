@@ -16,7 +16,7 @@ public class MoleSprite extends View{
 	public static final int DIGUPFULL = 0;
 	public static final int HIT1 = 3;
 	public static final int HITFULL = 2;
-	public static final int ANIMATIONBIG = 2; //TODO
+	public static final int ANIMATIONBIG = 2;
 	public static final int ANIMATIONHIT = 1;
 	public static final int ANIMATIONWEASEL = 4;
 	public static final int ANIMATIONWEASELHIT = 5;
@@ -150,7 +150,11 @@ public class MoleSprite extends View{
 			isDigging = false;
 			diggingTick = 0;
 			
-			if(isBig())
+			if(animation == ANIMATIONBIGHIT || animation == ANIMATIONWEASELHIT
+					|| animation == ANIMATIONHIT){
+				//Do nothing
+			}
+			else if(isBig())
 				animation = ANIMATIONBIGHIT;
 			else if(isWeasel())
 				animation = ANIMATIONWEASELHIT;
@@ -193,7 +197,6 @@ public class MoleSprite extends View{
 				diggingTick = 0;
 				if(isDiggingDown()){
 					animation = 0;
-					diggingTick = 0;
 				}
 				isDigging = false;
 			}
