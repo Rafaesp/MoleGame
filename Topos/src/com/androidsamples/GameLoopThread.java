@@ -316,7 +316,12 @@ public class GameLoopThread extends Thread {
 
 		sm.startEnding();
 		sm.endingVibrate();
-
+		try {
+			Thread.sleep(600);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		synchronized (view.getHolder()) {
 			Message m = handler.obtainMessage();
 			Bundle data = new Bundle();
