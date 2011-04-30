@@ -2,16 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
     <LinearLayout 
+    	android:id="@+id/infoBar"
     	android:layout_width="fill_parent" 
     	android:layout_height="fill_parent"
     	android:layout_weight="0.93" 
-    	android:orientation="horizontal">
-        <ImageView android:layout_height="wrap_content" android:id="@+id/imageView1" android:layout_width="wrap_content" android:src="@drawable/carrots"></ImageView>
-        <TextView android:id="@+id/txtLives" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:layout_weight="1"></TextView>
-        <TextView android:text="@string/points" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="right" android:layout_weight="1"></TextView>
-        <TextView android:id="@+id/txtPoints" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="right" android:layout_weight="1"></TextView>
-		<TextView android:text="@string/txtTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="right" android:layout_weight="1"></TextView>
-        <TextView android:id="@+id/txtTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="right" android:layout_weight="1"></TextView>
+    	android:orientation="horizontal"
+    	android:background="@drawable/barrainfo" android:layout_gravity="center" android:baselineAligned="false">
+        <TextView android:layout_width="fill_parent" android:text="1" android:id="@+id/txtLevel" android:layout_height="fill_parent" android:gravity="right|center_vertical" android:layout_weight="0.85"></TextView>
+        <TextView android:layout_width="fill_parent" android:text="10" android:id="@+id/txtLives" android:layout_height="fill_parent" android:layout_weight="0.82" android:gravity="right|center_vertical"></TextView>
+        <TextView android:text="0" android:id="@+id/txtPoints" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="0.75" android:gravity="right|center_vertical"></TextView>
+        <TextView android:text="30" android:id="@+id/txtTime" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="0.75" android:gravity="right|center_vertical" android:layout_marginRight="8dp"></TextView>
     </LinearLayout>
 	<com.androidsamples.ToposGameView 
 		android:id="@+id/toposview"

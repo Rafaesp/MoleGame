@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ToposGameActivity extends Activity {
 
 	private ToposGameView toposview;
-
+	private LinearLayout infoBar;
 
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -18,12 +19,8 @@ public class ToposGameActivity extends Activity {
 		setContentView(R.layout.gameview);
 
 		toposview = (ToposGameView) findViewById(R.id.toposview);
-		TextView txtLivesView = (TextView) findViewById(R.id.txtLives);
-		toposview.setLivesTxtView(txtLivesView);
-		TextView txtTimeView = (TextView) findViewById(R.id.txtTime);
-		toposview.setTimeTxtView(txtTimeView);
-		TextView txtPointsView = (TextView) findViewById(R.id.txtPoints);
-		toposview.setPointsTxtView(txtPointsView);
+		infoBar = (LinearLayout) findViewById(R.id.infoBar);
+		toposview.setInfoBar(infoBar);
 
 	}
 

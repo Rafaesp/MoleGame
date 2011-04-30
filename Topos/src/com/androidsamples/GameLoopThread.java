@@ -125,6 +125,17 @@ public class GameLoopThread extends Thread {
 			handler.sendMessage(m);
 		}
 	}
+	
+	public void setLevel(Integer level) {
+		this.level = level;
+		synchronized (view.getHolder()) {
+			Message m = handler.obtainMessage();
+			Bundle data = new Bundle();
+			data.putString("level", level.toString());
+			m.setData(data);
+			handler.sendMessage(m);
+		}
+	}
 
 	public void click(MoleSprite mole) {
 		int newpoints = points;
@@ -301,13 +312,13 @@ public class GameLoopThread extends Thread {
 		if(!start){
 			canSave = false;
 			secondsTimer.cancel();
-			level++;
+			setLevel(level+1);
 			if(level>=7){
 				levelTimeDigDown-=100;
 			}
 		}
 		bigMolesCount = 0;
-		time = levelTimeDuration;
+		setTime(levelTimeDuration/1000);
 		playLoopTime/=playVelocity;
 		levelFinish = false;
 	}

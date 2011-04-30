@@ -6,4 +6,5 @@
     <TextView android:id="@+id/txtLevelX" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/txtLevelX"></TextView>
     <TextView android:id="@+id/txtScore" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/txtScore"></TextView>
     <TextView android:id="@+id/txtValueScore" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/txtValueScore"></TextView>
+    <LinearLayout android:id="@+id/adLayout" android:layout_width="fill_parent" android:layout_height="wrap_content"></LinearLayout>
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.androidsamples;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,9 +25,13 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.scoreloop.client.android.ui.OnScoreSubmitObserver;
 import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
 
@@ -38,11 +44,12 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	private GameLoopThread gameLoopThread;
 	private List<MoleSprite> moles;
 	private boolean needRedraw;
-	private TextView livesTxtView;
-	private TextView pointsTxtView;
-	private TextView timeTxtView;
+	private TextView txtLivesView;
+	private TextView txtPointsView;
+	private TextView txtTimeView;
+	private TextView txtLevelView;
 	private AlertDialog alertDialog;
-
+	private LinearLayout infoBar;
 	private Context context;
 	private ProgressDialog progressd;
 
@@ -68,17 +75,25 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		setOnTouchListener(this);
 
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
-
+				
 		Handler handler = new Handler() {
 			@Override
 			public void handleMessage(Message m) {
+				if(infoBar != null){
+					txtLivesView = (TextView) infoBar.findViewById(R.id.txtLives);
+					txtTimeView = (TextView) infoBar.findViewById(R.id.txtTime);
+					txtPointsView = (TextView) infoBar.findViewById(R.id.txtPoints);
+					txtLevelView = (TextView) infoBar.findViewById(R.id.txtLevel);
+				}
 				Bundle b = m.getData();
 				if (b.getString("lives") != null)
-					livesTxtView.setText(m.getData().getString("lives"));
+					txtLivesView.setText(m.getData().getString("lives"));
+				if (b.getString("level") != null)
+					txtLevelView.setText(m.getData().getString("level"));
 				if (b.getString("points") != null)
-					pointsTxtView.setText(b.getString("points"));
+					txtPointsView.setText(b.getString("points"));
 				if (b.getString("time") != null)
-					timeTxtView.setText(b.getString("time"));
+					txtTimeView.setText(b.getString("time"));
 				
 				String type = b.getString("type");
 				if (type == "level" || type == "gameover"){
@@ -93,6 +108,14 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					TextView txtLevel = (TextView) layout
 							.findViewById(R.id.txtLevelX);
 					txtLevel.setText("Level " + m.getData().getInt("level"));
+									
+//					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
+//					AdRequest request = new AdRequest();
+//
+//					LinearLayout adLayout = (LinearLayout) layout.findViewById(R.id.adLayout);
+//					adLayout.addView(adView);
+//					adView.loadAd(request);
+					
 					builder = new AlertDialog.Builder(getContext());
 					builder.setCancelable(false);
 					builder.setView(layout);
@@ -192,29 +215,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	public List<MoleSprite> getMoles() {
 		return moles;
 	}
-
-	public void setLivesTxtView(TextView txtView) {
-		this.livesTxtView = txtView;
-	}
-
-	public TextView getLivesTxtView() {
-		return livesTxtView;
-	}
-
-	public TextView getPointsTxtView() {
-		return pointsTxtView;
-	}
-
-	public void setPointsTxtView(TextView pointsTxtView) {
-		this.pointsTxtView = pointsTxtView;
-	}
-
-	public TextView getTimeTxtView() {
-		return timeTxtView;
-	}
-
-	public void setTimeTxtView(TextView timeTxtView) {
-		this.timeTxtView = timeTxtView;
+	
+	public void setInfoBar(LinearLayout bar){
+		infoBar = bar;
 	}
 
 	public boolean needRedraw() {
@@ -226,9 +229,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
-		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-//		canvas.drawColor(Color.GREEN);
+//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
+//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+		canvas.drawColor(Color.rgb(00, 0xCD, 00));
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);

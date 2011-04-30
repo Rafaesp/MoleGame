@@ -68,7 +68,6 @@ public class topos extends Activity implements OnClickListener {
 	protected void onResume() {
 		super.onResume();
 		AdRequest request = new AdRequest();
-		request.setTesting(true);
 		adView.loadAd(request);
 		
 		SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
@@ -119,7 +118,6 @@ public class topos extends Activity implements OnClickListener {
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, PREFERENCES, 0, R.string.pref);
 		menu.add(Menu.NONE, SALIR, 1, R.string.btnExit);
-		// menu.add(Menu.NONE, SETTINGS, 0, R.string.btnExit);
 		return true;
 	}
 
