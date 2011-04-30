@@ -61,9 +61,9 @@ public class SoundManager {
 			fxInt=current.load(context, R.raw.laugh01, 1);//TODO recurso de prueba
 
 		}if(musicEnabled){
-
 			mpMusic=MediaPlayer.create(context, R.raw.music1);
 			mpMusic.setLooping(true);
+
 		}if(endingEnabled){
 			mpEnding = MediaPlayer.create(context, R.raw.finish);
 		}
@@ -111,8 +111,6 @@ public class SoundManager {
 	public void stopMusic(){
 		if(mpMusic != null && mpMusic.isPlaying()){
 			mpMusic.stop();
-		}else{
-			throw new RuntimeException("Check stop");
 		}
 	}
 

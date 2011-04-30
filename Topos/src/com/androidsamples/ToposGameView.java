@@ -7,10 +7,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -226,9 +224,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
-		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-//		canvas.drawColor(Color.GREEN);
+//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
+//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+		canvas.drawColor(Color.GREEN);
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
