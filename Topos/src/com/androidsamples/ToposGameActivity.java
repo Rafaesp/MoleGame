@@ -1,11 +1,7 @@
 package com.androidsamples;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
@@ -29,25 +25,6 @@ public class ToposGameActivity extends Activity {
 		TextView txtPointsView = (TextView) findViewById(R.id.txtPoints);
 		toposview.setPointsTxtView(txtPointsView);
 
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-		if(settings.getBoolean("MusicPref", true)){
-			SoundManager music1Fx= new SoundManager("music1Fx", this.getApplicationContext());
-			toposview.setSoundManager(music1Fx);
-			toposview.startMusic1Fx();
-		}
-		if(settings.getBoolean("HitPref", true)){
-			SoundManager hitFx= new SoundManager("hitFx", this.getApplicationContext());
-			toposview.setSoundManager(hitFx);
-		}
-		if(settings.getBoolean("MissPref", true)){
-			SoundManager missFx= new SoundManager("missFx", this.getApplicationContext());
-			toposview.setSoundManager(missFx);
-		}
-		if(settings.getBoolean("VibrationPref", true)){
-			Vibrator vibrator =(Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			toposview.setVibrator(vibrator);
-		}
 	}
 
 	@Override

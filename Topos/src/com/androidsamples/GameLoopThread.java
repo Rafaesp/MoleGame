@@ -5,7 +5,6 @@ import java.util.List;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -36,10 +35,10 @@ public class GameLoopThread extends Thread {
 	private CountDownTimer secondsTimer;
 	private int bigMolesCount;
 	private int weaselCount;
-	private MediaPlayer mp;
 	private boolean canSave;
 	private boolean saved;
 	private boolean timerStarted;
+	private SoundManager sm;
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
@@ -47,11 +46,14 @@ public class GameLoopThread extends Thread {
 		SharedPreferences sp = view.getContext().getSharedPreferences(
 				topos.PREFS, Context.MODE_PRIVATE);
 		saved = sp.getBoolean("saved", false);
-		Log.i("TAG", "Saved?: " + saved + "");
-		
+
+		sm = new SoundManager(view.getContext());
+
+		sm.startMusic();
+
 		levelFinish = false;
 		secondsTimer = doSecondsTimer();
-		
+
 		if (saved) {
 			level = sp.getInt("level", 1);
 			points = sp.getInt("points", 0);
@@ -76,7 +78,7 @@ public class GameLoopThread extends Thread {
 	}
 
 	public void stopGame() {
-		view.stopMusic1Fx();
+		sm.stopMusic();
 		secondsTimer.cancel();
 		boolean retry = true;
 		setRunning(false);
@@ -123,7 +125,7 @@ public class GameLoopThread extends Thread {
 			handler.sendMessage(m);
 		}
 	}
-	
+
 	public void click(MoleSprite mole) {
 		int newpoints = points;
 		if (mole.isBig()) {
@@ -144,7 +146,9 @@ public class GameLoopThread extends Thread {
 			mole.doHit();
 			newpoints += (100 + 10 * (level - 1));
 			setPoints(newpoints);
-		}
+		}				
+		sm.startHit();
+
 	}
 
 	public void setRunning(boolean run) {
@@ -200,16 +204,18 @@ public class GameLoopThread extends Thread {
 					if (mole.isBig()) {
 						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeBigDigDown) {
 							mole.digDown();
-							view.startMissFx();
+							sm.startMiss();
 							int newlives = lives - 3;
 							setLives(newlives);
 						}
 					} else if (mole.isWeasel()) {
-						mole.digDown();
+						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeBigDigDown) {
+							mole.digDown();
+						}
 					} else {
 						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeDigDown) {
 							mole.digDown();
-							view.startMissFx();
+							sm.startMiss();							
 							setLives(--lives);
 						}
 					}
@@ -284,7 +290,7 @@ public class GameLoopThread extends Thread {
 		}
 
 		mole.digUp();
-		
+
 		if(!timerStarted){
 			secondsTimer.start();
 			timerStarted = true;
@@ -307,26 +313,9 @@ public class GameLoopThread extends Thread {
 	}
 
 	public void throwAlertFinalLevel() {
-		try {// Yo lo veo bien aqui pero si quereis puedo meterlo en
-				// SoundManager
 
-			if (view.getStatusEndingFx()) {// el aviso sonoro de finish que
-											// hacemos lo activamos cuando se
-											// activa missFx como esta ahora, o
-											// aparte?
-				mp = MediaPlayer.create(view.getContext(), R.raw.finish);
-				mp.start();
-			}
-			if (view.getStatusEndingVibration()) {
-				Thread.sleep(200);
-				view.startFinishVibrator();
-			}
-			Thread.sleep(800);
-			if (mp != null && mp.isPlaying())
-				mp.stop();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		sm.startEnding();
+		sm.endingVibrate();
 
 		synchronized (view.getHolder()) {
 			Message m = handler.obtainMessage();

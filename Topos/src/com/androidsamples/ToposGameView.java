@@ -7,16 +7,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,19 +40,10 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	private TextView pointsTxtView;
 	private TextView timeTxtView;
 	private AlertDialog alertDialog;
-	private static Vibrator vibrator;
+
 	private Context context;
 	private ProgressDialog progressd;
-	private SoundManager hitFx;
-	private SoundManager missFx;
-	private boolean musicEnabled;
-	private boolean hitEnabled;
-	private boolean missEnabled;
-	private boolean vibrationEnabled;
-	private boolean endingVibration;
-	private boolean endingEnable;
-	
-	private SoundManager music1Fx;
+
 
 	public ToposGameView(Context context) {
 		super(context);
@@ -79,14 +65,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		setFocusable(true);
 		setOnTouchListener(this);
 
-		SharedPreferences sp = PreferenceManager
-				.getDefaultSharedPreferences(context);
-		musicEnabled = sp.getBoolean("MusicPref", true);
-		missEnabled = sp.getBoolean("MissPref", true);
-		hitEnabled = sp.getBoolean("HitPref", true);
-		vibrationEnabled = sp.getBoolean("VibrationPref", true);
-		endingEnable = sp.getBoolean("EndingPref", true);
-		endingVibration  = sp.getBoolean("EndingVibrationPref", true);
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
 		Handler handler = new Handler() {
@@ -246,9 +224,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
-		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-//		canvas.drawColor(Color.GREEN);
+//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
+//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+		canvas.drawColor(Color.GREEN);
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
@@ -272,31 +250,12 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 						if (mole.getStatus() != MoleSprite.HOLE && !mole.isDiggingDown() && !mole.isHit()) {
 							clicked = true;
 							gameLoopThread.click(mole);
-							if (hitEnabled)					
-								hitFx.start();
-							if (vibrationEnabled)
-								vibrator.vibrate(40);
-
 						}
 					}
 				}
 			}
 		}
 		return clicked;
-	}
-
-	public void setVibrator(Vibrator v) {
-		vibrator = v;
-	}
-
-	public void setSoundManager(SoundManager sound) {
-		if (sound.getType().equals("hitFx")) {// TODO poner como constantes
-			hitFx = sound;
-		} else if (sound.getType().equals("missFx")) {
-			missFx = sound;
-		} else if (sound.getType().equals("music1Fx")){
-			music1Fx =sound;
-		}
 	}
 
 	@Override
@@ -323,41 +282,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		((ToposGameActivity)getContext()).finish();
 	}
 
-	public void startMissFx() {
-		if (missEnabled)
-			missFx.start();
-	}
-	
-	public void startMusic1Fx(){
-		if(musicEnabled){
-			music1Fx.start();
-		}
-	}
-	public void stopMusic1Fx(){
-		if(music1Fx!=null && music1Fx.isPlaying()){
-			music1Fx.stop();
-		}
-	}
-	
-	public void startFinishVibrator(){
-		if(vibrationEnabled){
-		vibrator.vibrate(300);
-		try {
-			Thread.sleep(600);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		vibrator.vibrate(300);
-		}
-	}
-	
-	public boolean getStatusEndingFx(){
-		Log.i("Valor de endindEnable", endingEnable+"");
-		return endingEnable;
-	}
-	public boolean getStatusEndingVibration(){
-		return endingVibration;
-	}
+
 
 }
