@@ -6,23 +6,27 @@
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
 		android:layout_weight="1"><!-- 0.17 -->
 		<TextView android:layout_width="wrap_content"
-			android:textSize="50dip" android:text="@string/app_name" android:id="@+id/textView1"
-			android:layout_height="wrap_content" android:layout_gravity="center_horizontal"></TextView>
+			android:textSize="60dp" android:text="@string/app_name" android:id="@+id/textView1"
+			android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:gravity="center_horizontal"></TextView>
 		<Button android:text="@string/btnPlay"
+			android:textSize="20dp"
 			android:id="@+id/btnPlay" android:layout_height="40dp"
 			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria" android:layout_marginBottom="5dp" android:layout_marginTop="10dp" android:layout_width="150dp"></Button>
 		<Button android:text="@string/btnContinue"
+			android:textSize="20dp"
 			android:id="@+id/btnContinue" android:layout_height="40dp"
 			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria" android:layout_marginBottom="5dp" android:layout_width="150dp"></Button>
 		<Button android:text="@string/btnRanking"
+			android:textSize="20dp"
 			android:id="@+id/btnRanking" android:layout_height="40dp"
 			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria" android:layout_marginBottom="5dp" android:layout_width="150dp"></Button>
 		<Button android:text="@string/pref"
+			android:textSize="20dp"
 			android:id="@+id/prefButton" android:layout_height="40dp"
 			android:layout_gravity="center_horizontal" android:background="@drawable/botonzanahoria" android:layout_width="150dp"></Button>
 	</LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:id="@+id/linearLayout"
-		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:layout_width="fill_parent" android:layout_height="100dp"
 		android:layout_weight="1" android:layout_gravity="left"></LinearLayout>
 		<!-- 0.83 -->
 </LinearLayout>

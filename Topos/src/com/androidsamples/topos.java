@@ -3,6 +3,8 @@ package com.androidsamples;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,21 +47,25 @@ public class topos extends Activity implements OnClickListener {
 		layout.addView(adView);
 	
 	    TextView title= (TextView) findViewById(R.id.textView1);
-        Typeface tf = Typeface.createFromAsset(getAssets(),
-        "fonts/aggstock.ttf");
+        Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/gooddogp.ttf");
+        title.setTextColor(Color.rgb(0xFF, 0x7F	, 00));
         title.setTypeface(tf);
 		
 		Button btnPlay = (Button) findViewById(R.id.btnPlay);
 		btnPlay.setOnClickListener(this);
+		btnPlay.setTypeface(tf);
 		
 		btnContinue = (Button) findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
-
+		btnContinue.setTypeface(tf);
+		
 		Button btnRanking = (Button) findViewById(R.id.btnRanking);
 		btnRanking.setOnClickListener(this);
-
+		btnRanking.setTypeface(tf);
+		
 		Button prefBtn = (Button) findViewById(R.id.prefButton);
 		prefBtn.setOnClickListener(this);
+		prefBtn.setTypeface(tf);
 	}
 	
 	
