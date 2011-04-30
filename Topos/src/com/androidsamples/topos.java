@@ -40,13 +40,9 @@ public class topos extends Activity implements OnClickListener {
 		setContentView(R.layout.main);
 
 
-		AdView adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
+		adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
 		LinearLayout layout = (LinearLayout) findViewById(R.id.linearLayout);
 		layout.addView(adView);
-		AdRequest request = new AdRequest();
-		request.setTesting(true);
-		adView.loadAd(request);
-		
 	
 	    TextView title= (TextView) findViewById(R.id.textView1);
         Typeface tf = Typeface.createFromAsset(getAssets(),
@@ -71,6 +67,10 @@ public class topos extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		AdRequest request = new AdRequest();
+		request.setTesting(true);
+		adView.loadAd(request);
+		
 		SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
 		Log.i("TAG", "OnResume");
 		if(sp.getBoolean("saved", false)){
