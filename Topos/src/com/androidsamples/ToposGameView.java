@@ -7,8 +7,10 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -110,7 +112,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 										progressd.show();
 									}
 								});
-						builder.setNegativeButton(R.string.txtButtonMain,
+						builder.setNegativeButton(R.string.txtButtonBack,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int id) {
@@ -129,7 +131,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 										gameLoopThread.startNextLevel(false);
 									}
 								});
-						builder.setNegativeButton(R.string.txtButtonMain,
+						builder.setNegativeButton(R.string.txtButtonBackSave,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int id) {
@@ -224,9 +226,9 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedp);		
-//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-		canvas.drawColor(Color.GREEN);
+		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
+		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+//		canvas.drawColor(Color.GREEN);
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
