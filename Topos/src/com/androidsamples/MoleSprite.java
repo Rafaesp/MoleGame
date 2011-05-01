@@ -1,5 +1,7 @@
 package com.androidsamples;
 
+import com.androidsamples.ToposGameView.RectPair;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -46,7 +48,6 @@ public class MoleSprite extends View{
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
 	private int diggingTick = 0; //How many frames have we already shown
 	private int bigClicks;
-
 
 	private static final String tag = "TAG";
 
@@ -120,11 +121,14 @@ public class MoleSprite extends View{
 	public void onDraw(Canvas canvas) {
 		dig();
 		hit();
-		int srcy = status * height;
-		int srcx = animation * width;
-		Rect src = new Rect(srcx, srcy, srcx+width, srcy+height);
-		Rect dst = new Rect(getX(), getY(), getX()+getMoleWidth(), getY()+getMoleHeight());
-		canvas.drawBitmap(bmp, src, dst, null);   
+		if(view.getStatusMap().containsKey(status+""+animation+getX()+getY())){
+			canvas.drawBitmap(bmp, view.getStatusMap().get(status+""+animation+getX()+getY()).src, view.getStatusMap().get(status+""+animation+getX()+getY()).dst, null);
+		}else{
+			Rect src = new Rect(animation * width, status * height, animation * width+width, status * height+height);
+			Rect dst = new Rect(getX(), getY(), getX()+getMoleWidth(), getY()+getMoleHeight());
+			view.getStatusMap().put(status+""+animation+getX()+getY(), view.new RectPair(src, dst));
+			canvas.drawBitmap(bmp, src, dst, null);
+		}
 	}
 	public boolean isClicked(float eventx, float eventy){
 		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;

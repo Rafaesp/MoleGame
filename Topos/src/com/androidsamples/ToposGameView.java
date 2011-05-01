@@ -1,6 +1,7 @@
 package com.androidsamples;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -36,7 +37,7 @@ import com.scoreloop.client.android.ui.OnScoreSubmitObserver;
 import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
 
 public class ToposGameView extends SurfaceView implements OnTouchListener,
-		OnScoreSubmitObserver {
+OnScoreSubmitObserver {
 
 	private static final String tag = "TAG";
 
@@ -52,6 +53,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	private LinearLayout infoBar;
 	private Context context;
 	private ProgressDialog progressd;
+	private HashMap<String,RectPair> statusMap;
 
 
 	public ToposGameView(Context context) {
@@ -75,7 +77,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 		setOnTouchListener(this);
 
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
-				
+
 		Handler handler = new Handler() {
 			@Override
 			public void handleMessage(Message m) {
@@ -94,73 +96,73 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 					txtPointsView.setText(b.getString("points"));
 				if (b.getString("time") != null)
 					txtTimeView.setText(b.getString("time"));
-				
+
 				String type = b.getString("type");
 				if (type == "level" || type == "gameover"){
-					
+
 					AlertDialog.Builder builder;
 					LayoutInflater inflater = (LayoutInflater) getContext()
-							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					View layout = inflater.inflate(R.layout.levelview, null);
 					TextView levelScore = (TextView) layout
-							.findViewById(R.id.txtValueScore);
+					.findViewById(R.id.txtValueScore);
 					levelScore.setText(m.getData().getString("points"));
 					TextView txtLevel = (TextView) layout
-							.findViewById(R.id.txtLevelX);
+					.findViewById(R.id.txtLevelX);
 					txtLevel.setText("Level " + m.getData().getInt("level"));
-									
+
 					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
 					AdRequest request = new AdRequest();
 
 					LinearLayout adLayout = (LinearLayout) layout.findViewById(R.id.adLayout);
 					adLayout.addView(adView);
 					adView.loadAd(request);
-					
+
 					builder = new AlertDialog.Builder(getContext());
 					builder.setCancelable(false);
 					builder.setView(layout);
-					
+
 					if (m.getData().getString("type") == "gameover") {
 						builder.setTitle(R.string.txtAlertDialogGameOver);
 						final Double sc = new Double(b.getString("points"));
 						builder.setPositiveButton(R.string.submitScore,
 								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										ScoreloopManagerSingleton.get()
-												.onGamePlayEnded(sc, null);
-										progressd = new ProgressDialog(context);
-										progressd
-												.setMessage("Submitting score, please wait.");
-										progressd.show();
-									}
-								});
+							public void onClick(DialogInterface dialog,
+									int id) {
+								ScoreloopManagerSingleton.get()
+								.onGamePlayEnded(sc, null);
+								progressd = new ProgressDialog(context);
+								progressd
+								.setMessage("Submitting score, please wait.");
+								progressd.show();
+							}
+						});
 						builder.setNegativeButton(R.string.txtButtonBack,
 								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										
-										goMainMenu();
-										
-									}
-								});
+							public void onClick(DialogInterface dialog,
+									int id) {
+
+								goMainMenu();
+
+							}
+						});
 					} else if(b.getString("type")=="level"){
 						builder.setTitle(R.string.txtAlertDialogFinishedLevel);
 						builder.setPositiveButton(R.string.txtButtonNextLevel,
 								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										alertDialog.dismiss();
-										gameLoopThread.startNextLevel(false);
-									}
-								});
+							public void onClick(DialogInterface dialog,
+									int id) {
+								alertDialog.dismiss();
+								gameLoopThread.startNextLevel(false);
+							}
+						});
 						builder.setNegativeButton(R.string.txtButtonBackSave,
 								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										goMainMenu();
-									}
-								});
+							public void onClick(DialogInterface dialog,
+									int id) {
+								goMainMenu();
+							}
+						});
 					}
 					alertDialog = builder.create();
 					alertDialog.show();
@@ -186,7 +188,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 				createMoles();
 				gameLoopThread.setRunning(true);
 				gameLoopThread.start();
-				
+
 			}
 
 			@Override
@@ -196,6 +198,7 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 			}
 		});
 
+		statusMap = new HashMap<String, RectPair>();
 	}
 
 	private void createMoles() {
@@ -214,9 +217,13 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	public List<MoleSprite> getMoles() {
 		return moles;
 	}
-	
+
 	public void setInfoBar(LinearLayout bar){
 		infoBar = bar;
+	}
+
+	public HashMap<String, RectPair> getStatusMap() {
+		return statusMap;
 	}
 
 	public boolean needRedraw() {
@@ -228,8 +235,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	}
 
 	protected void onDraw(Canvas canvas) {
-//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
-//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+		//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
+		//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
 		canvas.drawColor(Color.rgb(00, 0xCD, 00));
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
@@ -285,7 +292,13 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 	public void goMainMenu() {
 		((ToposGameActivity)getContext()).finish();
 	}
-
-
-
+	
+	class RectPair{
+		public Rect src;
+		public Rect dst;
+		public RectPair(Rect r1, Rect r2){
+			src = r1;
+			dst = r2;
+		}
+	}
 }
