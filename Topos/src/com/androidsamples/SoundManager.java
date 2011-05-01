@@ -21,6 +21,7 @@ public class SoundManager {
 	private Integer fxInt;
 	private MediaPlayer mpMusic;
 	private MediaPlayer mpEnding;
+	private MediaPlayer mpMiss;
 	private Vibrator vibrator;
 	private boolean vibrationEnabled;
 	private boolean endingEnabled;
@@ -42,23 +43,20 @@ public class SoundManager {
 		hitEnabled = sp.getBoolean("HitPref", true);
 		missEnabled = sp.getBoolean("MissPref", true);
 
-		if(musicEnabled || hitEnabled || 
-				missEnabled || endingEnabled)
-			current=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
-
 		if(endingVibration)
 			vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
 		if(hitEnabled){
+			current=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
 			listHitFX= new ArrayList<Integer>();	 		
 			listHitFX.add(current.load(context, R.raw.hit01, 1));
 			// listHitFX.add(current.load(context, R.raw.hit02, 1)); hit02 es el que estaba mal
 			listHitFX.add(current.load(context, R.raw.hit03, 1));
 			listHitFX.add(current.load(context, R.raw.hit04, 1));
 			listHitFX.add(current.load(context, R.raw.hit05, 1));
+		
 		}if(missEnabled){
-
-			fxInt=current.load(context, R.raw.laugh01, 1);//TODO recurso de prueba
+			mpMiss = MediaPlayer.create(context, R.raw.laugh01);
 
 		}if(musicEnabled){
 			mpMusic=MediaPlayer.create(context, R.raw.music1);
@@ -78,7 +76,7 @@ public class SoundManager {
 	}
 	public void startMiss(){
 		if(missEnabled)
-			current.play(fxInt, 1.0f, 1.0f, 0, 0, 1.5f);	 
+			mpMiss.start();
 	}
 	public void startMusic(){
 		if(musicEnabled)
