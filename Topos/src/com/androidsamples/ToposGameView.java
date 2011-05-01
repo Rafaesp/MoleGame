@@ -109,12 +109,12 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 							.findViewById(R.id.txtLevelX);
 					txtLevel.setText("Level " + m.getData().getInt("level"));
 									
-//					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
-//					AdRequest request = new AdRequest();
-//
-//					LinearLayout adLayout = (LinearLayout) layout.findViewById(R.id.adLayout);
-//					adLayout.addView(adView);
-//					adView.loadAd(request);
+					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
+					AdRequest request = new AdRequest();
+
+					LinearLayout adLayout = (LinearLayout) layout.findViewById(R.id.adLayout);
+					adLayout.addView(adView);
+					adView.loadAd(request);
 					
 					builder = new AlertDialog.Builder(getContext());
 					builder.setCancelable(false);
