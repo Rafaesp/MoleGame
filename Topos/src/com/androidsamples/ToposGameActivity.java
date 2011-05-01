@@ -32,12 +32,4 @@ public class ToposGameActivity extends Activity {
 		toposview.getGameLoopThread().stopGame();
 	}
 
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-		toposview.getGameLoopThread().saveGame();
-		toposview.getGameLoopThread().stopGame();
-		finish();
-	}
-
 }

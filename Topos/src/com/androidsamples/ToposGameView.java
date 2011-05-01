@@ -88,8 +88,8 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 				Bundle b = m.getData();
 				if (b.getString("lives") != null)
 					txtLivesView.setText(m.getData().getString("lives"));
-				if (b.getString("level") != null)
-					txtLevelView.setText(m.getData().getString("level"));
+				if (b.getInt("level") != 0)
+					txtLevelView.setText(m.getData().getInt("level")+"");
 				if (b.getString("points") != null)
 					txtPointsView.setText(b.getString("points"));
 				if (b.getString("time") != null)
@@ -205,7 +205,6 @@ public class ToposGameView extends SurfaceView implements OnTouchListener,
 				moles.add(mole);
 			}
 		}
-		Log.i(tag, "Moles created");
 	}
 
 	public GameLoopThread getGameLoopThread() {

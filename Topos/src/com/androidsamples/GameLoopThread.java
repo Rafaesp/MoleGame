@@ -86,7 +86,7 @@ public class GameLoopThread extends Thread {
 			try {
 				join();
 				retry = false;
-
+				Log.i(tag, "Join thread");
 			} catch (InterruptedException i) {
 
 			}
@@ -131,7 +131,7 @@ public class GameLoopThread extends Thread {
 		synchronized (view.getHolder()) {
 			Message m = handler.obtainMessage();
 			Bundle data = new Bundle();
-			data.putString("level", level.toString());
+			data.putInt("level", level);
 			m.setData(data);
 			handler.sendMessage(m);
 		}
