@@ -12,9 +12,9 @@
 	<string name="txtSound">Sound</string>
 	<string name="txtFailed">Carrots remaining:</string>
 	<string name="points">Points:</string>
-
 	<string name="txtTime">Time</string>
-	<string name="txtLevelX">Level X</string>
+	<string name="txtTitleLevelView">Title</string>
+	<string name="txtLevel">Level:</string>
 	<string name="txtScore">Score:</string>
 	<string name="txtValueScore">0</string>
 	<string name="txtAlertDialogFinishedLevel">Finished level</string>

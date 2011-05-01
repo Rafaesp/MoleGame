@@ -9,16 +9,16 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -26,7 +26,9 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +51,7 @@ OnScoreSubmitObserver {
 	private TextView txtPointsView;
 	private TextView txtTimeView;
 	private TextView txtLevelView;
-	private AlertDialog alertDialog;
+	private PopupWindow pw;
 	private LinearLayout infoBar;
 	private Context context;
 	private ProgressDialog progressd;
@@ -97,35 +99,58 @@ OnScoreSubmitObserver {
 				String type = b.getString("type");
 				if (type == "level" || type == "gameover"){
 
-					AlertDialog.Builder builder;
 					LayoutInflater inflater = (LayoutInflater) getContext()
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					View layout = inflater.inflate(R.layout.levelview, null);
-					TextView levelScore = (TextView) layout
+					View levelLayout = inflater.inflate(R.layout.levelview, null);
+					TextView levelValueScore = (TextView) levelLayout
 					.findViewById(R.id.txtValueScore);
-					levelScore.setText(m.getData().getString("points"));
-					TextView txtLevel = (TextView) layout
-					.findViewById(R.id.txtLevelX);
-					txtLevel.setText("Level " + m.getData().getInt("level"));
+					levelValueScore.setText(m.getData().getString("points"));
+					TextView levelScore = (TextView) levelLayout
+					.findViewById(R.id.txtScore);
+					TextView txtLevel = (TextView) levelLayout
+					.findViewById(R.id.txtLevel);
+					TextView txtValueLevel = (TextView) levelLayout
+					.findViewById(R.id.txtValueLevel);
+					txtValueLevel.setText(m.getData().getInt("level")+"");
+					TextView txtTitle = (TextView) levelLayout.findViewById(R.id.txtTitle);
+					
+					Button positiveBtn = (Button) levelLayout.findViewById(R.id.btnNext);
+					Button backBtn = (Button) levelLayout.findViewById(R.id.btnBack);
+				
+					Typeface tf = Typeface.createFromAsset(context.getAssets(),"fonts/gooddogp.ttf");
+			        levelScore.setTypeface(tf);
+			        levelScore.setTextColor(Color.rgb(0xFF, 0x7F, 00));
+			        levelValueScore.setTypeface(tf);
+			        levelValueScore.setTextColor(Color.rgb(0xFF, 0x7F, 00));
+			        txtValueLevel.setTypeface(tf);
+			        txtValueLevel.setTextColor(Color.rgb(0xFF, 0x7F, 00));
+			        txtLevel.setTypeface(tf);
+			        txtLevel.setTextColor(Color.rgb(0xFF, 0x7F, 00));
+			        txtTitle.setTypeface(tf);
+			        txtTitle.setTextColor(Color.rgb(0xFF, 0x7F, 00));
+			        positiveBtn.setTypeface(tf);
+			        txtValueLevel.setTypeface(tf);
+			        backBtn.setTypeface(tf);
+					levelLayout.setBackgroundColor(Color.BLUE);
+
+					pw = new PopupWindow(levelLayout,320,200);
 
 					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
 					AdRequest request = new AdRequest();
 
-					LinearLayout adLayout = (LinearLayout) layout.findViewById(R.id.adLayout);
+					LinearLayout adLayout = (LinearLayout) levelLayout.findViewById(R.id.adLayout);
 					adLayout.addView(adView);
 					adView.loadAd(request);
 
-					builder = new AlertDialog.Builder(getContext());
-					builder.setCancelable(false);
-					builder.setView(layout);
-
 					if (m.getData().getString("type") == "gameover") {
-						builder.setTitle(R.string.txtAlertDialogGameOver);
+						txtTitle.setText(R.string.txtAlertDialogGameOver);
 						final Double sc = new Double(b.getString("points"));
-						builder.setPositiveButton(R.string.submitScore,
-								new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int id) {
+
+						positiveBtn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
 								ScoreloopManagerSingleton.get()
 								.onGamePlayEnded(sc, null);
 								progressd = new ProgressDialog(context);
@@ -134,35 +159,39 @@ OnScoreSubmitObserver {
 								progressd.show();
 							}
 						});
-						builder.setNegativeButton(R.string.txtButtonBack,
-								new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int id) {
+						backBtn.setText(R.string.txtButtonBack);
+						backBtn.setOnClickListener(new OnClickListener() {
 
-								goMainMenu();
-
+							@Override
+							public void onClick(View v) {
+								goMainMenu();								
 							}
 						});
+
 					} else if(b.getString("type")=="level"){
-						builder.setTitle(R.string.txtAlertDialogFinishedLevel);
-						builder.setPositiveButton(R.string.txtButtonNextLevel,
-								new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int id) {
-								alertDialog.dismiss();
+						txtTitle.setText(R.string.txtAlertDialogFinishedLevel);
+
+						positiveBtn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								pw.dismiss();
 								gameLoopThread.startNextLevel(false);
 							}
 						});
-						builder.setNegativeButton(R.string.txtButtonBackSave,
-								new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int id) {
-								goMainMenu();
+						backBtn.setText(R.string.txtButtonBackSave);
+						backBtn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								goMainMenu();								
 							}
 						});
 					}
-					alertDialog = builder.create();
-					alertDialog.show();
+
+					ToposGameView toposview = (ToposGameView) findViewById(R.id.toposview);
+					pw.showAtLocation(toposview, Gravity.CENTER_VERTICAL, 0, 0);
 				}else if (type=="saved"){
 					gameLoopThread.startNextLevel(false);
 				}

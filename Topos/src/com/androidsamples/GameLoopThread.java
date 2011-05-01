@@ -58,12 +58,13 @@ public class GameLoopThread extends Thread {
 		secondsTimer = doSecondsTimer();
 
 		if (saved) {
-			level = sp.getInt("level", 1);
+			level = sp.getInt("level", 0);
 			points = sp.getInt("points", 0);
 			lives = sp.getInt("lives", 10);
+			time = levelTimeDuration/1000;
 			playLoopTime = sp.getLong("playLoopTime", 1000);		
 		}else{
-			level = 1;
+			level = 0;
 			points = 0;
 			lives = 10;
 			startNextLevel(true);
@@ -292,15 +293,7 @@ public class GameLoopThread extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		synchronized (view.getHolder()) {
-			Message m = handler.obtainMessage();
-			Bundle data = new Bundle();
-			data.putString("type", "level");
-			data.putInt("level", level);
-			data.putString("points", points.toString());
-			m.setData(data);
-			handler.sendMessage(m);
-		}
+		updateInfoBar("level");
 	}
 
 	public void saveGame() {
