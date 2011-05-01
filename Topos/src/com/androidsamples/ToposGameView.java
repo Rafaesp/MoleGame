@@ -88,14 +88,11 @@ OnScoreSubmitObserver {
 					txtLevelView = (TextView) infoBar.findViewById(R.id.txtLevel);
 				}
 				Bundle b = m.getData();
-				if (b.getString("lives") != null)
-					txtLivesView.setText(m.getData().getString("lives"));
-				if (b.getInt("level") != 0)
-					txtLevelView.setText(m.getData().getInt("level")+"");
-				if (b.getString("points") != null)
-					txtPointsView.setText(b.getString("points"));
-				if (b.getString("time") != null)
-					txtTimeView.setText(b.getString("time"));
+
+				txtLivesView.setText(m.getData().getString("lives"));
+				txtLevelView.setText(m.getData().getInt("level")+"");
+				txtPointsView.setText(b.getString("points"));
+				txtTimeView.setText(b.getString("time"));
 
 				String type = b.getString("type");
 				if (type == "level" || type == "gameover"){
@@ -292,7 +289,7 @@ OnScoreSubmitObserver {
 	public void goMainMenu() {
 		((ToposGameActivity)getContext()).finish();
 	}
-	
+
 	class RectPair{
 		public Rect src;
 		public Rect dst;

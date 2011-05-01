@@ -39,6 +39,8 @@ public class GameLoopThread extends Thread {
 	private boolean saved;
 	private boolean timerStarted;
 	private SoundManager sm;
+	private Message msg;
+	private Bundle data;
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
@@ -48,8 +50,9 @@ public class GameLoopThread extends Thread {
 		saved = sp.getBoolean("saved", false);
 
 		sm = new SoundManager(view.getContext());
-
 		sm.startMusic();
+		
+		data = new Bundle();
 
 		levelFinish = false;
 		secondsTimer = doSecondsTimer();
@@ -58,23 +61,14 @@ public class GameLoopThread extends Thread {
 			level = sp.getInt("level", 1);
 			points = sp.getInt("points", 0);
 			lives = sp.getInt("lives", 10);
-			playLoopTime = sp.getLong("playLoopTime", 1000);
-			synchronized (view.getHolder()) {
-				Message m = handler.obtainMessage();
-				Bundle data = new Bundle();
-				data.putString("type", "saved");
-				data.putInt("level", level);
-				data.putString("lives", lives.toString());
-				data.putString("points", points.toString());
-				m.setData(data);
-				handler.sendMessage(m);
-			}
-		} else {
+			playLoopTime = sp.getLong("playLoopTime", 1000);		
+		}else{
 			level = 1;
-			setPoints(0);
-			setLives(10);
+			points = 0;
+			lives = 10;
 			startNextLevel(true);
 		}
+		updateInfoBar("saved");
 	}
 
 	public void stopGame() {
@@ -92,50 +86,22 @@ public class GameLoopThread extends Thread {
 			}
 		}
 	}
-
-	public void setLives(int newlives) {
-		lives = newlives;
-		synchronized (view.getHolder()) {
-			Message m = handler.obtainMessage();
-			Bundle data = new Bundle();
-			data.putString("lives", lives.toString());
-			m.setData(data);
-			handler.sendMessage(m);
-		}
-	}
-
-	public void setTime(long seconds) {
-		time = seconds;
-		synchronized (view.getHolder()) {
-			Message m = handler.obtainMessage();
-			Bundle data = new Bundle();
-			data.putString("time", time.toString());
-			m.setData(data);
-			handler.sendMessage(m);
-		}
-	}
-
-	public void setPoints(Integer points) {
-		this.points = points;
-		synchronized (view.getHolder()) {
-			Message m = handler.obtainMessage();
-			Bundle data = new Bundle();
-			data.putString("points", points.toString());
-			m.setData(data);
-			handler.sendMessage(m);
-		}
-	}
 	
-	public void setLevel(Integer level) {
-		this.level = level;
+	public void updateInfoBar(String type){
 		synchronized (view.getHolder()) {
-			Message m = handler.obtainMessage();
-			Bundle data = new Bundle();
+			if(handler.hasMessages(0))
+				handler.removeMessages(0);
+			data.putString("type", type);
+			data.putString("time", time.toString());
 			data.putInt("level", level);
-			m.setData(data);
-			handler.sendMessage(m);
-		}
+			data.putString("lives", lives.toString());
+			data.putString("points", points.toString());
+			msg = handler.obtainMessage(0);
+			msg.setData(data);
+			handler.sendMessage(msg);
+		}		
 	}
+
 
 	public void click(MoleSprite mole) {
 		int newpoints = points;
@@ -145,18 +111,21 @@ public class GameLoopThread extends Thread {
 			else {
 				mole.resetBigClicks();
 				newpoints += (300 + 10 * (level - 1));
-				setPoints(newpoints);
+				points = newpoints;
+				updateInfoBar("");
 				mole.doHit();
 			}
 		} else if (mole.isWeasel()) {
 			mole.doHit();
 			newpoints -= 500;
-			setPoints(newpoints);
+			points = newpoints;
+			updateInfoBar("");
 
 		} else {
 			mole.doHit();
 			newpoints += (100 + 10 * (level - 1));
-			setPoints(newpoints);
+			points = newpoints;
+			updateInfoBar("");
 		}				
 		sm.startHit();
 
@@ -170,11 +139,13 @@ public class GameLoopThread extends Thread {
 		return new CountDownTimer(levelTimeDuration, 1000) {
 
 			public void onTick(long millisUntilFinished) {
-				setTime(millisUntilFinished / 1000);
+				time = millisUntilFinished / 1000;
+				updateInfoBar("");
 			}
 
 			public void onFinish() {
-				setTime(0);
+				time = 0l;
+				updateInfoBar("");
 				view.reset();
 				levelFinish = true;
 				canSave = true;
@@ -202,7 +173,7 @@ public class GameLoopThread extends Thread {
 				canSave = false;
 				levelFinish = true;
 				gameOver = true;
-				gameOver();
+				updateInfoBar("gameover");
 			} else if(System.currentTimeMillis() - playLoopStartTime > playLoopTime
 					&& !levelFinish) {
 				play();
@@ -216,8 +187,8 @@ public class GameLoopThread extends Thread {
 						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeBigDigDown) {
 							mole.digDown();
 							sm.startMiss();
-							int newlives = lives - 3;
-							setLives(newlives);
+							lives = lives - 3;
+							updateInfoBar("");
 						}
 					} else if (mole.isWeasel()) {
 						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeBigDigDown) {
@@ -227,7 +198,8 @@ public class GameLoopThread extends Thread {
 						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeDigDown) {
 							mole.digDown();
 							sm.startMiss();							
-							setLives(--lives);
+							--lives;
+							updateInfoBar("");
 						}
 					}
 
@@ -262,19 +234,6 @@ public class GameLoopThread extends Thread {
 
 		}
 
-	}
-
-	private void gameOver() {
-		synchronized (view.getHolder()) {
-			Message m = handler.obtainMessage();
-			Bundle data = new Bundle();
-			data.putString("type", "gameover");
-			data.putInt("level", level);
-			data.putInt("time", 0);
-			data.putString("points", points.toString());
-			m.setData(data);
-			handler.sendMessage(m);
-		}
 	}
 
 	private void play() {
@@ -312,15 +271,16 @@ public class GameLoopThread extends Thread {
 		if(!start){
 			canSave = false;
 			secondsTimer.cancel();
-			setLevel(level+1);
+			level++;
 			if(level>=7){
 				levelTimeDigDown-=100;
 			}
 		}
 		bigMolesCount = 0;
-		setTime(levelTimeDuration/1000);
+		time = levelTimeDuration/1000;
 		playLoopTime/=playVelocity;
 		levelFinish = false;
+		updateInfoBar("");
 	}
 
 	public void throwAlertFinalLevel() {
@@ -330,7 +290,6 @@ public class GameLoopThread extends Thread {
 		try {
 			Thread.sleep(600);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		synchronized (view.getHolder()) {
