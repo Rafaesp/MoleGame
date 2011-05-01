@@ -30,6 +30,7 @@ public class ToposGameActivity extends Activity {
 		Log.i("TAG", "OnPauseGameActivity");
 		toposview.getGameLoopThread().saveGame();
 		toposview.getGameLoopThread().stopGame();
+		System.gc();
 	}
 
 }
