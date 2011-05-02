@@ -50,7 +50,6 @@ public class GameLoopThread extends Thread {
 		saved = sp.getBoolean("saved", false);
 
 		sm = new SoundManager(view.getContext());
-		sm.startMusic();
 		
 		data = new Bundle();
 
@@ -151,6 +150,7 @@ public class GameLoopThread extends Thread {
 				levelFinish = true;
 				canSave = true;
 				timerStarted = false;
+				sm.stopMusic();
 				if (!gameOver)
 					throwAlertFinalLevel();
 			}
@@ -281,6 +281,7 @@ public class GameLoopThread extends Thread {
 		time = levelTimeDuration/1000;
 		playLoopTime/=playVelocity;
 		levelFinish = false;
+		sm.startMusic();
 		updateInfoBar("");
 	}
 
