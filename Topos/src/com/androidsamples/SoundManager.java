@@ -1,8 +1,5 @@
 package com.androidsamples;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -15,9 +12,9 @@ import android.preference.PreferenceManager;
 public class SoundManager {
 
 	private Context context;
-	private SoundPool current;
-	private List<Integer> listHitFX;
+	private SoundPool spool;
 	private Integer fxMiss;
+	private Integer fxHit;
 	private MediaPlayer mpMusic;
 	private MediaPlayer mpEnding;
 	private Vibrator vibrator;
@@ -44,18 +41,15 @@ public class SoundManager {
 		if(endingVibration)
 			vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-		if(hitEnabled){
-			current=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
-			listHitFX= new ArrayList<Integer>();	 		
-			listHitFX.add(current.load(context, R.raw.hit01, 1));
-			// listHitFX.add(current.load(context, R.raw.hit02, 1)); hit02 es el que estaba mal
-			listHitFX.add(current.load(context, R.raw.hit03, 1));
-			listHitFX.add(current.load(context, R.raw.hit04, 1));
-			listHitFX.add(current.load(context, R.raw.hit05, 1));
-		
+		if(hitEnabled || missEnabled){
+			spool=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);	
+
+			if(hitEnabled)
+				fxHit = spool.load(context, R.raw.punch, 1);
+
 		}if(missEnabled){
-			fxMiss=current.load(context, R.raw.laugh01, 1);
-			
+			fxMiss=spool.load(context, R.raw.laugh01, 1);
+
 		}if(musicEnabled){
 			mpMusic=MediaPlayer.create(context, R.raw.bgmusic);
 
@@ -65,26 +59,26 @@ public class SoundManager {
 	}
 
 	public void startHit(){
-		if(hitEnabled){
-			current.play(listHitFX.get((int) (listHitFX.size()*Math.random())), 1.0f, 1.0f, 0, 0, 1.5f);
-			if (vibrationEnabled)
-				vibrator.vibrate(40);
-		}
+		if(hitEnabled)
+			spool.play(fxHit, 1.0f, 1.0f, 0, 0, 1.5f);
+		if (vibrationEnabled)
+			vibrator.vibrate(40);
+
 	}
 	public void startMiss(){
 		if(missEnabled)
-			current.play(fxMiss, 1.0f, 1.0f, 0, 0, 1.5f);
+			spool.play(fxMiss, 1.0f, 1.0f, 0, 0, 1.5f);
 	}
 	public void startMusic(){
 		if(musicEnabled)
 			mpMusic.start();
 	}
-	
+
 	public void startEnding(){
 		if(endingEnabled)
 			mpEnding.start();
 	}
-	
+
 	public void endingVibrate(){
 		if(vibrationEnabled){
 			vibrator.vibrate(300);
@@ -95,7 +89,7 @@ public class SoundManager {
 				e.printStackTrace();
 			}
 			vibrator.vibrate(300);
-			}
+		}
 	}
 
 	public void stopMusic(){
@@ -103,18 +97,18 @@ public class SoundManager {
 			mpMusic.stop();
 		}
 	}
-	
+
 	public void release(){
 		if(musicEnabled)
 			mpMusic.release();
 		if(endingEnabled)
 			mpEnding.release();
 		if(hitEnabled || missEnabled)
-			current.release();
-		
+			spool.release();
+
 		mpMusic = null;
 		mpEnding = null;
-		current = null;
+		spool = null;
 	}
 
 
