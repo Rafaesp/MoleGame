@@ -7,7 +7,7 @@
     	android:layout_height="fill_parent"
     	android:layout_weight="0.93" 
     	android:orientation="horizontal"
-    	android:background="@drawable/barrainfo" android:layout_gravity="center" android:baselineAligned="false">
+    	android:background="@drawable/infobar" android:layout_gravity="center" android:baselineAligned="false">
         <TextView android:layout_width="fill_parent" android:text="1" android:id="@+id/txtLevel" android:layout_height="fill_parent" android:gravity="right|center_vertical" android:layout_weight="0.85"></TextView>
         <TextView android:layout_width="fill_parent" android:text="10" android:id="@+id/txtLives" android:layout_height="fill_parent" android:layout_weight="0.82" android:gravity="right|center_vertical"></TextView>
         <TextView android:text="0" android:id="@+id/txtPoints" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="0.75" android:gravity="right|center_vertical"></TextView>

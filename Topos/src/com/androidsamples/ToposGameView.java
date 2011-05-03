@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -133,7 +133,7 @@ OnScoreSubmitObserver {
 			        backBtn.setTypeface(tf);
 					levelLayout.setBackgroundColor(Color.BLUE);
 
-					pw = new PopupWindow(levelLayout,320,200);
+					pw = new PopupWindow(levelLayout,320,250);
 
 					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
 					AdRequest request = new AdRequest();
@@ -261,9 +261,9 @@ OnScoreSubmitObserver {
 	}
 
 	protected void onDraw(Canvas canvas) {
-		//		Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cespedj);		
-		//		canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-		canvas.drawColor(Color.rgb(00, 0xCD, 00));
+				Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cesped);		
+				canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
+//		canvas.drawColor(Color.rgb(00, 0xCD, 00));
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);
