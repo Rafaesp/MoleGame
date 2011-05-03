@@ -73,6 +73,7 @@ public class GameLoopThread extends Thread {
 
 	public void stopGame() {
 		sm.stopMusic();
+		sm.release();
 		secondsTimer.cancel();
 		boolean retry = true;
 		setRunning(false);

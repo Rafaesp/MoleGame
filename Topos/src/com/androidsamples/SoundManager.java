@@ -103,6 +103,19 @@ public class SoundManager {
 			mpMusic.stop();
 		}
 	}
+	
+	public void release(){
+		if(musicEnabled)
+			mpMusic.release();
+		if(endingEnabled)
+			mpEnding.release();
+		if(hitEnabled || missEnabled)
+			current.release();
+		
+		mpMusic = null;
+		mpEnding = null;
+		current = null;
+	}
 
 
 }
