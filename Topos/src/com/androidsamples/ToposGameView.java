@@ -134,9 +134,9 @@ OnScoreSubmitObserver {
 			        positiveBtn.setTypeface(tf);
 			        txtValueLevel.setTypeface(tf);
 			        backBtn.setTypeface(tf);
-					levelLayout.setBackgroundColor(Color.BLUE);
+					levelLayout.setBackgroundColor(Color.rgb(23, 86, 164));
 
-					pw = new PopupWindow(levelLayout,320,250);
+					pw = new PopupWindow(levelLayout,getWidth(),250);
 
 					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
 					AdRequest request = new AdRequest();
