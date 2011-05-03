@@ -60,7 +60,7 @@ public class SoundManager {
 
 	public void startHit(){
 		if(hitEnabled)
-			spool.play(fxHit, 1.0f, 1.0f, 0, 0, 1.5f);
+			spool.play(fxHit, 0.15f, 0.15f, 0, 0, 1.5f);
 		if (vibrationEnabled)
 			vibrator.vibrate(40);
 
