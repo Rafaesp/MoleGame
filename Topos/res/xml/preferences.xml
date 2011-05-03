@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="Sound Settings">
-		<CheckBoxPreference android:title="Music"
-			android:defaultValue="true" android:summary="Plays music while playing"
+	<PreferenceCategory android:title="@string/prefTitleSound">
+		<CheckBoxPreference android:title="@string/prefTitleMusic"
+			android:defaultValue="true" android:summary="@string/prefSummaryMusic"
 			android:key="MusicPref" />
-		<CheckBoxPreference android:title="Hit Sound"
-			android:defaultValue="true" android:summary="Plays a sound when hit a mole"
+		<CheckBoxPreference android:title="@string/prefTitleHit"
+			android:defaultValue="true" android:summary="@string/prefSummaryHit"
 			android:key="HitPref" />
-		<CheckBoxPreference android:title="Miss Sound"
-			android:defaultValue="true" android:summary="Plays a sound when miss a mole"
+		<CheckBoxPreference android:title="@string/prefTitleMiss"
+			android:defaultValue="true" android:summary="@string/prefSummaryMiss"
 			android:key="MissPref" />
-		<CheckBoxPreference android:title="Ending Sound"
-			android:defaultValue="true" android:summary="Plays a sound to warn of the end of a level"
+		<CheckBoxPreference android:title="@string/prefTitleEnding"
+			android:defaultValue="true" android:summary="@string/prefSummaryEnding"
 			android:key="EndingPref" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="Misc Settings">
-		<CheckBoxPreference android:title="Vibration"
-			android:defaultValue="true" android:summaryOn="Touch to disable"
-			android:summaryOff="Touch to enable" android:key="VibrationPref"
+	<PreferenceCategory android:title="@string/prefTitleMisc">
+		<CheckBoxPreference android:title="@string/prefTitleVibration"
+			android:defaultValue="true" android:summary="@string/prefSummaryVibration" android:key="VibrationPref"
 			android:shouldDisableView="false" />
-		<CheckBoxPreference android:title="Ending Vibration"
-			android:summary="Toogle vibration to warn of the end of a level"
+		<CheckBoxPreference android:title="@string/prefTitleEndingVibration"
+			android:summary="@string/prefSummaryEndingVibration"
 			android:defaultValue="true" android:key="EndingVibrationPref"
 			android:shouldDisableView="false" />
-		<CheckBoxPreference android:title="Background"
-			android:summary="Toogle background visibility in game. Disable for performance"
+		<CheckBoxPreference android:title="@string/prefTitleBackground"
+			android:summary="@string/prefSummaryBackground"
 			android:defaultValue="true" android:key="BackgroundPref"
 			android:shouldDisableView="false" />
 		<!-- <Preference android:title="Custom Preference" android:summary="This 

@@ -23,12 +23,29 @@
 	<string name="txtButtonBack">Back to main menu</string>
 	<string name="txtAlertDialogGameOver">Game Over</string>
 	<string name="submitScore">Submit score</string>
-	<string name="pref">Settings</string><string name="sl_networkError">Error while submitting score. Please, check your
+	<string name="pref">Settings</string>
+	<string name="sl_networkError">Error while submitting score. Please, check your
 		internet connection.</string>
 	<string name="sl_success">Score submitted. Check the leaderboards!</string>
 	<string name="submitting">Submitting score, please wait.</string>
 	<string name="txtVibration">Vibration</string>
 	<string name="btnCredits">Credits</string>
+	<string name="prefTitleSound">Sound settings</string>
+	<string name="prefTitleMusic">Music</string>
+	<string name="prefTitleHit">Hit sound</string>
+	<string name="prefTitleMiss">Miss sound</string>
+	<string name="prefTitleEnding">Ending sound</string>
+	<string name="prefTitleMisc">Misc settings</string>
+	<string name="prefTitleVibration">Vibration</string>
+	<string name="prefTitleEndingVibration">Ending vibration</string>
+	<string name="prefTitleBackground">Background</string>
+	<string name="prefSummaryMusic">Plays music while playing</string>
+	<string name="prefSummaryHit">Plays a sound when you hit a mole</string>
+	<string name="prefSummaryMiss">Plays a sound when you lose a carrot</string>
+	<string name="prefSummaryEnding">Plays a sound to warn of the end of a level</string>
+	<string name="prefSummaryVibration">Vibrates when you hit a mole</string>
+	<string name="prefSummaryEndingVibration">Vibrates to warn of the end of a level</string>
+	<string name="prefSummaryBackground">Change background visibility in game. Disable for performance</string>
 	<string name="NO_BORRAR">peta</string>
 	
 
