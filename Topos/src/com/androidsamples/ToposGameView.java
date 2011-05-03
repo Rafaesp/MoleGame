@@ -16,6 +16,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -56,6 +57,7 @@ OnScoreSubmitObserver {
 	private Context context;
 	private ProgressDialog progressd;
 	private HashMap<String,RectPair> statusMap;
+	private boolean bgEnabled;
 
 
 	public ToposGameView(Context context) {
@@ -77,7 +79,8 @@ OnScoreSubmitObserver {
 		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
-
+		
+		bgEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("BackgroundPref", true);
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
 		Handler handler = new Handler() {
@@ -261,9 +264,12 @@ OnScoreSubmitObserver {
 	}
 
 	protected void onDraw(Canvas canvas) {
+		if(bgEnabled){
 				Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cesped);		
 				canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-//		canvas.drawColor(Color.rgb(00, 0xCD, 00));
+		}else
+		canvas.drawColor(Color.rgb(00, 0xCD, 00));
+			
 		needRedraw = false;
 		for (MoleSprite mole : moles) {
 			mole.onDraw(canvas);

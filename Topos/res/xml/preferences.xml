@@ -23,6 +23,10 @@
 			android:summary="Toogle vibration to warn of the end of a level"
 			android:defaultValue="true" android:key="EndingVibrationPref"
 			android:shouldDisableView="false" />
+		<CheckBoxPreference android:title="Background"
+			android:summary="Toogle background visibility in game. Disable for performance"
+			android:defaultValue="true" android:key="BackgroundPref"
+			android:shouldDisableView="false" />
 		<!-- <Preference android:title="Custom Preference" android:summary="This 
 			works almost like a button" android:key="customPref" /> -->
 
