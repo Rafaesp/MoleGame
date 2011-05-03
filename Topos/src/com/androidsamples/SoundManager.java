@@ -44,8 +44,8 @@ public class SoundManager {
 		if(hitEnabled || missEnabled){
 			spool=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);	
 
-			if(hitEnabled)
-				fxHit = spool.load(context, R.raw.punch, 1);
+		if(hitEnabled)
+			fxHit = spool.load(context, R.raw.punch, 1);
 
 		}if(missEnabled){
 			fxMiss=spool.load(context, R.raw.laugh01, 1);
@@ -71,9 +71,7 @@ public class SoundManager {
 	}
 	public void startMusic(){
 		if(musicEnabled)
-			mpMusic=MediaPlayer.create(context, R.raw.bgmusic); //TODO con esta linea se arregla el bug de que ma musica solo sonaba en el primer
-																// nivel, pero no se asta que punto esto es optimo.
-			mpMusic.start();
+			mpMusic=MediaPlayer.create(context, R.raw.bgmusic);
 	}
 
 	public void startEnding(){
@@ -87,7 +85,6 @@ public class SoundManager {
 			try {
 				Thread.sleep(600);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			vibrator.vibrate(300);

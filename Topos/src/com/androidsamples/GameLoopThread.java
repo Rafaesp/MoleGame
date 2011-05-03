@@ -282,6 +282,7 @@ public class GameLoopThread extends Thread {
 		time = levelTimeDuration/1000;
 		playLoopTime/=playVelocity;
 		levelFinish = false;
+		sm.stopMusic();
 		sm.startMusic();
 		updateInfoBar("");
 	}
