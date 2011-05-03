@@ -71,6 +71,8 @@ public class SoundManager {
 	}
 	public void startMusic(){
 		if(musicEnabled)
+			mpMusic=MediaPlayer.create(context, R.raw.bgmusic); //TODO con esta linea se arregla el bug de que ma musica solo sonaba en el primer
+																// nivel, pero no se asta que punto esto es optimo.
 			mpMusic.start();
 	}
 
