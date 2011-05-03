@@ -71,7 +71,7 @@ public class SoundManager {
 	}
 	public void startMusic(){
 		if(musicEnabled)
-			mpMusic=MediaPlayer.create(context, R.raw.bgmusic);
+			mpMusic.start();
 	}
 
 	public void startEnding(){
