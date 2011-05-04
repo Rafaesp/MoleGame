@@ -100,7 +100,6 @@ public class GameLoopThread extends Thread {
 			data.putString("points", points.toString());
 			msg = handler.obtainMessage(0);
 			msg.setData(data);
-			Log.i(tag, "tipo: "+type);
 			handler.sendMessage(msg);
 		}		
 	}
