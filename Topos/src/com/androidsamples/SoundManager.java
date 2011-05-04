@@ -70,8 +70,9 @@ public class SoundManager {
 			spool.play(fxMiss, 1.0f, 1.0f, 0, 0, 1.5f);
 	}
 	public void startMusic(){
-		if(musicEnabled)
+		if(musicEnabled){
 			mpMusic.start();
+		}
 	}
 
 	public void startEnding(){

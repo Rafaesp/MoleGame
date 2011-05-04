@@ -57,18 +57,19 @@ public class GameLoopThread extends Thread {
 		secondsTimer = doSecondsTimer();
 
 		if (saved) {
-			level = sp.getInt("level", 0);
+			level = sp.getInt("level", 1);
 			points = sp.getInt("points", 0);
 			lives = sp.getInt("lives", 10);
 			time = levelTimeDuration/1000;
-			playLoopTime = sp.getLong("playLoopTime", 1000);		
+			playLoopTime = sp.getLong("playLoopTime", 1000);	
+			updateInfoBar("saved");
 		}else{
-			level = 0;
+			level = 1;
 			points = 0;
 			lives = 10;
 			startNextLevel(true);
+			updateInfoBar("");
 		}
-		updateInfoBar("saved");
 	}
 
 	public void stopGame() {
@@ -99,6 +100,7 @@ public class GameLoopThread extends Thread {
 			data.putString("points", points.toString());
 			msg = handler.obtainMessage(0);
 			msg.setData(data);
+			Log.i(tag, "tipo: "+type);
 			handler.sendMessage(msg);
 		}		
 	}
