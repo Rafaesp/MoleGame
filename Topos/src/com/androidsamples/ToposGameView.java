@@ -136,7 +136,7 @@ OnScoreSubmitObserver {
 			        backBtn.setTypeface(tf);
 					levelLayout.setBackgroundColor(Color.rgb(23, 86, 164));
 
-					pw = new PopupWindow(levelLayout,getWidth(),250);
+					pw = new PopupWindow(levelLayout,getWidth(),(int)(getHeight()/1.9));
 
 
 					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");

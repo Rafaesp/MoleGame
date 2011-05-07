@@ -150,11 +150,12 @@ public class GameLoopThread extends Thread {
 				updateInfoBar("");
 				view.reset();
 				levelFinish = true;
-				canSave = true;
 				timerStarted = false;
 				sm.stopMusic();
-				if (!gameOver)
+				if (!gameOver){
+					canSave = true;
 					throwAlertFinalLevel();
+				}
 			}
 		};
 	}
@@ -173,7 +174,6 @@ public class GameLoopThread extends Thread {
 			startTime = System.currentTimeMillis();
 			if (lives <= 0 && !gameOver) {
 				view.reset();
-				canSave = false;
 				levelFinish = true;
 				gameOver = true;
 				updateInfoBar("gameover");
