@@ -31,6 +31,7 @@ public class ToposGameActivity extends Activity {
 		toposview.getGameLoopThread().saveGame();
 		toposview.getGameLoopThread().stopGame();
 		System.gc();
+		finish();
 	}
 
 }
