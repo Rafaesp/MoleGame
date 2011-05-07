@@ -317,5 +317,7 @@ public class GameLoopThread extends Thread {
 
 		editor.commit();
 	}
+	
+
 
 }

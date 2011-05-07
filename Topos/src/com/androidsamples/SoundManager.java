@@ -71,6 +71,7 @@ public class SoundManager {
 	}
 	public void startMusic(){
 		if(musicEnabled){
+			mpMusic=MediaPlayer.create(context, R.raw.bgmusic); //TODO con esta linea se consigue que funcione en cada nivel la musica, como lo ves de rendimiento?
 			mpMusic.start();
 		}
 	}

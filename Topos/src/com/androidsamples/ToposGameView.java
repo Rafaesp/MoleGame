@@ -181,6 +181,7 @@ OnScoreSubmitObserver {
 
 								pw.dismiss();
 								gameLoopThread.startNextLevel(false);
+								
 							}
 						});
 						backBtn.setText(R.string.txtButtonBackSave);
