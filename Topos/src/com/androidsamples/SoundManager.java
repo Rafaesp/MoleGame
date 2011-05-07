@@ -1,5 +1,7 @@
 package com.androidsamples;
 
+import java.io.IOException;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -71,7 +73,12 @@ public class SoundManager {
 	}
 	public void startMusic(){
 		if(musicEnabled){
-			mpMusic=MediaPlayer.create(context, R.raw.bgmusic); //TODO con esta linea se consigue que funcione en cada nivel la musica, como lo ves de rendimiento?
+			try {
+				mpMusic.prepareAsync();
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} 
+			stopMusic();
 			mpMusic.start();
 		}
 	}
