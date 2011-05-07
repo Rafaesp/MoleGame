@@ -149,7 +149,7 @@ OnScoreSubmitObserver {
 					if (m.getData().getString("type") == "gameover") {
 						txtTitle.setText(R.string.txtAlertDialogGameOver);
 						final Double sc = new Double(b.getString("points"));
-
+						positiveBtn.setText(R.string.submitScore);
 						positiveBtn.setOnClickListener(new OnClickListener() {
 
 							@Override
@@ -158,8 +158,7 @@ OnScoreSubmitObserver {
 								ScoreloopManagerSingleton.get()
 								.onGamePlayEnded(sc, null);
 								progressd = new ProgressDialog(context);
-								progressd
-								.setMessage("Submitting score, please wait.");
+								progressd.setMessage(context.getText(R.string.submitting));
 								progressd.show();
 							}
 						});
