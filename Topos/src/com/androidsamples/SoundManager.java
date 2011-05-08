@@ -1,7 +1,5 @@
 package com.androidsamples;
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -73,12 +71,6 @@ public class SoundManager {
 	}
 	public void startMusic(){
 		if(musicEnabled){
-			try {
-				mpMusic.prepareAsync();
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} 
-			stopMusic();
 			mpMusic.start();
 		}
 	}
@@ -99,7 +91,14 @@ public class SoundManager {
 			vibrator.vibrate(300);
 		}
 	}
-
+	
+	public void pauseMusic(){
+		if(mpMusic != null && mpMusic.isPlaying()){
+			mpMusic.pause();
+			mpMusic.seekTo(0);
+		}
+	}
+	
 	public void stopMusic(){
 		if(mpMusic != null && mpMusic.isPlaying()){
 			mpMusic.stop();

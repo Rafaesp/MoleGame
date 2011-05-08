@@ -151,7 +151,7 @@ public class GameLoopThread extends Thread {
 				view.reset();
 				levelFinish = true;
 				timerStarted = false;
-				sm.stopMusic();
+				sm.pauseMusic();
 				if (!gameOver){
 					canSave = true;
 					throwAlertFinalLevel();
@@ -176,6 +176,7 @@ public class GameLoopThread extends Thread {
 				view.reset();
 				levelFinish = true;
 				gameOver = true;
+				sm.pauseMusic();
 				updateInfoBar("gameover");
 			} else if(System.currentTimeMillis() - playLoopStartTime > playLoopTime
 					&& !levelFinish) {
@@ -283,7 +284,6 @@ public class GameLoopThread extends Thread {
 		time = levelTimeDuration/1000;
 		playLoopTime/=playVelocity;
 		levelFinish = false;
-		sm.stopMusic();
 		sm.startMusic();
 		updateInfoBar("");
 	}

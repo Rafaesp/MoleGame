@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class ToposGameActivity extends Activity {
 
