@@ -148,7 +148,6 @@ OnScoreSubmitObserver {
 					
 					LinearLayout adLayout = (LinearLayout) levelLayout.findViewById(R.id.adLayout);
 					adLayout.addView(adView);
-					request.setTesting(true);
 					adView.loadAd(request);
 
 					if (m.getData().getString("type") == "gameover") {
