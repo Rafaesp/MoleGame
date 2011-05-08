@@ -142,8 +142,13 @@ OnScoreSubmitObserver {
 					AdView adView = new AdView((Activity) context, AdSize.BANNER, "a14d9ccf09ec04d");
 					AdRequest request = new AdRequest();
 
+					Integer dim=(int) (getHeight()*0.52);
+					pw = new PopupWindow(levelLayout,getWidth(), dim);
+					Log.i("DIMENSION DEL POPUP", dim.toString());
+					
 					LinearLayout adLayout = (LinearLayout) levelLayout.findViewById(R.id.adLayout);
 					adLayout.addView(adView);
+					request.setTesting(true);
 					adView.loadAd(request);
 
 					if (m.getData().getString("type") == "gameover") {

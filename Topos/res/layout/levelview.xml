@@ -5,18 +5,16 @@
   android:minWidth="300dp"
   android:layout_height="fill_parent" 
   android:orientation="vertical">
-	<LinearLayout android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="25">
+	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_weight="25" android:layout_height="fill_parent">
 	    <TextView android:id="@+id/txtTitle" android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/txtTitleLevelView" android:textSize="45dp"></TextView>
 	    <TextView android:id="@+id/txtLevel" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/txtLevel" android:textSize="20dp"></TextView>
 	    <TextView android:id="@+id/txtValueLevel" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="" android:textSize="20dp"></TextView>
 	    <TextView android:id="@+id/txtScore" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/txtScore" android:textSize="20dp"></TextView>
 	    <TextView android:id="@+id/txtValueScore" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/txtValueScore" android:textSize="20dp"></TextView>
 	    <LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent">
-	        <Button android:text="@string/txtButtonNextLevel" android:id="@+id/btnNext" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="20dp"></Button>
-	        <Button android:text="" android:id="@+id/btnBack" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="20dp"></Button>
+	        <Button android:text="@string/txtButtonNextLevel" android:id="@+id/btnNext" android:layout_width="fill_parent" android:layout_weight="1" android:textSize="20dp" android:layout_height="wrap_content"></Button>
+	        <Button android:text="" android:id="@+id/btnBack" android:layout_width="fill_parent" android:layout_weight="1" android:textSize="20dp" android:layout_height="wrap_content"></Button>
 	    </LinearLayout>
+	    <LinearLayout android:layout_width="320dp" android:layout_height="50dp" android:gravity="center_vertical|center_horizontal" android:id="@+id/adLayout"></LinearLayout>
   </LinearLayout>
-    <LinearLayout android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="75">
-    	<LinearLayout android:id="@+id/adLayout" android:layout_width="320dp" android:layout_height="50dp" android:gravity="center_vertical|center_horizontal"></LinearLayout>
-	</LinearLayout>
 </LinearLayout>
