@@ -18,7 +18,7 @@ public class GameLoopThread extends Thread {
 	private ToposGameView view;
 	private boolean running = false;
 	private int level;
-	private long levelTimeDuration = 10000;
+	private long levelTimeDuration = 30000;
 	private boolean levelFinish;
 	private boolean gameOver;
 	private long playLoopTime = 1000;
