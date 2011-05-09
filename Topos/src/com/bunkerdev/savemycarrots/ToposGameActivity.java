@@ -1,9 +1,7 @@
-package com.androidsamples;
+package com.bunkerdev.savemycarrots;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Window;
 import android.widget.LinearLayout;
 
 public class ToposGameActivity extends Activity {
@@ -25,7 +23,6 @@ public class ToposGameActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.i("TAG", "OnPauseGameActivity");
 		toposview.getGameLoopThread().saveGame();
 		toposview.getGameLoopThread().stopGame();
 		System.gc();

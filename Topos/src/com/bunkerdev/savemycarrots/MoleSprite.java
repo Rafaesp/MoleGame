@@ -1,10 +1,11 @@
-package com.androidsamples;
+package com.bunkerdev.savemycarrots;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
+import com.bunkerdev.savemycarrots.R;
 
 public class MoleSprite extends View{
 
@@ -45,8 +46,6 @@ public class MoleSprite extends View{
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
 	private int diggingTick = 0; //How many frames have we already shown
 	private int bigClicks;
-
-	private static final String tag = "TAG";
 
 	public MoleSprite(ToposGameView view, int posx, int posy) {
 		super(view.getContext());

@@ -1,7 +1,8 @@
-package com.androidsamples;
+package com.bunkerdev.savemycarrots;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import com.bunkerdev.savemycarrots.R;
 
 public class Preferences extends PreferenceActivity {
 	@Override

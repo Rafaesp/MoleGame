@@ -1,4 +1,4 @@
-package com.androidsamples;
+package com.bunkerdev.savemycarrots;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import com.bunkerdev.savemycarrots.R;
 
 
 public class SoundManager {

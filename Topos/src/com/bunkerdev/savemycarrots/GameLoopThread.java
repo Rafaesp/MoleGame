@@ -1,4 +1,4 @@
-package com.androidsamples;
+package com.bunkerdev.savemycarrots;
 
 import java.util.List;
 
@@ -9,10 +9,8 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class GameLoopThread extends Thread {
-	private static final String tag = "TAG";
 
 	private static final int BIGCLICKS = 3;
 
@@ -83,7 +81,6 @@ public class GameLoopThread extends Thread {
 			try {
 				join();
 				retry = false;
-				Log.i(tag, "Join thread");
 			} catch (InterruptedException i) {
 
 			}
@@ -306,7 +303,6 @@ public class GameLoopThread extends Thread {
 				topos.PREFS, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		if (canSave) {
-			Log.i(tag, "saving game");
 			editor.putBoolean("saved", true);
 			editor.putInt("level", level);
 			editor.putInt("lives", lives);

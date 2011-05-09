@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, topos!</string>
+	<string name="app_name">Save my carrots!</string>
+	<string name="txtTitleSetting">Sonido</string>
+	<string name="textView1">Topos Game</string>
+	<string name="btnPlay">Jugar</string>
+	<string name="btnContinue">Continuar</string>
+	<string name="btnExit">Salir</string>
+	<string name="btnRanking">Ranking</string>
+	<string name="btnSettings">Opciones</string>
+	<string name="txtSound">Sonido</string>
+	<string name="txtFailed">Zanahorias:</string>
+	<string name="points">Puntos:</string>
+	<string name="txtTime">Tiempo</string>
+	<string name="txtTitleLevelView">Título</string>
+	<string name="txtLevel">Nivel:</string>
+	<string name="txtScore">Puntuación:</string>
+	<string name="txtValueScore">0</string>
+	<string name="txtAlertDialogFinishedLevel">Nivel completado</string>
+	<string name="txtButtonNextLevel">Siguiente nivel</string>
+	<string name="txtButtonBackSave">Guardar y volver</string>
+	<string name="txtButtonBack">Volver al menú</string>
+	<string name="txtAlertDialogGameOver">Game Over</string>
+	<string name="submitScore">Enviar puntuación</string>
+	<string name="pref">Opciones</string>
+	<string name="sl_networkError">Error al enviar la puntuación. Por favor, comprueba tu conexión a internet.</string>
+	<string name="sl_success">Puntuación enviada. ¡Mira en qué puesto estás!</string>
+	<string name="submitting">Enviando puntuación, espera por favor.</string>
+	<string name="txtVibration">Vibración</string>
+	<string name="btnCredits">Creditos</string>
+	<string name="prefTitleSound">Opciones de sonido</string>
+	<string name="prefTitleMusic">Música</string>
+	<string name="prefTitleHit">Sonido de golpe</string>
+	<string name="prefTitleMiss">Sonido al escaparse</string>
+	<string name="prefTitleEnding">Sonido final</string>
+	<string name="prefTitleMisc">Otras opciones</string>
+	<string name="prefTitleVibration">Vibración</string>
+	<string name="prefTitleEndingVibration">Vibración final</string>
+	<string name="prefTitleBackground">Fondo</string>
+	<string name="prefSummaryMusic">Reproduce música mientras juegas</string>
+	<string name="prefSummaryHit">Reproduce un sonido cuando golpeas un topo</string>
+	<string name="prefSummaryMiss">Reproduce un sonido cuando pierdes una zanahoria</string>
+	<string name="prefSummaryEnding">Reproduce un sonido para avisar del final del nivel</string>
+	<string name="prefSummaryVibration">Vibra cuando golpeas un topo</string>
+	<string name="prefSummaryEndingVibration">Vibra para avisar del final del nievel</string>
+	<string name="prefSummaryBackground">Cambia la visibilidad del fondo. Desactiva para mejorar el rendimiento</string>
+	<string name="NO_BORRAR">peta</string>
+	
+
+
+</resources>
