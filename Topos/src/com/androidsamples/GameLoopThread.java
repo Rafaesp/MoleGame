@@ -78,6 +78,7 @@ public class GameLoopThread extends Thread {
 		secondsTimer.cancel();
 		boolean retry = true;
 		setRunning(false);
+		view.destroyMoles();
 		while (retry) {
 			try {
 				join();

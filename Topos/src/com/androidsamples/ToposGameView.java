@@ -243,6 +243,13 @@ OnScoreSubmitObserver {
 			}
 		}
 	}
+	
+	public void destroyMoles(){
+		int size = moles.size();
+		for(int i = 0; i<size; ++i){
+			moles.get(i).recycleBmp();
+		}
+	}
 
 	public GameLoopThread getGameLoopThread() {
 		return gameLoopThread;

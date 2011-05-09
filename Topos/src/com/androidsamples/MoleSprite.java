@@ -33,7 +33,7 @@ public class MoleSprite extends View{
 	private int y;
 
 	private ToposGameView view;
-	private Bitmap bmp;
+	private static Bitmap bmp;
 	private int width;
 	private int height;	
 	private int status; //Each row, each frame of the animation
@@ -242,5 +242,9 @@ public class MoleSprite extends View{
 		diggingTick=0;
 		isDigging = false;
 		isHit = false;
+	}
+	
+	public void recycleBmp(){
+		bmp.recycle();
 	}
 }
