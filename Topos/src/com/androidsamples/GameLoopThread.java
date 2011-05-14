@@ -29,7 +29,7 @@ public class GameLoopThread extends Thread {
 	private Integer lives;
 	private Integer points;
 	private Long time;
-	private Double playVelocity = 1.15;
+	private Double playVelocity;
 	private CountDownTimer secondsTimer;
 	private int bigMolesCount;
 	private int weaselCount;
@@ -48,7 +48,7 @@ public class GameLoopThread extends Thread {
 		saved = sp.getBoolean("saved", false);
 
 		sm = new SoundManager(view.getContext());
-		
+
 		data = new Bundle();
 
 		levelFinish = false;
@@ -85,7 +85,7 @@ public class GameLoopThread extends Thread {
 			}
 		}
 	}
-	
+
 	public void updateInfoBar(String type){
 		synchronized (view.getHolder()) {
 			if(handler.hasMessages(0))
@@ -274,11 +274,21 @@ public class GameLoopThread extends Thread {
 			secondsTimer.cancel();
 			level++;
 		}
-		if(level>=8){
-			levelTimeDigDown-=100;
-		}else{
-			playLoopTime/=playVelocity;
-		}
+		
+
+		if(level==6)
+			levelTimeDigDown-=50;
+		if(level==8)
+			levelTimeDigDown-=60;
+		if(level==10)
+			levelTimeDigDown-=70;
+		
+		if(level>=5)
+			playVelocity = 1.1;
+		else
+			playVelocity = 1.2;
+
+		playLoopTime/=playVelocity;
 		bigMolesCount = 0;
 		time = levelTimeDuration/1000;
 		levelFinish = false;
@@ -314,7 +324,7 @@ public class GameLoopThread extends Thread {
 
 		editor.commit();
 	}
-	
+
 
 
 }

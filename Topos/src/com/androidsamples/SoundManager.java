@@ -52,7 +52,7 @@ public class SoundManager {
 			fxMiss=spool.load(context, R.raw.laugh01, 1);
 
 		}if(musicEnabled){
-			mpMusic=MediaPlayer.create(context, R.raw.bgmusic);
+			mpMusic=MediaPlayer.create(context, R.raw.musicacortada30);
 
 		}if(endingEnabled){
 			mpEnding = MediaPlayer.create(context, R.raw.finish);
