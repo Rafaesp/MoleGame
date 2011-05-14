@@ -21,7 +21,7 @@ public class GameLoopThread extends Thread {
 	private long levelTimeDuration = 30000;
 	private boolean levelFinish;
 	private boolean gameOver;
-	private long playLoopTime = 1000;
+	private long playLoopTime = 750;
 	private long playLoopStartTime;
 	private long levelTimeDigDown = 1500;
 	private long levelTimeBigDigDown = 4500;
@@ -29,7 +29,7 @@ public class GameLoopThread extends Thread {
 	private Integer lives;
 	private Integer points;
 	private Long time;
-	private Double playVelocity = 1.20;
+	private Double playVelocity = 1.15;
 	private CountDownTimer secondsTimer;
 	private int bigMolesCount;
 	private int weaselCount;
@@ -192,7 +192,7 @@ public class GameLoopThread extends Thread {
 							updateInfoBar("");
 						}
 					} else if (mole.isWeasel()) {
-						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeBigDigDown) {
+						if (System.currentTimeMillis() - mole.getDigStartTime() > levelTimeDigDown) {
 							mole.digDown();
 						}
 					} else {
@@ -273,13 +273,14 @@ public class GameLoopThread extends Thread {
 			canSave = false;
 			secondsTimer.cancel();
 			level++;
-			if(level>=7){
-				levelTimeDigDown-=100;
-			}
+		}
+		if(level>=8){
+			levelTimeDigDown-=100;
+		}else{
+			playLoopTime/=playVelocity;
 		}
 		bigMolesCount = 0;
 		time = levelTimeDuration/1000;
-		playLoopTime/=playVelocity;
 		levelFinish = false;
 		sm.startMusic();
 		updateInfoBar("");
