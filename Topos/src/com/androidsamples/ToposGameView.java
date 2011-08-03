@@ -153,7 +153,6 @@ OnScoreSubmitObserver {
 						positiveBtn.setText(R.string.submitScore);
 						positiveBtn.setOnClickListener(new OnClickListener() {
 
-							@Override
 							public void onClick(View v) {
 
 								ScoreloopManagerSingleton.get()
@@ -170,7 +169,6 @@ OnScoreSubmitObserver {
 						backBtn.setText(R.string.txtButtonBack);
 						backBtn.setOnClickListener(new OnClickListener() {
 
-							@Override
 							public void onClick(View v) {
 								goMainMenu();								
 							}
@@ -181,7 +179,6 @@ OnScoreSubmitObserver {
 
 						positiveBtn.setOnClickListener(new OnClickListener() {
 
-							@Override
 							public void onClick(View v) {
 
 								pw.dismiss();
@@ -192,7 +189,6 @@ OnScoreSubmitObserver {
 						backBtn.setText(R.string.txtButtonBackSave);
 						backBtn.setOnClickListener(new OnClickListener() {
 
-							@Override
 							public void onClick(View v) {
 								goMainMenu();								
 							}
@@ -212,11 +208,9 @@ OnScoreSubmitObserver {
 		holder = getHolder();
 		holder.addCallback(new Callback() {
 
-			@Override
 			public void surfaceDestroyed(SurfaceHolder arg0) {
 			}
 
-			@Override
 			public void surfaceCreated(SurfaceHolder arg0) {
 				
 				createMoles();
@@ -225,7 +219,6 @@ OnScoreSubmitObserver {
 
 			}
 
-			@Override
 			public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2,
 					int arg3) {
 
@@ -288,7 +281,6 @@ OnScoreSubmitObserver {
 		needRedraw = true;
 	}
 
-	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		boolean clicked = false;
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -306,7 +298,6 @@ OnScoreSubmitObserver {
 		return clicked;
 	}
 
-	@Override
 	public void onScoreSubmit(int status, Exception error) {
 		progressd.dismiss();
 		Toast result = Toast.makeText(context, "", 5000);

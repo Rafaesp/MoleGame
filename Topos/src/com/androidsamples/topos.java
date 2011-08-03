@@ -37,7 +37,7 @@ public class topos extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		ScoreloopManagerSingleton.destroy();
-		ScoreloopManagerSingleton.init(this);
+		ScoreloopManagerSingleton.init(this, "uj+WFcZ4PfW5+OeUkqCTOOcGGDUkO84CNVgcIs8H4sdYcLrCvgWJ5Q==");
 		setContentView(R.layout.main);
 
 

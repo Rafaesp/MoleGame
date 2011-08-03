@@ -14,4 +14,6 @@ Topos/gen/
 ScoreloopUI/.classpath
 ScoreloopUI/.project
 ScoreloopUI/bin/
+ScoreloopUI/gen/Topos/.settings
+Topos/.settings/
 ScoreloopUI/gen/
