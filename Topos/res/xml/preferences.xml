@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/prefTitleKid">
+		<CheckBoxPreference 
+			android:title="@string/prefTitleKid"
+			android:defaultValue="false" 
+			android:summary="@string/prefSummaryKid"
+			android:key="KidPref" />
+	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/prefTitleSound">
 		<CheckBoxPreference android:title="@string/prefTitleMusic"
 			android:defaultValue="true" android:summary="@string/prefSummaryMusic"

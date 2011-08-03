@@ -30,6 +30,7 @@
 	<string name="submitting">Submitting score, please wait.</string>
 	<string name="txtVibration">Vibration</string>
 	<string name="btnCredits">Credits</string>
+	<string name="prefTitleKid">Kid Mode</string>
 	<string name="prefTitleSound">Sound settings</string>
 	<string name="prefTitleMusic">Music</string>
 	<string name="prefTitleHit">Hit sound</string>
@@ -39,6 +40,7 @@
 	<string name="prefTitleVibration">Vibration</string>
 	<string name="prefTitleEndingVibration">Ending vibration</string>
 	<string name="prefTitleBackground">Background</string>
+	<string name="prefSummaryKid">Easier to play. Disables submitting score</string>
 	<string name="prefSummaryMusic">Plays music while playing</string>
 	<string name="prefSummaryHit">Plays a sound when you hit a mole</string>
 	<string name="prefSummaryMiss">Plays a sound when you lose a carrot</string>

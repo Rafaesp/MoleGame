@@ -11,4 +11,7 @@ Topos/.classpath
 Topos/.project
 Topos/bin/
 Topos/gen/
-ScoreloopUI/
+ScoreloopUI/.classpath
+ScoreloopUI/.project
+ScoreloopUI/bin/
+ScoreloopUI/gen/

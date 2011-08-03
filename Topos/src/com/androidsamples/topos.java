@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +76,7 @@ public class topos extends Activity implements OnClickListener {
 		adView.loadAd(request);
 		
 		SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
-		Log.i("TAG", "OnResume");
+
 		if(sp.getBoolean("saved", false)){
 			btnContinue.setEnabled(true);
 		}else{
@@ -96,7 +95,6 @@ public class topos extends Activity implements OnClickListener {
 			SharedPreferences.Editor edit= getSharedPreferences(PREFS, MODE_PRIVATE).edit();
 			edit.putBoolean("saved", false);
 			edit.commit();
-			Log.i("TAG", "topos: saved=false");
 			i = new Intent(getApplicationContext(), ToposGameActivity.class);
 			startActivity(i);
 			break;

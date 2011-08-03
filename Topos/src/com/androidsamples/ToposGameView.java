@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,8 +42,6 @@ import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
 public class ToposGameView extends SurfaceView implements OnTouchListener,
 OnScoreSubmitObserver {
 
-	private static final String tag = "TAG";
-
 	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;
 	private List<MoleSprite> moles;
@@ -59,7 +56,6 @@ OnScoreSubmitObserver {
 	private ProgressDialog progressd;
 	private HashMap<String,RectPair> statusMap;
 	private boolean bgEnabled;
-
 
 	public ToposGameView(Context context) {
 		super(context);
@@ -82,6 +78,7 @@ OnScoreSubmitObserver {
 		setOnTouchListener(this);
 		
 		bgEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("BackgroundPref", true);
+		
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
 		Handler handler = new Handler() {
@@ -145,7 +142,6 @@ OnScoreSubmitObserver {
 
 					Integer dim=(int) (getHeight()*0.52);
 					pw = new PopupWindow(levelLayout,getWidth(), dim);
-					Log.i("DIMENSION DEL POPUP", dim.toString());
 					
 					LinearLayout adLayout = (LinearLayout) levelLayout.findViewById(R.id.adLayout);
 					adLayout.addView(adView);
@@ -167,6 +163,10 @@ OnScoreSubmitObserver {
 								progressd.show();
 							}
 						});
+						
+						if(m.getData().getBoolean("kidMode"))
+							positiveBtn.setEnabled(false);
+						
 						backBtn.setText(R.string.txtButtonBack);
 						backBtn.setOnClickListener(new OnClickListener() {
 
@@ -218,8 +218,7 @@ OnScoreSubmitObserver {
 
 			@Override
 			public void surfaceCreated(SurfaceHolder arg0) {
-				Log.i(tag, "GameView width: " + getWidth()
-						+ " GameView height: " + getHeight());
+				
 				createMoles();
 				gameLoopThread.setRunning(true);
 				gameLoopThread.start();

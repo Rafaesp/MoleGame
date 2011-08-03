@@ -28,7 +28,8 @@
 	<string name="sl_success">Puntuacion enviada. Mira en que puesto estas!</string>
 	<string name="submitting">Enviando puntuación, espera por favor.</string>
 	<string name="txtVibration">Vibracion</string>
-	<string name="btnCredits">Creditos</string>
+	<string name="btnCredits">Créditos</string>
+	<string name="prefTitleKid">Modo niño</string>
 	<string name="prefTitleSound">Opciones de sonido</string>
 	<string name="prefTitleMusic">Musica</string>
 	<string name="prefTitleHit">Sonido de golpe</string>
@@ -38,6 +39,7 @@
 	<string name="prefTitleVibration">Vibracion</string>
 	<string name="prefTitleEndingVibration">Vibracion final</string>
 	<string name="prefTitleBackground">Fondo</string>
+	<string name="prefSummaryKid">Más fácil jugar. Deshabilita el envío de puntuaciones</string>
 	<string name="prefSummaryMusic">Reproduce musica mientras juegas</string>
 	<string name="prefSummaryHit">Reproduce un sonido cuando golpeas un topo</string>
 	<string name="prefSummaryMiss">Reproduce un sonido cuando pierdes una zanahoria</string>

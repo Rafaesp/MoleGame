@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 
 public class GameLoopThread extends Thread {
 
@@ -39,13 +40,25 @@ public class GameLoopThread extends Thread {
 	private SoundManager sm;
 	private Message msg;
 	private Bundle data;
+	private boolean kidMode;
+	private SharedPreferences.Editor editor;
 
 	public GameLoopThread(final ToposGameView view, Handler txtHandler) {
 		this.view = view;
 		this.handler = txtHandler;
 		SharedPreferences sp = view.getContext().getSharedPreferences(
 				topos.PREFS, Context.MODE_PRIVATE);
+		editor = sp.edit();
 		saved = sp.getBoolean("saved", false);
+		
+		kidMode = PreferenceManager.getDefaultSharedPreferences(
+					view.getContext()).getBoolean("KidPref", false);
+	
+			if(kidMode){
+				levelTimeDigDown+=1000;
+				playLoopTime+=1000;
+				levelTimeDuration -= 10000;
+			}
 
 		sm = new SoundManager(view.getContext());
 
@@ -95,6 +108,9 @@ public class GameLoopThread extends Thread {
 			data.putInt("level", level);
 			data.putString("lives", lives.toString());
 			data.putString("points", points.toString());
+			if(type == "gameover")
+			data.putBoolean("kidMode", kidMode);
+			
 			msg = handler.obtainMessage(0);
 			msg.setData(data);
 			handler.sendMessage(msg);
@@ -273,6 +289,7 @@ public class GameLoopThread extends Thread {
 			canSave = false;
 			secondsTimer.cancel();
 			level++;
+		}else{
 		}
 		
 
@@ -321,7 +338,7 @@ public class GameLoopThread extends Thread {
 		} else {
 			editor.putBoolean("saved", false);
 		}
-
+		editor.putBoolean("kidMode", kidMode);
 		editor.commit();
 	}
 

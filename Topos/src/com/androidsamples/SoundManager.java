@@ -39,7 +39,7 @@ public class SoundManager {
 		hitEnabled = sp.getBoolean("HitPref", true);
 		missEnabled = sp.getBoolean("MissPref", true);
 
-		if(endingVibration)
+		if(vibrationEnabled || endingVibration)
 			vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
 		if(hitEnabled || missEnabled){
