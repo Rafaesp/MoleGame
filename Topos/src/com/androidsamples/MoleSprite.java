@@ -1,12 +1,21 @@
 package com.androidsamples;
 
-import com.bunkerdev.savemycarrots.R;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.opengl.GLUtils;
+import android.util.Log;
 import android.view.View;
+
+import com.bunkerdev.savemycarrots.R;
 
 public class MoleSprite extends View{
 
@@ -33,6 +42,9 @@ public class MoleSprite extends View{
 	private int posy;
 	private int x;
 	private int y;
+	private boolean shouldLoadTexture;
+	private float side = 500f;
+	private int textureId;
 
 	private ToposGameView view;
 	private static Bitmap bmp;
@@ -47,13 +59,26 @@ public class MoleSprite extends View{
 	private int diggingDirection = 0; //Up-> -1   Down -> 1
 	private int diggingTick = 0; //How many frames have we already shown
 	private int bigClicks;
+	
+	private float vertices[] = {
+		      -0.5f,  0.5f, 0.0f,  // 0, Top Left
+		      -0.5f, -0.5f, 0.0f,  // 1, Bottom Left
+		       0.5f, -0.5f, 0.0f,  // 2, Bottom Right
+		       0.5f,  0.5f, 0.0f,  // 3, Top Right
+		};
+
+	private short[] indices = { 0, 1, 2, 0, 2, 3 };
+	private float[] textureCoords = new float[8];
+	private FloatBuffer vertexBuffer;
+	private ShortBuffer indexBuffer;
+	private FloatBuffer textureBuffer;
 
 	public MoleSprite(ToposGameView view, int posx, int posy) {
 		super(view.getContext());
 		this.view = view;
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.sprites);
-		this.width = bmp.getWidth() / BMP_COLUMNS;		
-		this.height = bmp.getHeight() / BMP_ROWS;
+		this.width = 100;		
+		this.height = 100;
 
 		this.posx=posx;
 		this.posy=posy;
@@ -62,6 +87,21 @@ public class MoleSprite extends View{
 		isDigging = false;
 		isHit = false;
 		bigClicks = 0;
+		
+		shouldLoadTexture = true;
+		
+		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+		vbb.order(ByteOrder.nativeOrder());
+		vertexBuffer = vbb.asFloatBuffer();
+		vertexBuffer.put(vertices);
+		vertexBuffer.position(0);
+
+		ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
+		ibb.order(ByteOrder.nativeOrder());
+		indexBuffer = ibb.asShortBuffer();
+		indexBuffer.put(indices);
+		indexBuffer.position(0);
+		
 	}
 
 	public int getX() {
@@ -114,19 +154,79 @@ public class MoleSprite extends View{
 	public Integer getBigClicks(){
 		return bigClicks;
 	}
-
-	public void onDraw(Canvas canvas) {
+	public void draw(GL10 gl) {
 		dig();
 		hit();
-		if(view.getStatusMap().containsKey(status+""+animation+getX()+getY())){
-			canvas.drawBitmap(bmp, view.getStatusMap().get(status+""+animation+getX()+getY()).src, view.getStatusMap().get(status+""+animation+getX()+getY()).dst, null);
-		}else{
-			Rect src = new Rect(animation * width, status * height, animation * width+width, status * height+height);
-			Rect dst = new Rect(getX(), getY(), getX()+getMoleWidth(), getY()+getMoleHeight());
-			view.getStatusMap().put(status+""+animation+getX()+getY(), view.new RectPair(src, dst));
-			canvas.drawBitmap(bmp, src, dst, null);
-		}
+        gl.glFrontFace(GL10.GL_CCW);
+        gl.glEnable(GL10.GL_CULL_FACE);
+        gl.glCullFace(GL10.GL_BACK);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+
+        if (shouldLoadTexture) {
+                loadGLTexture(gl);
+                shouldLoadTexture = false;
+        }
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        
+        if(view.getStatusMap().containsKey(status+""+animation+getX()+getY())){
+        	textureBuffer = view.getStatusMap().get(status+""+animation+getX()+getY());
+        }else{
+        	float zeroW = (width*animation)/(width*BMP_COLUMNS);
+        	float oneW =  (width*animation+width)/(width*BMP_COLUMNS);
+        	float zeroH = (height*status)/(height*BMP_ROWS);
+        	float oneH = (height*status+status)/(height*BMP_ROWS);
+        	Log.i("TAG", "zW "+zeroW+" oW "+oneW+" zH " +zeroH+" oH "+oneH);
+        	textureCoords[0] = zeroW;
+        	textureCoords[1] = zeroH;
+        	textureCoords[2] = zeroW;
+        	textureCoords[3] = oneH;
+        	textureCoords[4] = oneW;
+        	textureCoords[5] = oneH;
+        	textureCoords[6] = oneW;
+        	textureCoords[7] = zeroH;
+        	
+        	ByteBuffer byteBuf = ByteBuffer.allocateDirect(
+                    textureCoords.length * 4);
+			byteBuf.order(ByteOrder.nativeOrder());
+			textureBuffer = byteBuf.asFloatBuffer();
+			textureBuffer.put(textureCoords);
+			textureBuffer.position(0);
+			view.getStatusMap().put(status+""+animation+getX()+getY(), textureBuffer);
+        }
+        
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
+
+		gl.glPushMatrix();
+		gl.glTranslatef(getX(), getY(), 0f);
+		gl.glScalef(side, side, 0f);
+        gl.glDrawElements(GL10.GL_TRIANGLES, indices.length,
+                GL10.GL_UNSIGNED_SHORT, indexBuffer);
+		gl.glPopMatrix();
+		
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        gl.glDisable(GL10.GL_CULL_FACE);
 	}
+	
+	private void loadGLTexture(GL10 gl) { // New function
+        int[] textures = new int[1];
+        gl.glGenTextures(1, textures, 0);
+        textureId = textures[0];
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
+                        GL10.GL_LINEAR);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
+                        GL10.GL_LINEAR);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+                        GL10.GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+                        GL10.GL_REPEAT);
+        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
+	}
+	
 	public boolean isClicked(float eventx, float eventy){
 		boolean coordx = getX() <= eventx && getX()+getMoleWidth() >= eventx;
 		boolean coordy = getY() <=eventy && getY()+getMoleHeight() >= eventy;

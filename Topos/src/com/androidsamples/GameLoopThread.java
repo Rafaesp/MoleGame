@@ -10,8 +10,9 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-public class GameLoopThread extends Thread {
+public class GameLoopThread{
 
 	private static final int BIGCLICKS = 3;
 
@@ -89,14 +90,14 @@ public class GameLoopThread extends Thread {
 		secondsTimer.cancel();
 		boolean retry = true;
 		setRunning(false);
-		while (retry) {
-			try {
-				join();
-				retry = false;
-			} catch (InterruptedException i) {
-
-			}
-		}
+//		while (retry) {
+//			try {
+//				join();
+//				retry = false;
+//			} catch (InterruptedException i) {
+//
+//			}
+//		}
 	}
 
 	public void updateInfoBar(String type){
@@ -173,18 +174,10 @@ public class GameLoopThread extends Thread {
 		};
 	}
 
-	@Override
-	public void run() {
-
-		long ticksPS = 1000 / FPS;
-		long startTime;
-		long sleepTime;
-
+	public void update() {
 		playLoopStartTime = System.currentTimeMillis();
 
-		while (running) {
-			Canvas canvas = null;
-			startTime = System.currentTimeMillis();
+		if (running) {
 			if (lives <= 0 && !gameOver) {
 				view.reset();
 				levelFinish = true;
@@ -225,32 +218,17 @@ public class GameLoopThread extends Thread {
 				if (mole.isDigging() || mole.isHit())
 					view.setRedraw(view.needRedraw() || true);
 			}
-			if (view.needRedraw()) {
-				try {
 
-					canvas = view.getHolder().lockCanvas();
-					synchronized (view.getHolder()) {
-						view.onDraw(canvas);
-					}
-
-				} finally {
-					if (canvas != null) {
-						view.getHolder().unlockCanvasAndPost(canvas);
-					}
-				}
-			}
-
-			sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
-			try {
-				if (sleepTime > 0)
-					sleep(sleepTime);
-				else
-					sleep(10);
-			} catch (Exception e) {
-			}
+//			sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+//			try {
+//				if (sleepTime > 0)
+//					sleep(sleepTime);
+//				else
+//					sleep(10);
+//			} catch (Exception e) {
+//			}
 
 		}
-
 	}
 
 	private void play() {

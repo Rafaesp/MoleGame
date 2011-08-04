@@ -16,6 +16,7 @@ public class ToposGameActivity extends Activity {
 		setContentView(R.layout.gameview);
 
 		toposview = (ToposGameView) findViewById(R.id.toposview);
+		toposview.setRenderer(toposview);
 		infoBar = (LinearLayout) findViewById(R.id.infoBar);
 		toposview.setInfoBar(infoBar);
 

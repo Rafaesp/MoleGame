@@ -1,8 +1,12 @@
 package com.androidsamples;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -13,11 +17,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,11 +44,11 @@ import com.google.ads.AdSize;
 import com.google.ads.AdView;
 import com.scoreloop.client.android.ui.OnScoreSubmitObserver;
 import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
+import android.opengl.GLSurfaceView.Renderer;
 
-public class ToposGameView extends SurfaceView implements OnTouchListener,
+public class ToposGameView extends GLSurfaceView implements Renderer, OnTouchListener,
 OnScoreSubmitObserver {
 
-	private SurfaceHolder holder;
 	private GameLoopThread gameLoopThread;
 	private List<MoleSprite> moles;
 	private boolean needRedraw;
@@ -54,8 +60,9 @@ OnScoreSubmitObserver {
 	private LinearLayout infoBar;
 	private Context context;
 	private ProgressDialog progressd;
-	private HashMap<String,RectPair> statusMap;
+	private HashMap<String,FloatBuffer> statusMap;
 	private boolean bgEnabled;
+	private Bitmap bg;
 
 	public ToposGameView(Context context) {
 		super(context);
@@ -76,8 +83,11 @@ OnScoreSubmitObserver {
 		needRedraw = true;
 		setFocusable(true);
 		setOnTouchListener(this);
+//		getHolder().addCallback(this);
 		
 		bgEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("BackgroundPref", true);
+		if(bgEnabled)
+			bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.cesped);
 		
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
@@ -205,27 +215,7 @@ OnScoreSubmitObserver {
 
 		gameLoopThread = new GameLoopThread(this, handler);
 
-		holder = getHolder();
-		holder.addCallback(new Callback() {
-
-			public void surfaceDestroyed(SurfaceHolder arg0) {
-			}
-
-			public void surfaceCreated(SurfaceHolder arg0) {
-				
-				createMoles();
-				gameLoopThread.setRunning(true);
-				gameLoopThread.start();
-
-			}
-
-			public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2,
-					int arg3) {
-
-			}
-		});
-
-		statusMap = new HashMap<String, RectPair>();
+		statusMap = new HashMap<String, FloatBuffer>();
 	}
 
 	private void createMoles() {
@@ -249,7 +239,7 @@ OnScoreSubmitObserver {
 		infoBar = bar;
 	}
 
-	public HashMap<String, RectPair> getStatusMap() {
+	public HashMap<String, FloatBuffer> getStatusMap() {
 		return statusMap;
 	}
 
@@ -259,20 +249,6 @@ OnScoreSubmitObserver {
 
 	public void setRedraw(boolean need) {
 		needRedraw = need;
-	}
-
-	protected void onDraw(Canvas canvas) {
-		if(bgEnabled){
-				Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cesped);		
-				canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
-		}else
-		canvas.drawColor(Color.rgb(00, 0xCD, 00));
-			
-		needRedraw = false;
-		for (MoleSprite mole : moles) {
-			mole.onDraw(canvas);
-		}
-
 	}
 
 	public void reset() {
@@ -321,12 +297,48 @@ OnScoreSubmitObserver {
 		((ToposGameActivity)getContext()).finish();
 	}
 
-	class RectPair{
-		public Rect src;
-		public Rect dst;
-		public RectPair(Rect r1, Rect r2){
-			src = r1;
-			dst = r2;
+	public void onDrawFrame(GL10 gl) {
+//		if(bgEnabled){
+//			canvas.drawBitmap(bg, null, new Rect(0, 0, getWidth(), getHeight()),null);
+//		}else
+//			canvas.drawColor(Color.rgb(00, 0xCD, 00));
+//		
+//		needRedraw = false;
+//		for (MoleSprite mole : moles) {
+//			mole.onDraw(canvas);
+//		}
+		gameLoopThread.update();
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		gl.glLoadIdentity();
+		synchronized (moles) {
+			for (MoleSprite mole : moles) {
+				mole.draw(gl);
+			}
 		}
+		Log.i("TAG", "sale update");
 	}
+	
+	public void onSurfaceCreated(	GL10 gl, EGLConfig config) {
+		Log.i("TAG", "surfaceCreated");
+		createMoles();
+		gameLoopThread.setRunning(true);
+//		gameLoopThread.start();
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+		gl.glShadeModel(GL10.GL_SMOOTH);
+		gl.glClearDepthf(1.0f);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL10.GL_LEQUAL);
+		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+	}
+
+	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		Log.i("TAG", "surfaceChanged");
+		gl.glViewport(0, 0, width, height);
+		gl.glMatrixMode(GL10.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glOrthof(0, width, -0, height, -1, 1);
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glLoadIdentity();
+	}
+
 }
