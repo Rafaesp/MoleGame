@@ -45,7 +45,7 @@ public class SoundManager {
 		if(hitEnabled || missEnabled){
 			spool=new SoundPool(6, AudioManager.STREAM_MUSIC, 0);	
 
-		if(hitEnabled)
+		}if(hitEnabled){
 			fxHit = spool.load(context, R.raw.punch, 1);
 
 		}if(missEnabled){

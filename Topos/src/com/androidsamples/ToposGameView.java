@@ -78,6 +78,11 @@ OnScoreSubmitObserver {
 		setOnTouchListener(this);
 		
 		bgEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("BackgroundPref", true);
+		if(bgEnabled)
+			topos.tracker.trackEvent("Evento", "Preferencia", "bgEnabled", 1);
+		else
+			topos.tracker.trackEvent("Evento", "Preferencia", "bgEnabled", 0);
+		
 		
 		ScoreloopManagerSingleton.get().setOnScoreSubmitObserver(this);
 
@@ -266,7 +271,7 @@ OnScoreSubmitObserver {
 				Bitmap bit=BitmapFactory.decodeResource(this.getResources(), R.drawable.cesped);		
 				canvas.drawBitmap(bit, null, new Rect(0, 0, getWidth(), getHeight()),null);
 		}else
-		canvas.drawColor(Color.rgb(00, 0xCD, 00));
+			canvas.drawColor(Color.rgb(00, 0xCD, 00));
 			
 		needRedraw = false;
 		for (MoleSprite mole : moles) {

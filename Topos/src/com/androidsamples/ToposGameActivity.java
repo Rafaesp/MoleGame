@@ -13,6 +13,7 @@ public class ToposGameActivity extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		topos.tracker.trackPageView("/Game");
 		setContentView(R.layout.gameview);
 
 		toposview = (ToposGameView) findViewById(R.id.toposview);

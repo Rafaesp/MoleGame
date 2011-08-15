@@ -58,7 +58,11 @@ public class GameLoopThread extends Thread {
 				levelTimeDigDown+=1000;
 				playLoopTime+=1000;
 				levelTimeDuration -= 10000;
+				topos.tracker.trackEvent("Evento", "Preferencia", "kidMode", 1);
+			}else{
+				topos.tracker.trackEvent("Evento", "Preferencia", "kidMode", 0);
 			}
+		
 
 		sm = new SoundManager(view.getContext());
 
@@ -191,6 +195,7 @@ public class GameLoopThread extends Thread {
 				gameOver = true;
 				sm.pauseMusic();
 				updateInfoBar("gameover");
+				topos.tracker.trackEvent("Evento", "Game", "level", level);
 			} else if(System.currentTimeMillis() - playLoopStartTime > playLoopTime
 					&& !levelFinish) {
 				play();
@@ -227,7 +232,6 @@ public class GameLoopThread extends Thread {
 			}
 			if (view.needRedraw()) {
 				try {
-
 					canvas = view.getHolder().lockCanvas();
 					synchronized (view.getHolder()) {
 						view.onDraw(canvas);
@@ -330,6 +334,7 @@ public class GameLoopThread extends Thread {
 				topos.PREFS, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		if (canSave) {
+			topos.tracker.trackEvent("Evento", "Preferencia", "saved", 1);
 			editor.putBoolean("saved", true);
 			editor.putInt("level", level);
 			editor.putInt("lives", lives);

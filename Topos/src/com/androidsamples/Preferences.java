@@ -14,7 +14,7 @@ public class Preferences extends PreferenceActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
-		
+		topos.tracker.trackPageView("/Preferences");
 	}
 	
 	@Override

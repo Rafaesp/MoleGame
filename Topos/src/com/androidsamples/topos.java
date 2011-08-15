@@ -1,11 +1,15 @@
 package com.androidsamples;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +22,7 @@ import com.bunkerdev.savemycarrots.R;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.scoreloop.client.android.ui.EntryScreenActivity;
 import com.scoreloop.client.android.ui.ScoreloopManagerSingleton;
 
@@ -26,6 +31,8 @@ public class topos extends Activity implements OnClickListener {
 
 	private static final int PREFERENCES = Menu.FIRST;
 	private static final int SALIR = Menu.FIRST + 1;
+	public static GoogleAnalyticsTracker tracker;
+	public Properties gitSecrets;
 	
 	public static final String PREFS = "prefs";
 	
@@ -35,13 +42,20 @@ public class topos extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		ScoreloopManagerSingleton.destroy();
-		ScoreloopManagerSingleton.init(this, "uj+WFcZ4PfW5+OeUkqCTOOcGGDUkO84CNVgcIs8H4sdYcLrCvgWJ5Q==");
+		
+		gitSecrets = new Properties();
+		try {
+			gitSecrets.load(this.getClass().getClassLoader().getResourceAsStream("assets/GitSecrets"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		tracker = GoogleAnalyticsTracker.getInstance();
+		tracker.startNewSession(gitSecrets.getProperty("ANALYTICS"), this);
+		
 		setContentView(R.layout.main);
 
-
-		adView = new AdView(this, AdSize.BANNER, "a14d9ccf09ec04d");
+		adView = new AdView(this, AdSize.BANNER, gitSecrets.getProperty("ADMOB_ID"));
 		LinearLayout layout = (LinearLayout) findViewById(R.id.linearLayout);
 		layout.addView(adView);
 	
@@ -72,6 +86,11 @@ public class topos extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		ScoreloopManagerSingleton.destroy();
+		ScoreloopManagerSingleton.init(this, gitSecrets.getProperty("SCORELOOP"));
+		
+		tracker.trackPageView("/Main");
 		AdRequest request = new AdRequest();
 		adView.loadAd(request);
 		
@@ -106,6 +125,7 @@ public class topos extends Activity implements OnClickListener {
 		case R.id.btnRanking:
 			startActivity(new Intent(getApplicationContext(),
 					EntryScreenActivity.class));
+			tracker.trackPageView("/Ranking");
 			break;
 
 		case R.id.prefButton:
@@ -141,6 +161,13 @@ public class topos extends Activity implements OnClickListener {
 	private void exit() {
 		setResult(RESULT_OK);
 		finish();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		tracker.dispatch();
+		tracker.stopSession();
 	}
 
 }
