@@ -54,6 +54,7 @@ public class UserAgent extends BaseAgent {
 	@Override
 	protected void onStartRetrieve(final ValueStore valueStore) {
 		_userController = new UserController(this);
+		_userController.setCachedResponseUsed(false);
 		_userController.setUser((Entity) valueStore.getValue(Constant.USER));
 		_userController.loadUser();
 	}
@@ -64,7 +65,7 @@ public class UserAgent extends BaseAgent {
 		// trigger remote retrieval
 		super.retrieve(valueStore);
 		
-		// if we already have some data ready, put it immediatly
+		// if we already have some data ready, put it immediately
         putValue(Constant.USER_NAME, _userController.getUser().getDisplayName());
 	}
 

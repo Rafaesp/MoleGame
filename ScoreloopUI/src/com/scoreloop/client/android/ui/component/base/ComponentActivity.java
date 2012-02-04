@@ -132,19 +132,24 @@ public abstract class ComponentActivity extends BaseActivity implements Componen
 
 	public int getModeForPosition(final int position) {
 		final Game game = getGame();
-		return position + game.getMinMode();
+		return position + (game.hasModes() ? game.getMinMode() : 0);
 	}
 
 	public String getModeString(final int mode) {
 		if (!getGame().hasModes()) {
 			return ""; // return empty string if we don't have modes
 		}
-		return getResources().getStringArray(getConfiguration().getModesResId())[getPositionForMode(mode)].toString();
+		// left for backward compatibility
+		if (getConfiguration().getModesResId() != 0) {
+			return getResources().getStringArray(getConfiguration().getModesResId())[getPositionForMode(mode)].toString();
+		} else {
+			return getConfiguration().getModesNames()[getPositionForMode(mode)];
+		}
 	}
 
 	public int getPositionForMode(final int mode) {
 		final Game game = getGame();
-		return mode - game.getMinMode();
+		return game.hasModes() ? mode - game.getMinMode() : -1;
 	}
 
 	protected RequestControllerObserver getRequestControllerObserver() {

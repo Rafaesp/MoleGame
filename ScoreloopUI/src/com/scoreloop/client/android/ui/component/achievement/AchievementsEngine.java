@@ -24,6 +24,8 @@ package com.scoreloop.client.android.ui.component.achievement;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.AsyncTask;
+
 import com.scoreloop.client.android.core.controller.AchievementController;
 import com.scoreloop.client.android.core.controller.AchievementsController;
 import com.scoreloop.client.android.core.controller.RequestController;
@@ -114,30 +116,42 @@ public class AchievementsEngine implements RequestControllerObserver {
 		}
 	}
 
-	public void submitAchievements(final Runnable continuation) {
-		if (!hasLoadedAchievements() || !hadInitialSync()) {
-			loadAchievements(true, new Runnable() {
-				public void run() {
-					if (hasLoadedAchievements()) {
-						submitAchievements(continuation);
-					} else {
-						// in case we had problems loading the achievements, we just run the submit continuations
-						// NOTE: in the future change from Runnable to another interface which allows to pass the failure
-						if (continuation != null) {
-							_submitContinuations.add(continuation);
+	public void submitAchievements(final boolean forceInitialSync, final Runnable continuation) {
+		final AsyncTask<Void, Void, Boolean> loadHasInitialSyncTask = new AsyncTask<Void, Void, Boolean>() {
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				return hadInitialSync();
+			}
+
+			@Override
+			protected void onPostExecute(Boolean hadInitialSync) {
+				if (!hasLoadedAchievements() || (!hadInitialSync && forceInitialSync)) {
+					loadAchievements(forceInitialSync, new Runnable() {
+						public void run() {
+							if (hasLoadedAchievements()) {
+								submitAchievements(forceInitialSync, continuation);
+							} else {
+								// in case we had problems loading the achievements, we just run the submit continuations
+								// NOTE: in the future change from Runnable to another interface which allows to pass the failure
+								if (continuation != null) {
+									_submitContinuations.add(continuation);
+								}
+								invokeSubmitContinuations();
+							}
 						}
-						invokeSubmitContinuations();
+					});
+				} else {
+					if (continuation != null) {
+						_submitContinuations.add(continuation);
+					}
+					if (!_isSubmitting) {
+						submitNextAchievement();
 					}
 				}
-			});
-		} else {
-			if (continuation != null) {
-				_submitContinuations.add(continuation);
 			}
-			if (!_isSubmitting) {
-				submitNextAchievement();
-			}
-		}
+		};
+		// noinspection unchecked
+		loadHasInitialSyncTask.execute();
 	}
 
 	private void submitNextAchievement() {

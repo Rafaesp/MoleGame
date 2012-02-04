@@ -119,9 +119,9 @@ public class PagingListAdapter<T extends BaseListItem> extends BaseListAdapter<B
 				final PagingListItem pagingItem = (PagingListItem) item;
 
 				pagingListener.onPagingListItemClick(pagingItem.getPagingDirection());
-				return;
-			}
-			_listItemClickListener.onListItemClick(item);
+			} else {
+			    _listItemClickListener.onListItemClick(item);
+            }
 		}
 	}
 }

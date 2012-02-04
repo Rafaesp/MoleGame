@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.scoreloop.client.android.core.model.Game;
+import com.scoreloop.client.android.ui.component.base.Constant;
 import com.scoreloop.client.android.ui.framework.ScreenActivity;
 
 /**
@@ -81,6 +82,12 @@ public class LeaderboardsScreenActivity extends ScreenActivity {
 	public static final int		LEADERBOARD_GLOBAL	= 0;
 
 	/**
+	* This code is used to identify the local (offline) leaderboard.
+	* Only scores submitted to this local leadearboard will be show.
+	 */
+	public static final int		LEADERBOARD_LOCAL	= Constant.LEADERBOARD_LOCAL;
+
+	/**
 	* A key identifying a mode. This is used in the 
 	* construction of new Android
 	* <a href="http://developer.android.com/reference/android/content/Intent.html">android.content.Intent</a> objects.
@@ -100,8 +107,10 @@ public class LeaderboardsScreenActivity extends ScreenActivity {
 			final Game game = manager.getSession().getGame();
 			final Integer minMode = game.getMinMode();
 			final Integer maxMode = game.getMaxMode();
-			if (minMode != null && maxMode != null && ((mode < minMode) || (mode >= maxMode))) {
-				Log.e("ScoreloopUI", "mode extra parameter on LeaderboardsScreenActivity is out of range [" + minMode + "," + maxMode + "[");
+			if ((minMode != null) && (maxMode != null) && ((mode < minMode) || (mode >= maxMode))) {
+				Log
+						.e("ScoreloopUI", "mode extra parameter on LeaderboardsScreenActivity is out of range [" + minMode + "," + maxMode
+								+ "[");
 				finish();
 				return;
 			}
@@ -110,7 +119,7 @@ public class LeaderboardsScreenActivity extends ScreenActivity {
 		Integer leaderboard = null;
 		if (intent.hasExtra(LEADERBOARD)) {
 			leaderboard = intent.getIntExtra(LEADERBOARD, 0);
-			if ((leaderboard < LEADERBOARD_GLOBAL) || (leaderboard > LEADERBOARD_24h)) {
+			if ((leaderboard < LEADERBOARD_GLOBAL) || (leaderboard > LEADERBOARD_LOCAL)) {
 				Log.e("ScoreloopUI", "leaderboard extra parameter on LeaderboardsScreenActivity is invalid");
 				finish();
 				return;

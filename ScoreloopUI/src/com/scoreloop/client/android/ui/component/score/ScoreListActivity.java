@@ -33,6 +33,7 @@ import com.scoreloop.client.android.core.controller.ScoresController;
 import com.scoreloop.client.android.core.model.Ranking;
 import com.scoreloop.client.android.core.model.Score;
 import com.scoreloop.client.android.core.model.SearchList;
+import com.scoreloop.client.android.core.model.Session;
 import com.scoreloop.client.android.core.model.User;
 import com.scoreloop.client.android.ui.R;
 import com.scoreloop.client.android.ui.component.base.ComponentListActivity;
@@ -57,6 +58,8 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 	private Ranking				_ranking;
 	private RankingController	_rankingController;
 	private ScoresController	_scoresController;
+	private SearchList			_searchList;
+	private BaseListItem		_submitLocalScoresListItem;
 
 	@SuppressWarnings("unchecked")
 	private PagingListAdapter<ScoreListItem> getPagingListAdapter() {
@@ -77,6 +80,9 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 	}
 
 	private boolean isHighlightedScore(final Score score) {
+		if (_searchList == SearchList.getLocalScoreSearchList()) {
+			return false;
+		}
 		return getSession().isOwnedByUser(score.getUser());
 	}
 
@@ -86,24 +92,38 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 
 		setListAdapter(new PagingListAdapter<ScoreListItem>(this));
 
-		final SearchList searchList = getActivityArguments().getValue(Constant.SEARCH_LIST, SearchList.getDefaultScoreSearchList());
+		_searchList = getActivityArguments().getValue(Constant.SEARCH_LIST, SearchList.getDefaultScoreSearchList());
 
 		addObservedKeys(Constant.MODE);
-		if (searchList.equals(SearchList.getBuddiesScoreSearchList())) {
+		if (_searchList.equals(SearchList.getBuddiesScoreSearchList())) {
 			addObservedKeys(Constant.NUMBER_BUDDIES);
 		}
 
 		_scoresController = new ScoresController(getRequestControllerObserver());
-		_scoresController.setRangeLength(Constant.getOptimalRangeLength(getListView(), new ScoreListItem(this, new Score(0.0, null))));
-		_scoresController.setSearchList(searchList);
+		_scoresController.setRangeLength(Constant
+				.getOptimalRangeLength(getListView(), new ScoreListItem(this, new Score(0.0, null), false)));
+		_scoresController.setSearchList(_searchList);
 
-		_rankingController = new RankingController(getRequestControllerObserver());
-		_rankingController.setSearchList(searchList);
+		if (showsLocalSearchList()) {
+			_submitLocalScoresListItem = new ScoreSubmitLocalListItem(this);
+		} else {
+			_rankingController = new RankingController(getRequestControllerObserver());
+			_rankingController.setSearchList(_searchList);
+		}
 	}
 
 	@Override
 	protected void onFooterItemClick(final BaseListItem footerItem) {
-		if (footerItem.getType() == Constant.LIST_ITEM_TYPE_SCORE_HIGHLIGHTED) {
+		if (footerItem == _submitLocalScoresListItem) {
+			showSpinner();
+			getManager().submitLocalScores(new Runnable() {
+				public void run() {
+					// refresh the UI, this will hide the footer if necessary
+					hideSpinner();
+					setNeedsRefresh(PagingDirection.PAGE_TO_RECENT);
+				}
+			});
+		} else if (footerItem.getType() == Constant.LIST_ITEM_TYPE_SCORE_HIGHLIGHTED) {
 			setNeedsRefresh(PagingDirection.PAGE_TO_OWN);
 		}
 	}
@@ -126,10 +146,11 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 
 	private void onRanking() {
 		final PagingListAdapter<ScoreListItem> adapter = getPagingListAdapter();
-		
+
 		_ranking = _rankingController.getRanking();
 		final Integer rank = _ranking.getRank();
 
+		// update the footer
 		if (rank != null) {
 
 			// if we have a highlighted position, update its ranking and refresh the list
@@ -150,30 +171,19 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 			// if no rank found, inform user via
 			showFooter(new ScoreExcludedListItem(this));
 		}
-		
-		// if _highlightedPosition is valid, scroll to that position, otherwise to top or bottom (depending on paging direction).
-		getListView().post(new Runnable() {
-			public void run() {
-		        final ListView listView = getListView();
-				if (_highlightedPosition != -1) {
-					listView.setSelectionFromTop(_highlightedPosition + adapter.getFirstContentPosition(), getVerticalCenterOffset());
-				} else {
-					if (_pagingDirection == PagingDirection.PAGE_TO_TOP) {
-						listView.setSelection(0);
-					} else if (_pagingDirection == PagingDirection.PAGE_TO_NEXT) {
-						listView.setSelection(adapter.getFirstContentPosition());
-					} else if (_pagingDirection == PagingDirection.PAGE_TO_PREV) {
-						listView.setSelectionFromTop(adapter.getLastContentPosition() + 1, listView.getHeight());
-					}
-				}				
-			}
-		});		
+
+		// update the scrolling
+		updateScrollPosition();
 	}
 
 	@Override
 	public void onRefresh(final int flags) {
 		showSpinnerFor(_scoresController);
-		_scoresController.setMode(getScreenValues().<Integer> getValue(Constant.MODE));
+		if (Session.getCurrentSession().getGame().hasModes()) {
+            _scoresController.setMode(getScreenValues().<Integer> getValue(Constant.MODE));
+        } else {
+            _scoresController.setMode(null);
+        }
 
 		switch (_pagingDirection) {
 		case PAGE_TO_TOP:
@@ -206,16 +216,17 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 		// fill adapter with scores
 		final List<Score> scores = _scoresController.getScores();
 		final int scoreCount = scores.size();
+		final boolean clickable = !showsLocalSearchList();
 		for (int i = 0; i < scoreCount; ++i) {
 			final Score score = scores.get(i);
 			if (isHighlightedScore(score)) {
 				_highlightedPosition = i;
 				adapter.add(new ScoreHighlightedListItem(this, score, null));
 			} else {
-				adapter.add(new ScoreListItem(this, score));
+				adapter.add(new ScoreListItem(this, score, clickable));
 			}
 		}
-		Integer recentTopRank = null;
+		Integer recentTopRank;
 		if (scoreCount == 0) {
 			adapter.add(new EmptyListItem(this, getString(R.string.sl_no_scores)));
 			recentTopRank = 1;
@@ -228,9 +239,23 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 		final boolean hasPreviousRange = _scoresController.hasPreviousRange();
 		adapter.addPagingItems(hasPreviousRange, hasPreviousRange, _scoresController.hasNextRange());
 
-		// load the rank for the user
-		final Integer mode = getScreenValues().getValue(Constant.MODE);
-		_rankingController.loadRankingForUserInGameMode(getUser(), mode);
+		// load/gather additional data
+		if (showsLocalSearchList()) {
+
+			// update the footer
+			if (_scoresController.getLocalScoreToSubmit() != null) {
+				showFooter(_submitLocalScoresListItem);
+			} else {
+				hideFooter();
+			}
+
+			// update the scrolling
+			updateScrollPosition();
+		} else {
+			// load the rank for the user
+			final Integer mode = getGame().hasModes() ? (Integer)getScreenValues().getValue(Constant.MODE) : null;
+			_rankingController.loadRankingForUserInGameMode(getUser(), mode);
+		}
 	}
 
 	@Override
@@ -268,5 +293,32 @@ public class ScoreListActivity extends ComponentListActivity<ScoreListItem> impl
 		_pagingDirection = pagingDirection;
 		hideFooter();
 		setNeedsRefresh();
+	}
+
+	private boolean showsLocalSearchList() {
+		return _searchList == SearchList.getLocalScoreSearchList();
+	}
+
+	private void updateScrollPosition() {
+
+		// if _highlightedPosition is valid, scroll to that position, otherwise to top or bottom (depending on paging direction).
+		getListView().post(new Runnable() {
+			public void run() {
+				final PagingListAdapter<ScoreListItem> adapter = getPagingListAdapter();
+				final ListView listView = getListView();
+
+				if (_highlightedPosition != -1) {
+					listView.setSelectionFromTop(_highlightedPosition + adapter.getFirstContentPosition(), getVerticalCenterOffset());
+				} else {
+					if (_pagingDirection == PagingDirection.PAGE_TO_TOP) {
+						listView.setSelection(0);
+					} else if (_pagingDirection == PagingDirection.PAGE_TO_NEXT) {
+						listView.setSelection(adapter.getFirstContentPosition());
+					} else if (_pagingDirection == PagingDirection.PAGE_TO_PREV) {
+						listView.setSelectionFromTop(adapter.getLastContentPosition() + 1, listView.getHeight());
+					}
+				}
+			}
+		});
 	}
 }

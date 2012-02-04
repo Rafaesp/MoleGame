@@ -154,11 +154,13 @@ public class StandardScreenManager implements ScreenManager {
 				final StackEntry previousEntry = popEntry();
 				final StackEntry currentEntry = _stack;
 
-				if ((currentEntry == null) || (currentEntry.getScreenActivity() != previousEntry.getScreenActivity())) {
-					previousEntry.getScreenActivity().getActivity().finish();
-					return;
+				if (previousEntry != null) {
+					if ((currentEntry == null) || (currentEntry.getScreenActivity() != previousEntry.getScreenActivity())) {
+						previousEntry.getScreenActivity().getActivity().finish();
+						return;
+					}
+					applyCurrentDescription(previousEntry.getScreenDescription(), ActivityHelper.ANIM_PREVIOUS);
 				}
-				applyCurrentDescription(previousEntry.getScreenDescription(), ActivityHelper.ANIM_PREVIOUS);
 			}
 		});
 	}

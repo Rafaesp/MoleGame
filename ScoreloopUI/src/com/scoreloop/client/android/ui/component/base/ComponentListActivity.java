@@ -90,7 +90,11 @@ public abstract class ComponentListActivity<T extends BaseListItem> extends Comp
 	}
 
 	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		getBaseListAdapter().onItemClick(parent, view, position, id);
+        final BaseListAdapter<T> baseListAdapter = getBaseListAdapter();
+        final T item = baseListAdapter.getItem(position);
+        if (item.isEnabled()) {
+            baseListAdapter.onItemClick(parent, view, position, id);
+        }
 	}
 
 	public void onListItemClick(final T item) {
@@ -134,14 +138,14 @@ public abstract class ComponentListActivity<T extends BaseListItem> extends Comp
 
 	@Override
 	public boolean onOptionsItemSelectedForActivityGroup(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.sl_item_account_settings:
-			getTracker().trackEvent(TrackerEvents.CAT_NAVI, TrackerEvents.NAVI_OM_ACCOUNT_SETTINGS, null, 0);
-			final ScreenDescription profileSettingsScreenDescription = getFactory()
-					.createProfileSettingsScreenDescription(getSessionUser());
-			display(profileSettingsScreenDescription);
-			return true;
-		}
+        int itemId = item.getItemId();
+        if (itemId == R.id.sl_item_account_settings) {
+            getTracker().trackEvent(TrackerEvents.CAT_NAVI, TrackerEvents.NAVI_OM_ACCOUNT_SETTINGS, null, 0);
+            final ScreenDescription profileSettingsScreenDescription = getFactory()
+                    .createProfileSettingsScreenDescription(getSessionUser());
+            display(profileSettingsScreenDescription);
+            return true;
+        }
 		return super.onOptionsItemSelectedForActivityGroup(item);
 	}
 

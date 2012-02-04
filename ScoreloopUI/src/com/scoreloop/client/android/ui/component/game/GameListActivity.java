@@ -55,10 +55,14 @@ public class GameListActivity extends ComponentListActivity<GameListItem> implem
 		setListAdapter(new PagingListAdapter<BaseListItem>(this, 1));
 		_mode = getActivityArguments().<Integer> getValue(Constant.MODE);
 
-		_gamesController = new GamesController(this);
 		final int optimalRangeLength = Constant.getOptimalRangeLength(getListView(), new StandardListItem<GameListItem>(this, null,
 				"title", "subtitle", null));
+
+		_gamesController = new GamesController(this);
 		_gamesController.setRangeLength(optimalRangeLength);
+		if (_mode == Constant.GAME_MODE_BUDDIES) {
+			_gamesController.setLoadsDevicesPlatformOnly(false);
+		}
 		setNeedsRefresh(PagingDirection.PAGE_TO_TOP);
 	}
 

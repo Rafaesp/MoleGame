@@ -40,7 +40,7 @@ public class GameDetailUserListItem extends StandardListItem<User> {
 
 	@Override
 	protected int getLayoutId() {
-		return R.layout.sl_list_item_icon_title;
+		return R.layout.sl_list_item_user;
 	}
 
 	@Override

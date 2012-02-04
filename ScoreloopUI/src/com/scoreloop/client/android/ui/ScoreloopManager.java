@@ -25,7 +25,6 @@ import java.util.List;
 
 import com.scoreloop.client.android.core.model.Achievement;
 import com.scoreloop.client.android.core.model.AwardList;
-import com.scoreloop.client.android.core.model.Client;
 import com.scoreloop.client.android.core.model.Score;
 
 /**
@@ -49,10 +48,13 @@ public interface ScoreloopManager {
 	 * as having been achieved by the session user. The method can be used
 	 * to specify whether a toast message should be displayed and also
 	 * whether the achieved award should be submitted to the Scoreloop
-	 * servers straight away. Note that {@link #loadAchievements(boolean, Runnable)} must first have
+	 * servers straight away. 
+	 * 
+	 * Note that {@link #loadAchievements(Runnable)} must first have
 	 * been called before this method is invoked, otherwise a
 	 * <a href="http://download.oracle.com/javase/6/docs/api/java/lang/IllegalStateException.html">
 	 * java.lang.illegalStateException</a> will be thrown.
+	 * 
 	 * @param awardId a valid award identifier as specified on the developer site.
 	 * @param showToast @c true if you want the ScoreloopUI show a toast when the award gets achieved.
 	 * @param submitNow @c true if you want to submit the new achievement immediately. You might not want to do this during gameplay as it results in a communication being built up.
@@ -72,7 +74,7 @@ public interface ScoreloopManager {
 	 * identifier is chosen by the developer and
 	 * configured on https://developer.scoreloop.com.
 	 * 
-	 * Note that the {@link #loadAchievements(boolean, Runnable)} method
+	 * Note that the {@link #loadAchievements(Runnable)} method
 	 * must first be called, before this method is invoked
 	 * otherwise a <a href="http://download.oracle.com/javase/6/docs/api/java/lang/IllegalStateException.html">java.lang.IllegalStateException</a> will be thrown.
 	 *
@@ -84,9 +86,9 @@ public interface ScoreloopManager {
 	/**
 	 * This method Returns the list of all achievements
 	 * that have been requested from the server by calling
-	 * {@link #loadAchievements(boolean, Runnable)}.
+	 * {@link #loadAchievements(Runnable)}.
 	 * 
-	 * If this method is called before {@link #loadAchievements(boolean, Runnable)}
+	 * If this method is called before {@link #loadAchievements(Runnable)}
 	 * then a <a href="http://download.oracle.com/javase/6/docs/api/java/lang/IllegalStateException.html">java.lang.IllegalStateException</a> will be thrown.
 	 * @return <a href="http://download.oracle.com/javase/6/docs/api/java/util/List.html">
 	 * java.util.List<Achievement></a> A list of Achievement objects.
@@ -118,10 +120,26 @@ public interface ScoreloopManager {
 	boolean hasLoadedAchievements();
 
 	/**
+	 * Use this method to increment the value of an award by one. If the achieving value is reached, a toast will be shown (optionally) and
+	 * the award will be uploaded to Scoreloop (also optionally).
+	 * 
+	 * Note that {@link #loadAchievements(Runnable)} must first have
+	 * been called before this method is invoked, otherwise a
+	 * <a href="http://download.oracle.com/javase/6/docs/api/java/lang/IllegalStateException.html">
+	 * java.lang.illegalStateException</a> will be thrown.
+	 * 
+	 * @param awardId a valid award identifier as specified on the developer site.
+	 * @param showToast @c true if you want the ScoreloopUI show a toast when the award gets achieved.
+	 * @param submitNow @c true if you want to submit the new achievement immediately. You might not want to do this during gameplay as it results in a communication being built up.
+	 * @return @true if the award was achieved by incrementing the value.
+	 */
+	boolean incrementAward(String awardId, boolean showToast, boolean submitNow);
+
+	/**
 	 * This method is used to query whether an award with a given id
 	 * has been achieved or not. The award identifier is defined
 	 * by the developer and configured on https://developer.scoreloop.com.
-	 * Note that {@link #loadAchievements(boolean, Runnable)}  must have first been called
+	 * Note that {@link #loadAchievements(Runnable)}  must have first been called
 	 * before this method can be invoked, otherwise a 
 	 * <a href="http://download.oracle.com/javase/6/docs/api/java/lang/IllegalStateException.html">
 	 * java.lang.IllegalStateException</a> will be thrown.
@@ -146,13 +164,15 @@ public interface ScoreloopManager {
 	 * @param continuation A <a href="http://download.oracle.com/javase/6/docs/api/java/lang/Runnable.html">java.lang.Runnable</a> that gets called when
 	 * the loading of achievements completes with or without errors. 
 	 * This can be  be @c null.
-	 * 
-	 * @param forceInitialSync (since 2.2) When this flag is set to true, a Scoreloop server request is made on the first call to this method after an installation of the game.
-	 * If false, loadAchievements will not make this intial server request which has pros and cons. As a pro, you can use the achievements without network access (you still
-	 * have to call loadAchievements() but this will return the achievements from the local store only. As a cons, if the game was deleted and reinstalled, the returned
+	 *
+	 * Normally, a Scoreloop server request is made on the first call to this method after an installation of the game.
+	 * By setting the ui.feature.achievement.forceSync property in scoreloop.properties to false, loadAchievements will not make this initial server request 
+	 * which has pros and cons. As a pro, you can use the achievements without network access (you still
+	 * have to call loadAchievements() though but this will return the achievements from the local store only. 
+	 * As a cons, if the game was deleted and reinstalled, the returned
 	 * achievements will not know about previous achievements before {@link #submitAchievements(Runnable)} is called. 
 	 */
-	void loadAchievements(boolean forceInitialSync, Runnable continuation);
+	void loadAchievements(Runnable continuation);
 
 	/**
 	* This method is used to submit a score to Scoreloop.
@@ -166,7 +186,11 @@ public interface ScoreloopManager {
 	* If no challenge is currently underway, the score will be submitted
 	* to Scoreloop on behalf of the session user in the standard way.
 	*
-	* After submitting the score, {@link com.scoreloop.client.android.ui.OnScoreSubmitObserver.onScoreSubmit(final int, final Exception) OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)} will be called.
+	* After submitting the score, @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.onScoreSubmit(final int, final Exception) OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)@endlink will be called.
+	* 
+	* This method always tries to submit the score to the remote Scoreloop servers. If this will not be possible due to connection problems,
+	* the score will be stored in the local (offline) leaderboards list instead. You might then submit the best score of the local leaderboard
+	* some time later. 
 	*
 	* \sa @link scoreloopui-integratescores Submitting Scores to Scoreloop@endlink
 	*
@@ -196,17 +220,20 @@ public interface ScoreloopManager {
 	* If no challenge is currently underway, the score will be submitted
 	* to Scoreloop on behalf of the session user in the standard way.
 	*
-	* After submitting the score, {@link com.scoreloop.client.android.ui.OnScoreSubmitObserver.onScoreSubmit(final int, final Exception) OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)} will be called.
+	* After submitting the score, @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)@endlink will be called.
 	*
-	* If the score to be submitted consists of the score result only, (with an optional mode), 
-	* then the onGamePlayEnded(Double, Integer) method should be used instead.
+	* This method allows you to specify whether the score should be submitted to the local (offline) leaderboard only. You might then submit 
+	* the best score of the local leaderboard some time later. Pass null or false if you want the score to be submitted to the Scoreloop servers.  
+	* Note, that scores which are part of a challenge are always submitted remotely.
 	* 
 	* \sa @link scoreloopui-integratescores Submitting Scores to Scoreloop@endlink for details about how to
 	* create complex Score objects.
 	*
 	* @param score A Score object representing the score result obtained by the user in the game. 
+	* @param submitLocallyOnly A Boolean which when true will indicate that the score should be submitted to the local (offline) leaderaboard list only.
+	* Pass null or false to send a score to the Scoreloop servers.
 	*/
-	void onGamePlayEnded(Score score);
+	void onGamePlayEnded(Score score, Boolean submitLocallyOnly);
 
 	/**
 	 * This method correctly sets an OnCanStartGamePlayObserver
@@ -254,12 +281,28 @@ public interface ScoreloopManager {
 
 	/**
 	 * This method is used to submit achievements to the Scoreloop server. 
-	 * This method will implicitly call the  {@link #loadAchievements(boolean, Runnable)}
+	 * This method will implicitly call the  {@link #loadAchievements(Runnable)}
 	 * method if it has not already been called.
 	 * 
-	 * @param continuation A <a href="http://download.oracle.com/javase/6/docs/api/java/lang/Runnable.html">java.lang.Runnable</a> that will be invoked when all achievements have been submitted. 
-	 * This value can be @c null. 
+	 * @param continuation A <a href="http://download.oracle.com/javase/6/docs/api/java/lang/Runnable.html">java.lang.Runnable</a> that will be invoked 
+	 * when all achievements have been submitted. This value can be @c null. 
 	 */
 	void submitAchievements(Runnable continuation);
+
+	/**
+	 * @param continuation A <a href="http://download.oracle.com/javase/6/docs/api/java/lang/Runnable.html">java.lang.Runnable</a> that will be invoked 
+	 * when the local scores hav been submitted to to the Scoreloop servers. Note that only the currently best local score of every mode which has not yet been
+	 * submitted will be uploaded to the server.  
+	 * This value can be @c null. 
+	 */
+	void submitLocalScores(Runnable continuation);
+
+	/**
+	 * Retrieves the mode names from configuration of ScoreFormatter
+	 * The modes are formatted with ModeOnlyFormat
+	 * For backward compatibility the property "ui.res.modes.name" from scoreloop.properties is evaluated
+	 * @return The mode names
+	 */
+	String[] getModeNames();
 
 }

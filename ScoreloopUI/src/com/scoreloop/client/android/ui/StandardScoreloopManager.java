@@ -21,10 +21,7 @@
 
 package com.scoreloop.client.android.ui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import android.content.Context;
 import android.content.Intent;
@@ -33,42 +30,20 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.scoreloop.client.android.core.controller.ChallengeController;
-import com.scoreloop.client.android.core.controller.ChallengeControllerObserver;
-import com.scoreloop.client.android.core.controller.RequestController;
-import com.scoreloop.client.android.core.controller.ScoreController;
-import com.scoreloop.client.android.core.model.Achievement;
-import com.scoreloop.client.android.core.model.AwardList;
-import com.scoreloop.client.android.core.model.Challenge;
-import com.scoreloop.client.android.core.model.Client;
-import com.scoreloop.client.android.core.model.Game;
-import com.scoreloop.client.android.core.model.Score;
-import com.scoreloop.client.android.core.model.SearchList;
-import com.scoreloop.client.android.core.model.Session;
-import com.scoreloop.client.android.core.model.User;
+import com.scoreloop.client.android.core.controller.*;
+import com.scoreloop.client.android.core.model.*;
 import com.scoreloop.client.android.ui.component.achievement.AchievementHeaderActivity;
 import com.scoreloop.client.android.ui.component.achievement.AchievementListActivity;
 import com.scoreloop.client.android.ui.component.achievement.AchievementsEngine;
-import com.scoreloop.client.android.ui.component.agent.NewsAgent;
-import com.scoreloop.client.android.ui.component.agent.NumberAchievementsAgent;
-import com.scoreloop.client.android.ui.component.agent.UserAgent;
-import com.scoreloop.client.android.ui.component.agent.UserBuddiesAgent;
-import com.scoreloop.client.android.ui.component.agent.UserDetailsAgent;
-import com.scoreloop.client.android.ui.component.base.Configuration;
-import com.scoreloop.client.android.ui.component.base.Constant;
-import com.scoreloop.client.android.ui.component.base.Factory;
-import com.scoreloop.client.android.ui.component.base.Manager;
-import com.scoreloop.client.android.ui.component.base.Tracker;
+import com.scoreloop.client.android.ui.component.agent.*;
+import com.scoreloop.client.android.ui.component.base.*;
 import com.scoreloop.client.android.ui.component.base.Configuration.Feature;
-import com.scoreloop.client.android.ui.component.challenge.ChallengeAcceptListActivity;
-import com.scoreloop.client.android.ui.component.challenge.ChallengeCreateListActivity;
-import com.scoreloop.client.android.ui.component.challenge.ChallengeHeaderActivity;
-import com.scoreloop.client.android.ui.component.challenge.ChallengeListActivity;
-import com.scoreloop.client.android.ui.component.challenge.ChallengePaymentActivity;
+import com.scoreloop.client.android.ui.component.challenge.*;
 import com.scoreloop.client.android.ui.component.entry.EntryListActivity;
 import com.scoreloop.client.android.ui.component.game.GameDetailHeaderActivity;
 import com.scoreloop.client.android.ui.component.game.GameDetailListActivity;
@@ -85,19 +60,14 @@ import com.scoreloop.client.android.ui.component.user.UserAddBuddyListActivity;
 import com.scoreloop.client.android.ui.component.user.UserDetailListActivity;
 import com.scoreloop.client.android.ui.component.user.UserHeaderActivity;
 import com.scoreloop.client.android.ui.component.user.UserListActivity;
-import com.scoreloop.client.android.ui.framework.BaseActivity;
-import com.scoreloop.client.android.ui.framework.ScreenDescription;
-import com.scoreloop.client.android.ui.framework.ScreenManager;
-import com.scoreloop.client.android.ui.framework.ScreenManagerSingleton;
-import com.scoreloop.client.android.ui.framework.StandardScreenManager;
-import com.scoreloop.client.android.ui.framework.ValueStore;
+import com.scoreloop.client.android.ui.framework.*;
 import com.scoreloop.client.android.ui.framework.ScreenDescription.ShortcutObserver;
 import com.scoreloop.client.android.ui.framework.ScreenManager.Delegate;
 import com.scoreloop.client.android.ui.framework.ValueStore.ValueSource;
 import com.scoreloop.client.android.ui.framework.ValueStore.ValueSourceFactory;
+import com.scoreloop.client.android.ui.util.LocalImageStorage;
 
-class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, ShortcutObserver, Delegate, ValueSourceFactory,
-		ChallengeControllerObserver, Runnable, Tracker {
+class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, ShortcutObserver, Delegate, ValueSourceFactory, Tracker {
 
 	class Checker {
 
@@ -221,25 +191,24 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 
 	private AchievementsEngine				_achievementsEngine;
 	private ValueStore						_cachedUserValueStore;
-	private ChallengeController				_challengeController;
-	private boolean							_challengeOngoing;
 	private final Client					_client;
 	private final Configuration				_configuration;
 	private final Context					_context;
-	private final Handler					_handler	= new Handler();
-	private Challenge						_lastChallenge;
-	private Score							_lastScore;
-	private int								_lastStatus;
+	private final Handler					_handler						= new Handler();
+	private Challenge						_lastSubmittedChallenge;
+	private Score							_lastSubmittedScore;
+	private int								_lastSubmitStatus;
 	private OnCanStartGamePlayObserver		_onCanStartGamePlayObserver;
 	private OnScoreSubmitObserver			_onScoreSubmitObserver;
 	private OnStartGamePlayRequestObserver	_onStartGamePlayRequestObserver;
-	private ScoreController					_scoreController;
 	private ValueStore						_sessionGameValueStore;
 	private ValueStore						_sessionUserValueStore;
 
-	StandardScoreloopManager(final Context context) {
+	private List<Runnable>					_submitLocalScoresContinuations	= null;
+
+	StandardScoreloopManager(final Context context, final String gameSecret) {
 		_context = context;
-		_client = new Client(_context, null);
+		_client = new Client(_context, gameSecret, null);
 
 		_configuration = new Configuration(_context, getSession());
 		verifyManifest();
@@ -249,18 +218,27 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		ScreenManagerSingleton.init(screenManager);
 
 		Constant.setup();
+
+		_handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				LocalImageStorage.get().tryPurge(context);
+			}
+		}, 1000 * 30);
+
 	}
 
 	public void achieveAward(final String awardId, final boolean showToast, final boolean submitNow) {
 		final Achievement achievement = getAchievement(awardId); // checks made here
-		if (!achievement.isAchieved()) {
-			achievement.setAchieved();
-			if (showToast) {
-				showToastForAchievement(achievement);
-			}
-			if (submitNow) {
-				submitAchievements(null);
-			}
+		if (achievement.isAchieved()) {
+			return;
+		}
+		achievement.setAchieved();
+		if (showToast) {
+			showToastForAchievement(achievement);
+		}
+		if (submitNow) {
+			submitAchievements(null);
 		}
 	}
 
@@ -270,25 +248,6 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 					"trying to check if gameplay can be started, but the callback is not set - did you call ScoreloopManagerSingleton.get().setOnCanStartGamePlayObserver(...)?");
 		}
 		return _onCanStartGamePlayObserver.onCanStartGamePlay();
-	}
-
-	public void challengeControllerDidFailOnInsufficientBalance(final ChallengeController challengeController) {
-		if (challengeController == _challengeController) {
-			_lastStatus = OnScoreSubmitObserver.STATUS_ERROR_BALANCE;
-			_lastChallenge = null;
-			_challengeOngoing = false;
-			if (_onScoreSubmitObserver != null) {
-				_onScoreSubmitObserver.onScoreSubmit(_lastStatus, null);
-			}
-		}
-	}
-
-	public void challengeControllerDidFailToAcceptChallenge(final ChallengeController challengeController) {
-		requestControllerDidFail(challengeController, new RuntimeException("challengeControllerDidFailToAcceptChallenge"));
-	}
-
-	public void challengeControllerDidFailToRejectChallenge(final ChallengeController challengeController) {
-		requestControllerDidFail(challengeController, new RuntimeException("challengeControllerDidFailToRejectChallenge"));
 	}
 
 	private void checkHasAwards() {
@@ -306,15 +265,16 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 	public ScreenDescription createAchievementScreenDescription(final User user) {
 		final ScreenDescription description = createScreenDescription(user, null, true);
 		description.setHeaderDescription(new Intent(getContext(), AchievementHeaderActivity.class));
-		description.setBodyDescription(new Intent(getContext(), AchievementListActivity.class));
+		description.setBodyDescription(new Intent(getContext(), AchievementListActivity.class)).getArguments()
+				.putValue(Constant.ACHIEVEMENTS_ENGINE, getAchievementsEngine());
 		return description;
 	}
 
 	public ScreenDescription createChallengeAcceptScreenDescription(final Challenge challenge) {
 		final ScreenDescription description = createScreenDescription(null, null, true);
 		description.setHeaderDescription(new Intent(getContext(), ChallengeHeaderActivity.class));
-		description.setBodyDescription(new Intent(getContext(), ChallengeAcceptListActivity.class)).getArguments().putValue(
-				Constant.CHALLENGE, challenge);
+		description.setBodyDescription(new Intent(getContext(), ChallengeAcceptListActivity.class)).getArguments()
+				.putValue(Constant.CHALLENGE, challenge);
 
 		return description;
 	}
@@ -322,16 +282,16 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 	public ScreenDescription createChallengeCreateScreenDescription(final User user, final Integer mode) {
 		final ScreenDescription description = createScreenDescription(null, null, true);
 		description.setHeaderDescription(new Intent(getContext(), ChallengeHeaderActivity.class));
-		description.setBodyDescription(new Intent(getContext(), ChallengeCreateListActivity.class)).getArguments().putValue(
-				Constant.CONTESTANT, user);
+		description.setBodyDescription(new Intent(getContext(), ChallengeCreateListActivity.class)).getArguments()
+				.putValue(Constant.CONTESTANT, user);
 
 		return description;
 	}
 
 	public ScreenDescription createChallengePaymentScreenDescription() {
 		final ScreenDescription description = createScreenDescription(null, null, true);
-		description.setHeaderDescription(new Intent(getContext(), ChallengeHeaderActivity.class)).getArguments().putValue(
-				Constant.CHALLENGE_HEADER_MODE, Constant.CHALLENGE_HEADER_MODE_BUY);
+		description.setHeaderDescription(new Intent(getContext(), ChallengeHeaderActivity.class)).getArguments()
+				.putValue(Constant.CHALLENGE_HEADER_MODE, Constant.CHALLENGE_HEADER_MODE_BUY);
 		description.setBodyDescription(new Intent(getContext(), ChallengePaymentActivity.class));
 		return description;
 	}
@@ -345,8 +305,8 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 
 	public ScreenDescription createEntryScreenDescription() {
 		final ScreenDescription description = createScreenDescription(null, null, true);
-		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments().putValue(Constant.MODE,
-				UserHeaderActivity.ControlMode.PROFILE);
+		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments()
+				.putValue(Constant.MODE, UserHeaderActivity.ControlMode.PROFILE);
 		description.setBodyDescription(new Intent(getContext(), EntryListActivity.class));
 		description.setShortcutSelectionId(R.string.sl_home);
 		return description;
@@ -362,8 +322,8 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 	public ScreenDescription createGameScreenDescription(final User user, final int mode) {
 		final ScreenDescription description = createScreenDescription(user, null, true);
 		if (mode == Constant.GAME_MODE_USER) {
-			description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments().putValue(Constant.MODE,
-					UserHeaderActivity.ControlMode.BUDDY);
+			description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments()
+					.putValue(Constant.MODE, UserHeaderActivity.ControlMode.BUDDY);
 		} else {
 			description.setHeaderDescription(new Intent(getContext(), MarketHeaderActivity.class));
 		}
@@ -404,16 +364,23 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		final ScreenDescription description = createScreenDescription(null, game, true);
 		description.getScreenValues().putValue(Constant.MODE, mode != null ? mode : ensureGame(game).getMinMode());
 
-		description.setHeaderDescription(new Intent(getContext(), ScoreHeaderActivity.class));
+		final Boolean isLocalLeaderboard = (leaderboard != null) && (leaderboard == Constant.LEADERBOARD_LOCAL);
+		description.setHeaderDescription(new Intent(getContext(), ScoreHeaderActivity.class)).getArguments()
+				.putValue(Constant.IS_LOCAL_LEADEARBOARD, isLocalLeaderboard);
 
-		description.addBodyDescription(R.string.sl_global, new Intent(getContext(), ScoreListActivity.class)).getArguments().putValue(
-				Constant.SEARCH_LIST, SearchList.getGlobalScoreSearchList());
-		description.addBodyDescription(R.string.sl_friends, new Intent(getContext(), ScoreListActivity.class)).getArguments().putValue(
-				Constant.SEARCH_LIST, SearchList.getBuddiesScoreSearchList());
-		description.addBodyDescription(R.string.sl_twentyfour, new Intent(getContext(), ScoreListActivity.class)).getArguments().putValue(
-				Constant.SEARCH_LIST, SearchList.getTwentyFourHourScoreSearchList());
-		if (leaderboard != null) {
-			description.setSelectedBodyIndex(leaderboard);
+		if (isLocalLeaderboard) {
+			description.setBodyDescription(new Intent(getContext(), ScoreListActivity.class)).getArguments()
+					.putValue(Constant.SEARCH_LIST, SearchList.getLocalScoreSearchList());
+		} else {
+			description.addBodyDescription(R.string.sl_global, new Intent(getContext(), ScoreListActivity.class)).getArguments()
+					.putValue(Constant.SEARCH_LIST, SearchList.getGlobalScoreSearchList());
+			description.addBodyDescription(R.string.sl_friends, new Intent(getContext(), ScoreListActivity.class)).getArguments()
+					.putValue(Constant.SEARCH_LIST, SearchList.getBuddiesScoreSearchList());
+			description.addBodyDescription(R.string.sl_twentyfour, new Intent(getContext(), ScoreListActivity.class)).getArguments()
+					.putValue(Constant.SEARCH_LIST, SearchList.getTwentyFourHourScoreSearchList());
+			if (leaderboard != null) {
+				description.setSelectedBodyIndex(leaderboard);
+			}
 		}
 
 		return description;
@@ -443,25 +410,30 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 
 	public ScreenDescription createUserAddBuddyScreenDescription() {
 		final ScreenDescription description = createScreenDescription(null, null, true);
-		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments().putValue(Constant.MODE,
-				UserHeaderActivity.ControlMode.BLANK);
+		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments()
+				.putValue(Constant.MODE, UserHeaderActivity.ControlMode.BLANK);
 		description.setBodyDescription(new Intent(getContext(), UserAddBuddyListActivity.class));
 		return description;
 	}
 
 	public ScreenDescription createUserDetailScreenDescription(final User user, final Boolean playsSessionGame) {
 		final ScreenDescription description = createScreenDescription(user, null, true);
-		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments().putValue(Constant.MODE,
-				UserHeaderActivity.ControlMode.BUDDY);
-		description.setBodyDescription(new Intent(getContext(), UserDetailListActivity.class)).getArguments().putValue(
-				Constant.USER_PLAYS_SESSION_GAME, playsSessionGame);
+		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments()
+				.putValue(Constant.MODE, UserHeaderActivity.ControlMode.BUDDY);
+		description.setBodyDescription(new Intent(getContext(), UserDetailListActivity.class)).getArguments()
+				.putValue(Constant.USER_PLAYS_SESSION_GAME, playsSessionGame);
 		return description;
 	}
 
 	public ScreenDescription createUserScreenDescription(final User user) {
 		final ScreenDescription description = createScreenDescription(user, null, true);
-		description.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class)).getArguments().putValue(Constant.MODE,
-				getSession().isOwnedByUser(ensureUser(user)) ? UserHeaderActivity.ControlMode.BLANK : UserHeaderActivity.ControlMode.BUDDY);
+		description
+				.setHeaderDescription(new Intent(getContext(), UserHeaderActivity.class))
+				.getArguments()
+				.putValue(
+						Constant.MODE,
+						getSession().isOwnedByUser(ensureUser(user)) ? UserHeaderActivity.ControlMode.BLANK
+								: UserHeaderActivity.ControlMode.BUDDY);
 		description.setBodyDescription(new Intent(getContext(), UserListActivity.class));
 		if (getSession().isOwnedByUser(ensureUser(user))) {
 			description.setShortcutSelectionId(R.string.sl_friends);
@@ -534,13 +506,6 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		return getAchievementsEngine().getAchievementsController().getAwardList();
 	}
 
-	private ChallengeController getChallengeController() {
-		if (_challengeController == null) {
-			_challengeController = new ChallengeController(this);
-		}
-		return _challengeController;
-	}
-
 	Configuration getConfiguration() {
 		return _configuration;
 	}
@@ -565,16 +530,40 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		return _client.getInfoString();
 	}
 
-	Challenge getLastChallenge() {
-		return _lastChallenge;
+	Challenge getLastSubmittedChallenge() {
+		return _lastSubmittedChallenge;
 	}
 
-	Score getLastScore() {
-		return _lastScore;
+	Score getLastSubmittedScore() {
+		return _lastSubmittedScore;
 	}
 
-	int getLastStatus() {
-		return _lastStatus;
+	int getLastSubmitStatus() {
+		return _lastSubmitStatus;
+	}
+
+	private List<Score> getLocalScoresToSubmit() {
+		final List<Score> scoresToSubmit = new ArrayList<Score>();
+
+		final ScoresController scoresController = new ScoresController(getSession(), new DummyRequestControllerObserver());
+		scoresController.setSearchList(SearchList.getLocalScoreSearchList());
+
+		final Game game = getSession().getGame();
+            final int start = game.getMinMode() != null ? game.getMinMode() : 0;
+            final int end = start + game.getModeCount();
+            for (int mode = start; mode < end; ++mode) {
+                scoresController.setMode(game.hasModes() ? mode : null);
+                final Score score = scoresController.getLocalScoreToSubmit();
+                if (score != null) {
+                    scoresToSubmit.add(score);
+                }
+            }
+            return scoresToSubmit;
+	}
+
+	@Override
+	public String[] getModeNames() {
+		return _configuration.getModesNames();
 	}
 
 	private String getPersistedUserImageUrl() {
@@ -585,13 +574,6 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 	private String getPersistedUserName() {
 		final SharedPreferences preferences = getContext().getSharedPreferences(PREFERENCES_NAME, 0);
 		return preferences.getString(PREFERENCES_ENTRY_USER_NAME, null);
-	}
-
-	private ScoreController getScoreController() {
-		if (_scoreController == null) {
-			_scoreController = new ScoreController(this, true);
-		}
-		return _scoreController;
 	}
 
 	protected Session getSession() {
@@ -655,27 +637,46 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		return getAchievementsEngine().hasLoadedAchievements();
 	}
 
+	@Override
+	public boolean incrementAward(final String awardId, final boolean showToast, final boolean submitNow) {
+		final Achievement achievement = getAchievement(awardId); // checks made here
+		if (achievement.isAchieved()) {
+			return false;
+		}
+		achievement.incrementValue();
+		if (!achievement.needsSubmit()) {
+			return false;
+		}
+		if (showToast) {
+			showToastForAchievement(achievement);
+		}
+		if (submitNow) {
+			submitAchievements(null);
+		}
+		return true;
+	}
+
 	public boolean isAwardAchieved(final String awardId) {
 		final Achievement achievement = getAchievement(awardId); // checks made here
 		return achievement.isAchieved();
 	}
 
 	public boolean isChallengeOngoing() {
-		return _challengeOngoing;
+		return getSession().getChallenge() != null;
 	}
 
-	public void loadAchievements(final boolean forceInitialSync, final Runnable continuation) {
+	public void loadAchievements(final Runnable continuation) {
 		checkHasAwards();
-		getAchievementsEngine().loadAchievements(forceInitialSync, continuation);
+		getAchievementsEngine().loadAchievements(getConfiguration().isAchievementForceInitialSync(), continuation);
 	}
 
 	public void onGamePlayEnded(final Double scoreResult, final Integer mode) {
 		final Score score = new Score(scoreResult, null);
 		score.setMode(mode);
-		onGamePlayEnded(score);
+		onGamePlayEnded(score, null);
 	}
 
-	public void onGamePlayEnded(final Score score) {
+	public void onGamePlayEnded(final Score score, final Boolean submitLocallyOnly) {
 		final Game game = getSession().getGame();
 		final Integer mode = score.getMode();
 		// NOTE: discuss introduction of Game.isValidMode(Integer mode)
@@ -694,28 +695,32 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 			throw new IllegalArgumentException("the game has no modes, but a mode was passed");
 		}
 
-		_lastStatus = OnScoreSubmitObserver.STATUS_UNDEFINED;
-		_lastScore = score;
+		_lastSubmitStatus = OnScoreSubmitObserver.STATUS_UNDEFINED;
+		_lastSubmittedScore = null;
+		_lastSubmittedChallenge = null;
 
-		if (_challengeOngoing) {
+		if (isChallengeOngoing()) {
 			if (!_configuration.isFeatureEnabled(Configuration.Feature.CHALLENGE)) {
 				throw new IllegalStateException(
 						"we're in challenge mode, but the challenge feature is not enabled in the scoreloop.properties");
 			}
 
-			if (_lastChallenge.isCreated()) {
-				_lastChallenge.setContenderScore(_lastScore);
+			final Challenge challenge = getSession().getChallenge();
+			if (challenge.isCreated()) {
+				challenge.setContenderScore(score);
 			}
 
-			if (_lastChallenge.isAccepted()) {
-				_lastChallenge.setContestantScore(_lastScore);
+			if (challenge.isAccepted()) {
+				challenge.setContestantScore(score);
 			}
 
-			getChallengeController().setChallenge(_lastChallenge);
-			_challengeController.submitChallenge();
+			final ChallengeController challengeController = new ChallengeController(new ChallengeRequestControllerObserver(score));
+			challengeController.setChallenge(challenge);
+			challengeController.submitChallenge();
 		} else {
-			_lastChallenge = null;
-			getScoreController().submitScore(_lastScore);
+			final ScoreController scoreController = new ScoreController(new ScoreRequestControllerObserver());
+			scoreController.setShouldSubmitScoreLocally((submitLocallyOnly != null) && submitLocallyOnly);
+			scoreController.submitScore(score);
 		}
 	}
 
@@ -732,46 +737,103 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 	public void persistSessionUserName() {
 		final User sessionUser = getSession().getUser();
 		if (sessionUser.isAuthenticated()) {
-			final SharedPreferences.Editor preferences = getContext().getSharedPreferences(PREFERENCES_NAME, 0).edit();
-			preferences.putString(PREFERENCES_ENTRY_USER_NAME, sessionUser.getDisplayName());
-			preferences.putString(PREFERENCES_ENTRY_USER_IMAGE_URL, sessionUser.getImageUrl());
-			preferences.commit();
+			AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+					final SharedPreferences.Editor preferences = getContext().getSharedPreferences(PREFERENCES_NAME, 0).edit();
+					preferences.putString(PREFERENCES_ENTRY_USER_NAME, sessionUser.getDisplayName());
+					preferences.putString(PREFERENCES_ENTRY_USER_IMAGE_URL, sessionUser.getImageUrl());
+					preferences.commit();
+					return null;
+				}
+			};
+			// noinspection unchecked
+			asyncTask.execute();
 		}
 	}
 
-	public void requestControllerDidFail(final RequestController aRequestController, final Exception anException) {
-		if ((aRequestController == _scoreController) || (aRequestController == _challengeController)) {
-			_lastScore = null;
-			_lastChallenge = null;
-			_lastStatus = OnScoreSubmitObserver.STATUS_ERROR_NETWORK;
-			_challengeOngoing = false;
+	private class ScoreRequestControllerObserver implements RequestControllerObserver {
 
-			if (_onScoreSubmitObserver != null) {
-				_onScoreSubmitObserver.onScoreSubmit(_lastStatus, anException);
-			}
-		}
-	}
-
-	public void requestControllerDidReceiveResponse(final RequestController aRequestController) {
-		if ((aRequestController == _scoreController) || (aRequestController == _challengeController)) {
-			if (_challengeOngoing) {
-				_lastStatus = OnScoreSubmitObserver.STATUS_SUCCESS_CHALLENGE;
-				_challengeOngoing = false;
+		@Override
+		public void requestControllerDidFail(final RequestController aRequestController, final Exception anException) {
+			if (anException instanceof ScoreSubmitException) {
+				_lastSubmitStatus = OnScoreSubmitObserver.STATUS_SUCCESS_LOCAL_SCORE;
 			} else {
-				_lastStatus = OnScoreSubmitObserver.STATUS_SUCCESS_SCORE;
+				_lastSubmitStatus = OnScoreSubmitObserver.STATUS_ERROR_NETWORK;
+			}
+			if (_onScoreSubmitObserver != null) {
+				_onScoreSubmitObserver.onScoreSubmit(_lastSubmitStatus, anException);
+			}
+		}
+
+		@Override
+		public void requestControllerDidReceiveResponse(final RequestController aRequestController) {
+			if (aRequestController instanceof ScoreController) {
+				ScoreController scoreController = (ScoreController) aRequestController;
+				_lastSubmittedScore = scoreController.getScore();
+				if (scoreController.shouldSubmitScoreLocally()) {
+					_lastSubmitStatus = OnScoreSubmitObserver.STATUS_SUCCESS_LOCAL_SCORE;
+				} else {
+					_lastSubmitStatus = OnScoreSubmitObserver.STATUS_SUCCESS_SCORE;
+				}
+				if (_onScoreSubmitObserver != null) {
+					_onScoreSubmitObserver.onScoreSubmit(_lastSubmitStatus, null);
+				}
 			}
 
-			if (_onScoreSubmitObserver != null) {
-				_onScoreSubmitObserver.onScoreSubmit(_lastStatus, null);
-			}
 		}
 	}
 
-	public void run() {
-		final String userName = getPersistedUserName();
-		if (userName != null) {
-			final String message = String.format(getContext().getString(R.string.sl_format_welcome_back), userName);
-			BaseActivity.showToast(getContext(), message, null, Toast.LENGTH_LONG);
+	private class ChallengeRequestControllerObserver implements ChallengeControllerObserver {
+		private final Score	score;
+
+		private ChallengeRequestControllerObserver(Score score) {
+			this.score = score;
+		}
+
+		@Override
+		public void requestControllerDidFail(final RequestController aRequestController, final Exception anException) {
+			_lastSubmitStatus = OnScoreSubmitObserver.STATUS_ERROR_NETWORK;
+			if (_onScoreSubmitObserver != null) {
+				_onScoreSubmitObserver.onScoreSubmit(_lastSubmitStatus, anException);
+			}
+		}
+
+		@Override
+		public void requestControllerDidReceiveResponse(final RequestController aRequestController) {
+			if (aRequestController instanceof ChallengeController) {
+				ChallengeController challengeController = (ChallengeController) aRequestController;
+				_lastSubmitStatus = OnScoreSubmitObserver.STATUS_SUCCESS_CHALLENGE;
+				_lastSubmittedScore = score;
+				_lastSubmittedChallenge = challengeController.getChallenge();
+				if (_onScoreSubmitObserver != null) {
+					_onScoreSubmitObserver.onScoreSubmit(_lastSubmitStatus, null);
+				}
+			}
+		}
+
+		public void challengeControllerDidFailOnInsufficientBalance(final ChallengeController challengeController) {
+			_lastSubmitStatus = OnScoreSubmitObserver.STATUS_ERROR_BALANCE;
+			if (_onScoreSubmitObserver != null) {
+				_onScoreSubmitObserver.onScoreSubmit(_lastSubmitStatus, null);
+			}
+		}
+
+		public void challengeControllerDidFailToAcceptChallenge(final ChallengeController challengeController) {
+			requestControllerDidFail(challengeController, new RuntimeException("challengeControllerDidFailToAcceptChallenge"));
+		}
+
+		public void challengeControllerDidFailToRejectChallenge(final ChallengeController challengeController) {
+			requestControllerDidFail(challengeController, new RuntimeException("challengeControllerDidFailToRejectChallenge"));
+		}
+	}
+
+	private void runSubmitLocalScoresContinuations() {
+		final List<Runnable> continuations = _submitLocalScoresContinuations;
+		_submitLocalScoresContinuations = null;
+
+		for (final Runnable continuation : continuations) {
+			continuation.run();
 		}
 	}
 
@@ -847,7 +909,16 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		if (delay < 0) {
 			throw new IllegalArgumentException("delay to showWelcomeBackToast must be zero or postive");
 		}
-		_handler.postDelayed(this, delay);
+		_handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				final String userName = getPersistedUserName();
+				if (userName != null) {
+					final String message = String.format(getContext().getString(R.string.sl_format_welcome_back), userName);
+					BaseActivity.showToast(getContext(), message, null, Toast.LENGTH_LONG);
+				}
+			}
+		}, delay);
 	}
 
 	public void startGamePlay(final Integer mode, final Challenge challenge) {
@@ -855,14 +926,73 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 			throw new IllegalStateException(
 					"trying to start gameplay, but the callback is not set - did you call ScoreloopManagerSingleton.get().setOnStartGamePlayRequestObserver(...)?");
 		}
-		_challengeOngoing = true;
-		_lastChallenge = challenge;
+		// challenge is not used, we always use the challenge from the session
 		_onStartGamePlayRequestObserver.onStartGamePlayRequest(mode);
 	}
 
 	public void submitAchievements(final Runnable continuation) {
 		checkHasAwards();
-		getAchievementsEngine().submitAchievements(continuation);
+		getAchievementsEngine().submitAchievements(getConfiguration().isAchievementForceInitialSync(), continuation);
+	}
+
+	public void submitLocalScores(final Runnable continuation) {
+
+		// if we are submitting local scores already, just add continuation to list of continuations
+		if (_submitLocalScoresContinuations != null) {
+			if (continuation != null) {
+				_submitLocalScoresContinuations.add(continuation);
+			}
+			return;
+		}
+
+		// get list of local scores to submit
+		final List<Score> scoresToSubmit = getLocalScoresToSubmit();
+
+		// add continuation to list of continuations
+		_submitLocalScoresContinuations = new ArrayList<Runnable>();
+		if (continuation != null) {
+			_submitLocalScoresContinuations.add(continuation);
+		}
+
+		// nothing to submit, so run continuations
+		if (scoresToSubmit.size() == 0) {
+			runSubmitLocalScoresContinuations();
+			return;
+		}
+
+		// iterate on scores to submit
+		final ListIterator<Score> scoresIterator = scoresToSubmit.listIterator();
+		final ScoreController scoreController = new ScoreController(getSession(), new RequestControllerObserver() {
+			public void requestControllerDidFail(final RequestController aRequestController, final Exception anException) {
+
+				// ignore the error for now and continue with next score
+				Log.w("ScoreloopUI", "failed to submit localScore: " + anException);
+				submitNextScore((ScoreController) aRequestController);
+			}
+
+			public void requestControllerDidReceiveResponse(final RequestController aRequestController) {
+				submitNextScore((ScoreController) aRequestController);
+			}
+
+			private void submitNextScore(final ScoreController controller) {
+				if (scoresIterator.hasNext()) {
+					controller.submitScore(scoresIterator.next());
+				} else {
+					runSubmitLocalScoresContinuations();
+				}
+			}
+		});
+		scoreController.submitScore(scoresIterator.next());
+	}
+
+	@Override
+	public void trackEvent(final String category, final String action, final String label, final int value) {
+		// no tracking
+	}
+
+	@Override
+	public void trackPageView(final String activityClassName, final ValueStore arguments) {
+		// no tracking
 	}
 
 	private void verifyManifest() {
@@ -929,13 +1059,14 @@ class StandardScoreloopManager implements ScoreloopManager, Manager, Factory, Sh
 		permission.check();
 	}
 
-	@Override
-	public void trackPageView(String activityClassName, ValueStore arguments) {
-		// no tracking
+	private class DummyRequestControllerObserver implements RequestControllerObserver {
+		@Override
+		public void requestControllerDidFail(RequestController aRequestController, Exception anException) {
+		}
+
+		@Override
+		public void requestControllerDidReceiveResponse(RequestController aRequestController) {
+		}
 	}
 
-	@Override
-	public void trackEvent(String category, String action, String label, int value) {
-		// no tracking
-	}
 }

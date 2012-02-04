@@ -29,6 +29,7 @@ import com.scoreloop.client.android.core.model.Score;
 import com.scoreloop.client.android.ui.R;
 import com.scoreloop.client.android.ui.component.base.ComponentActivity;
 import com.scoreloop.client.android.ui.component.base.Constant;
+import com.scoreloop.client.android.ui.component.base.StringFormatter;
 
 public class ScoreHighlightedListItem extends ScoreListItem {
 
@@ -36,12 +37,10 @@ public class ScoreHighlightedListItem extends ScoreListItem {
 		TextView	percentText;
 	}
 
-	private static final int	ROUND_TO_PERCENT	= 5;
-
-	private Ranking				_ranking;
+	private Ranking	_ranking;
 
 	public ScoreHighlightedListItem(final ComponentActivity activity, final Score score, final Ranking ranking) {
-		super(activity, score);
+		super(activity, score, true);
 		_ranking = ranking;
 	}
 
@@ -61,19 +60,6 @@ public class ScoreHighlightedListItem extends ScoreListItem {
 		return R.layout.sl_list_item_score_highlighted;
 	}
 
-	private String getPercentString() {
-		if (_ranking == null) {
-			return "";
-		}
-		final int total = _ranking.getTotal();
-		if (total == 0) {
-			return "";
-		}
-		final int percent = _ranking.getRank() * 100 / total;
-		final int roundedPercent = (percent + ROUND_TO_PERCENT - 1) / ROUND_TO_PERCENT * ROUND_TO_PERCENT;
-		return String.format(getContext().getString(R.string.sl_format_leaderboards_percent), roundedPercent);
-	}
-
 	@Override
 	public int getType() {
 		return Constant.LIST_ITEM_TYPE_SCORE_HIGHLIGHTED;
@@ -86,6 +72,8 @@ public class ScoreHighlightedListItem extends ScoreListItem {
 	@Override
 	protected void updateViews(final StandardViewHolder holder) {
 		super.updateViews(holder);
-		((HighlightedViewHolder) holder).percentText.setText(getPercentString());
+
+		final String percentageString = StringFormatter.formatRanking(getContext(), _ranking, getComponentActivity().getConfiguration());
+		((HighlightedViewHolder) holder).percentText.setText(percentageString);
 	}
 }

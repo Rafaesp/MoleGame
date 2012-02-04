@@ -46,15 +46,18 @@ public class ShowResultOverlayActivity extends Activity {
 
 		final StandardScoreloopManager manager = StandardScoreloopManager.getFactory(ScoreloopManagerSingleton.get());
 
-		final int lastStatus = manager.getLastStatus();
+		final int lastStatus = manager.getLastSubmitStatus();
 
 		String text = "";
 		switch (lastStatus) {
 		case OnScoreSubmitObserver.STATUS_SUCCESS_SCORE:
 			text = getResources().getString(R.string.sl_status_success_score);
 			break;
+		case OnScoreSubmitObserver.STATUS_SUCCESS_LOCAL_SCORE:
+			text = getResources().getString(R.string.sl_status_success_local_score);
+			break;
 		case OnScoreSubmitObserver.STATUS_SUCCESS_CHALLENGE:
-			final Challenge challenge = manager.getLastChallenge();
+			final Challenge challenge = manager.getLastSubmittedChallenge();
 			if (challenge.isOpen() || challenge.isAssigned()) {
 				text = getResources().getString(R.string.sl_status_success_challenge_created);
 			} else if (challenge.isComplete()) {
@@ -75,7 +78,7 @@ public class ShowResultOverlayActivity extends Activity {
 			throw new IllegalStateException(
 					"this should not happen - make sure to start ShowResultOverlayActivity only after onScoreSubmit() was called");
 		}
-		
+
 		final TextView textView = (TextView) findViewById(R.id.sl_text);
 		textView.setText(text);
 

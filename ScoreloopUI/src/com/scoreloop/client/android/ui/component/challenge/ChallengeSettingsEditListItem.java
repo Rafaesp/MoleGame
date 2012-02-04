@@ -96,7 +96,14 @@ class ChallengeSettingsEditListItem extends ChallengeSettingsListItem {
 		final Spinner modeSelector = (Spinner) view.findViewById(R.id.mode_selector);
 		if (getComponentActivity().getGame().hasModes()) {
 			modeSelector.setVisibility(View.VISIBLE);
-			final ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getContext(), getComponentActivity().getConfiguration().getModesResId(), R.layout.sl_spinner_item);
+			final ArrayAdapter<?> adapter;
+			
+			// left for backward compatibility
+			if (getComponentActivity().getConfiguration().getModesResId() != 0) {
+				adapter = ArrayAdapter.createFromResource(getContext(), getComponentActivity().getConfiguration().getModesResId(), R.layout.sl_spinner_item);
+			} else {
+				adapter = new ArrayAdapter<String>(getContext(), R.layout.sl_spinner_item, getComponentActivity().getConfiguration().getModesNames());
+			}
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 			modeSelector.setAdapter(adapter);

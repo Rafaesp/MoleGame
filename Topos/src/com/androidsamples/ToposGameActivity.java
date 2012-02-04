@@ -3,6 +3,7 @@ package com.androidsamples;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.LinearLayout;
+
 import com.bunkerdev.savemycarrots.R;
 
 public class ToposGameActivity extends Activity {

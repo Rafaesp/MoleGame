@@ -33,10 +33,13 @@ import com.scoreloop.client.android.ui.component.base.StandardListItem;
 import com.scoreloop.client.android.ui.component.base.StringFormatter;
 
 public class ScoreListItem extends StandardListItem<Score> {
+	
+	private boolean _isEnabled;
 
-	public ScoreListItem(final ComponentActivity activity, final Score score) {
-		super(activity, null, StringFormatter.getScoreTitle(activity, score), StringFormatter.formatScore(score, activity
+	public ScoreListItem(final ComponentActivity activity, final Score score, final boolean isEnabled) {
+		super(activity, null, StringFormatter.getScoreTitle(activity, score), StringFormatter.formatLeaderboardsScore(score, activity
 				.getConfiguration()), score);
+		_isEnabled = isEnabled;
 	}
 
 	@Override
@@ -72,5 +75,10 @@ public class ScoreListItem extends StandardListItem<Score> {
 	@Override
 	public Drawable getDrawable() {
 		return getContext().getResources().getDrawable(R.drawable.sl_icon_user);
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return _isEnabled;
 	}
 }

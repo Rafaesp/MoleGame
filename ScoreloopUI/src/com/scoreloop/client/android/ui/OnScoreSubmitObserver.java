@@ -20,6 +20,7 @@
  */
 
 package com.scoreloop.client.android.ui;
+
 /**
  * The OnScoreSubmitObserver receives notifications and callbacks
  * from the server after a score has been submitted to Scoreloop. 
@@ -33,26 +34,15 @@ package com.scoreloop.client.android.ui;
  *
  */
 public interface OnScoreSubmitObserver {
-	
-	/**
-	 * \internal
-	 */
-	public static final int STATUS_UNDEFINED = 0;
-	
-	/**
-	 * This code is returned via the 
-	 * OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)
-	 * callback in cases where a score was successfully submitted.
-	 */
-	public static final int STATUS_SUCCESS_SCORE = 1;
 
 	/**
 	 * This code is returned via the 
 	 * OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)
-	 * callback in cases where a score was successfully submitted as 
-	 * part of a challenge.
+	 * in cases where a score failed to be submitted to Scoreloop
+	 * as part of a challenge due to the user's balance being too 
+	 * low to cover the balance stake.
 	 */
-	public static final int STATUS_SUCCESS_CHALLENGE = 2;
+	public static final int	STATUS_ERROR_BALANCE		= 5;
 
 	/**
 	 * This code is returned via the 
@@ -61,17 +51,34 @@ public interface OnScoreSubmitObserver {
 	 * in cases where a score failed to be submitted to Scoreloop
 	 * due to a network error.
 	 */
-	public static final int STATUS_ERROR_NETWORK = 3;
-        
+	public static final int	STATUS_ERROR_NETWORK		= 4;
+
 	/**
 	 * This code is returned via the 
 	 * OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)
-	 * in cases where a score failed to be submitted to Scoreloop
-	 * as part of a challenge due to the user's balance being too 
-	 * low to cover the balance stake.
+	 * callback in cases where a score was successfully submitted as 
+	 * part of a challenge.
 	 */
-	public static final int	STATUS_ERROR_BALANCE = 4;
+	public static final int	STATUS_SUCCESS_CHALLENGE	= 3;
 
+	/**
+	 * This code is returned via the
+	 * OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)
+	 * in cases where a score is saved to the local (offline) leaderboard only.
+	 */
+	public static final int	STATUS_SUCCESS_LOCAL_SCORE	= 2;
+
+	/**
+	 * This code is returned via the 
+	 * OnScoreSubmitObserver.onScoreSubmit(final int, final Exception)
+	 * callback in cases where a score was successfully submitted.
+	 */
+	public static final int	STATUS_SUCCESS_SCORE		= 1;
+
+	/**
+	 * \internal
+	 */
+	public static final int	STATUS_UNDEFINED			= 0;
 
 	/**
 	 * This method is called after a score
@@ -87,8 +94,11 @@ public interface OnScoreSubmitObserver {
 	 * In the case of an unsuccessful response ScoreloopUI will 
 	 * display an error notification.
 	 * 
-	 * @param status The status code, can be either @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_SUCCESS_SCORE STATUS_SUCCESS_SCORE @endlink, 
-	 * @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_SUCCESS_CHALLENGE STATUS_SUCCESS_CHALLENGE @endlink, @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_ERROR_NETWORK STATUS_ERROR_NETWORK @endlink, or 
+	 * @param status The status code, can be either 
+	 * @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_SUCCESS_SCORE STATUS_SUCCESS_SCORE @endlink, 
+	 * @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_SUCCESS_CHALLENGE STATUS_SUCCESS_CHALLENGE @endlink, 
+	 * @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_SUCCESS_LOCAL_SCORE STATUS_SUCCESS_LOCAL_SCORE @endlink, 
+	 * @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_ERROR_NETWORK STATUS_ERROR_NETWORK @endlink, or 
 	 * @link com.scoreloop.client.android.ui.OnScoreSubmitObserver.STATUS_ERROR_BALANCE STATUS_ERROR_BALANCE @endlink. 
 	 * @param error <a href="http://download.oracle.com/javase/6/docs/api/java/lang/Exception.html">java.lang.Exception</a> If the submission was unsuccessful this object will hold the reason for the error.
 	 */

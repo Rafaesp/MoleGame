@@ -16,13 +16,6 @@
 
 package com.scoreloop.client.android.ui.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -30,13 +23,17 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.widget.ImageView;
 
 /**
@@ -50,10 +47,14 @@ import android.widget.ImageView;
  */
 public class ImageDownloader {
 
-	private static final int				HARD_CACHE_CAPACITY	= 150;			// cache up to 150 images
-	private static final int				DELAY_BEFORE_PURGE	= 180 * 1000;	// 3 minutes in milliseconds
+	private static final int				HARD_CACHE_CAPACITY	= 150;				// cache up to 150 images
 	private static ImageDownloader			imageDownloader		= null;
 	private static Cache<String, Bitmap>	_cache				= null;
+	private static final int				MIN_10				= 1000 * 60 * 10;
+
+	public interface ImageDownloaderCallback {
+		void onNotFound();
+	}
 
 	private static void assertImageDownloader() {
 		if (imageDownloader == null) {
@@ -78,32 +79,49 @@ public class ImageDownloader {
 	 * @param errorDrawable The drawable which is displayed if an error occurred while downloading
 	 */
 	public static void downloadImage(String url, Drawable loadingDrawable, ImageView imageView, Drawable errorDrawable) {
+		downloadImage(url, loadingDrawable, imageView, errorDrawable, null);
+	}
+
+	/**
+	 * Download the specified image from the Internet and binds it to the provided ImageView. The
+	 * binding is immediate if the image is found in the cache and will be done asynchronously
+	 * otherwise. A null bitmap will be associated to the ImageView if an error occurs.
+	 *
+	 * @param url The URL of the image to download.
+	 * @param loadingDrawable The drawable which is displayed while downloading
+	 * @param imageView The ImageView to bind the downloaded image to.
+	 * @param errorDrawable The drawable which is displayed if an error occurred while downloading
+	 * @param imageDownloaderCallback callback when image download has finished
+	 */
+	public static void downloadImage(String url, Drawable loadingDrawable, ImageView imageView, Drawable errorDrawable,
+			ImageDownloaderCallback imageDownloaderCallback) {
 		if (url == null) {
 			return;
 		}
 		assertImageDownloader();
 		assertCache();
-        final Cache<String, Bitmap>.CacheEntry cacheEntry = _cache.getCacheEntry(url);
-        if (cacheEntry == null) {
-			imageDownloader.forceDownload(url, loadingDrawable, imageView, errorDrawable);
+		final Cache<String, Bitmap>.CacheEntry cacheEntry = _cache.getCacheEntry(url);
+		if (cacheEntry == null) {
+			imageDownloader.forceDownload(url, loadingDrawable, imageView, errorDrawable, imageDownloaderCallback, MIN_10);
 		} else {
 			cancelPotentialDownload(url, imageView);
-            final Bitmap bitmap = cacheEntry.getValue();
-            if (bitmap == null && errorDrawable != null) {
-                imageView.setImageDrawable(errorDrawable);
-            } else {
-                imageView.setImageBitmap(bitmap);
-            }
+			final Bitmap bitmap = cacheEntry.getValue();
+			if (bitmap == null && errorDrawable != null) {
+				imageView.setImageDrawable(errorDrawable);
+			} else {
+				imageView.setImageBitmap(bitmap);
+			}
 		}
 	}
 
 	/**
-	 * Same as download but the image is always downloaded and the cache is not used.
+	 * Same as download but the image is always downloaded and the memory cache is not used.
 	 * Kept private at the moment as its interest is not clear.
 	 */
-	private void forceDownload(String url, Drawable drawable, ImageView imageView, Drawable errorDrawable) {
+	private void forceDownload(String url, Drawable drawable, ImageView imageView, Drawable errorDrawable,
+			ImageDownloaderCallback imageDownloaderCallback, long timeToLive) {
 		if (cancelPotentialDownload(url, imageView)) {
-			BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, errorDrawable);
+			BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, errorDrawable, imageDownloaderCallback, timeToLive);
 			DownloadedDrawable downloadedDrawable = new DownloadedDrawable(drawable, task);
 			imageView.setImageDrawable(downloadedDrawable);
 			task.execute(url);
@@ -154,7 +172,7 @@ public class ImageDownloader {
 		final HttpClient client = new DefaultHttpClient();
 		final HttpGet getRequest = new HttpGet(url);
 
-        // todo implement HttpCacheStorage for caching of redirects
+		// todo implement HttpCacheStorage for caching of redirects
 
 		try {
 			HttpResponse response = client.execute(getRequest);
@@ -196,12 +214,12 @@ public class ImageDownloader {
 		return BitmapResult.createError();
 	}
 
-	BitmapResult downloadBitmap(Context context, String url) {
-		BitmapResult bitmapResult = LocalImageStorage.getBitmap(context, url);
+	BitmapResult downloadBitmap(Context context, String url, long timeToLive) {
+		BitmapResult bitmapResult = LocalImageStorage.get().getBitmap(context, url, timeToLive);
 		if (bitmapResult == null) {
 			bitmapResult = downloadBitmapHttp(url);
 			if (bitmapResult.isCachable()) { // store to shared location cache
-				LocalImageStorage.putBitmap(context, url, bitmapResult);
+				LocalImageStorage.get().putBitmap(context, url, bitmapResult);
 			}
 		}
 		return bitmapResult;
@@ -242,10 +260,15 @@ public class ImageDownloader {
 		private String							url;
 		private final WeakReference<ImageView>	imageViewReference;
 		private final Drawable					errorDrawable;
+		private final ImageDownloaderCallback	imageDownloaderCallback;
+		private final long						timeToLive;
 
-		public BitmapDownloaderTask(ImageView imageView, Drawable errorDrawable) {
+		public BitmapDownloaderTask(ImageView imageView, Drawable errorDrawable, ImageDownloaderCallback imageDownloaderCallback,
+				long timeToLive) {
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			this.errorDrawable = errorDrawable;
+			this.imageDownloaderCallback = imageDownloaderCallback;
+			this.timeToLive = timeToLive;
 		}
 
 		/**
@@ -253,10 +276,12 @@ public class ImageDownloader {
 		 */
 		@Override
 		protected BitmapResult doInBackground(String... params) {
+			ImageView imageView = imageViewReference.get();
+
 			url = params[0];
-			if (imageViewReference != null) {
-				ImageView imageView = imageViewReference.get();
-				return downloadBitmap(imageView.getContext(), url);
+
+			if (imageView != null) {
+				return downloadBitmap(imageView.getContext(), url, timeToLive);
 			}
 			return null;
 		}
@@ -266,11 +291,11 @@ public class ImageDownloader {
 		 */
 		@Override
 		protected void onPostExecute(BitmapResult bitmapResult) {
-            final Bitmap bitmap = isCancelled() || bitmapResult == null ? null : bitmapResult.getBitmap();
+			final Bitmap bitmap = isCancelled() || bitmapResult == null ? null : bitmapResult.getBitmap();
 
-            if (bitmapResult != null && bitmapResult.isCachable()) {
-                addBitmapToCache(url, bitmap);
-            }
+			if (bitmapResult != null && bitmapResult.isCachable()) {
+				addBitmapToCache(url, bitmap, timeToLive);
+			}
 
 			if (imageViewReference != null) {
 				ImageView imageView = imageViewReference.get();
@@ -284,6 +309,9 @@ public class ImageDownloader {
 						imageView.setImageBitmap(bitmap);
 					}
 				}
+			}
+			if (bitmapResult != null && bitmapResult.isNotFound() && imageDownloaderCallback != null) {
+				imageDownloaderCallback.onNotFound();
 			}
 		}
 	}
@@ -301,82 +329,12 @@ public class ImageDownloader {
 		}
 	}
 
-	public static class LocalImageStorage {
-		static boolean isStorageWritable() {
-			return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-		}
-
-		static boolean isStorageReadable() {
-			return isStorageWritable() || Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
-		}
-
-		private static File getCacheDir(Context context) {
-			File cacheDir = null;
-			File storageDir = Environment.getExternalStorageDirectory();
-			if (storageDir != null) {
-				File tmp = new File(storageDir, "/Android/data/" + context.getPackageName() + "/cache/");
-				if ((tmp.exists() && tmp.isDirectory()) || tmp.mkdirs()) {
-					cacheDir = tmp;
-				}
-			}
-			return cacheDir;
-		}
-
-		private static File getCacheFile(Context context, String url) {
-			File cacheFile = null;
-			File cacheDir = getCacheDir(context);
-			if (cacheDir != null) {
-				String fileName = Base64.encodeBytes(url.getBytes());
-				cacheFile = new File(cacheDir, fileName);
-			}
-			return cacheFile;
-		}
-
-		public static BitmapResult getBitmap(Context context, String url) {
-			if (isStorageReadable()) {
-				File cacheFile = getCacheFile(context, url);
-				if (cacheFile != null && cacheFile.exists() && cacheFile.canRead()) {
-                    if (cacheFile.length() == 0) {
-                        return BitmapResult.createNotFound();
-                    } else {
-					    return new BitmapResult(BitmapFactory.decodeFile(cacheFile.getAbsolutePath()));
-                    }
-				}
-			}
-			return null;
-		}
-
-        public static boolean putBitmap(Context context, String url, Bitmap bitmap) {
-            return putBitmap(context, url, new BitmapResult(bitmap));
-        }
-
-		public static boolean putBitmap(Context context, String url, BitmapResult bitmapResult) {
-			if (isStorageWritable()) {
-				File cacheFile = getCacheFile(context, url);
-				try {
-					if (bitmapResult.isNotFound()) {
-						cacheFile.createNewFile();
-                        return true;
-					} else {
-						FileOutputStream os = new FileOutputStream(cacheFile);
-						bitmapResult.getBitmap().compress(Bitmap.CompressFormat.PNG, 90, os);
-						os.close();
-						return true;
-					}
-				} catch (Exception e) {
-					// ignore
-				}
-			}
-			return false;
-		}
-	}
-
 	/**
 	 * Adds this bitmap to the cache.
 	 * @param bitmap The newly downloaded bitmap.
 	 */
-	private void addBitmapToCache(String url, Bitmap bitmap) {
-    	_cache.put(url, bitmap, DELAY_BEFORE_PURGE);
+	private void addBitmapToCache(String url, Bitmap bitmap, long timeToLive) {
+		_cache.put(url, bitmap, timeToLive);
 	}
 
 	static class BitmapResult {

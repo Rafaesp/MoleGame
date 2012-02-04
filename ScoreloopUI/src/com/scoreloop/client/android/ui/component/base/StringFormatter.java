@@ -28,38 +28,114 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import com.scoreloop.client.android.core.addon.RSSItem;
-import com.scoreloop.client.android.core.model.Money;
-import com.scoreloop.client.android.core.model.Score;
-import com.scoreloop.client.android.core.model.Session;
-import com.scoreloop.client.android.core.model.User;
+import com.scoreloop.client.android.core.model.*;
+import com.scoreloop.client.android.core.model.ScoreFormatter.ScoreFormatKey;
 import com.scoreloop.client.android.ui.R;
 import com.scoreloop.client.android.ui.framework.ValueStore;
 
 public class StringFormatter {
 
-	private static final BigDecimal	CENTS_FOR_UNIT	= new BigDecimal(100);
+	private static final BigDecimal	CENTS_FOR_UNIT		= new BigDecimal(100);	// TODO: remove in 3.0 and use new method provided
+	private static final int		ROUND_TO_PERCENT	= 5;
+
+	public static String formatChallengesScore(final Score score, final Configuration configuration) {
+		final ScoreFormatKey format = configuration.getChallengesScoreFormat();
+		final ScoreFormatter scoreFormatter = configuration.getScoreFormatter();
+
+		if (format == null) {
+			return formatScore(score, configuration);
+		}
+
+		return scoreFormatter.formatScore(score, format);
+	}
+
+	public static String formatLeaderboardsScore(final Score score, final Configuration configuration) {
+		final ScoreFormatKey format = configuration.getLeaderboardScoreFormat();
+		final ScoreFormatter scoreFormatter = configuration.getScoreFormatter();
+
+		if (format == null) {
+			return formatScore(score, configuration);
+		}
+
+		return scoreFormatter.formatScore(score, format);
+	}
 
 	public static String formatMoney(final Money money, final Configuration configuration) {
 		final BigDecimal cents = money.getAmount();
 		final BigDecimal units = cents.divide(CENTS_FOR_UNIT);
-		
+
 		String currencyName = Money.getApplicationCurrencyNamePlural();
 		if (units.equals(BigDecimal.ONE)) {
 			currencyName = Money.getApplicationCurrencyNameSingular();
 		}
-		
+
 		return String.format(configuration.getMoneyFormat(), units, currencyName);
 	}
 
+	public static String formatRanking(final Context context, final Ranking ranking, final Configuration configuration) {
+		if (ranking == null) {
+			return "";
+		}
+		final int total = ranking.getTotal();
+		if (total == 0) {
+			return "";
+		}
+		final int percent = ranking.getRank() * 100 / total;
+		int roundedPercent = 0;
+		if (percent == 0) {
+			roundedPercent = 1;
+		} else if (percent == 100) {
+			roundedPercent = 100;
+		} else {
+			roundedPercent = (percent + ROUND_TO_PERCENT) / ROUND_TO_PERCENT * ROUND_TO_PERCENT;
+		}
+		return String.format(context.getString(R.string.sl_format_leaderboards_percent), roundedPercent);
+	}
+
 	public static String formatScore(final Score score, final Configuration configuration) {
-		return String.format(configuration.getScoreResultFormat(), score.getResult());
+		final String scoreResultFormat = configuration.getScoreResultFormat();
+		if (scoreResultFormat != null) {
+			// backward compatibility
+			return String.format(scoreResultFormat, score.getResult());
+		}
+		final ScoreFormatter scoreFormatter = configuration.getScoreFormatter();
+		return scoreFormatter.formatScore(score, ScoreFormatKey.ScoresOnlyFormat);
+	}
+
+	public static String formatSocialNetworkPostScore(final Score score, final Configuration configuration) {
+		final ScoreFormatKey format = configuration.getSocialNetworkPostScoreFormat();
+		final ScoreFormatter scoreFormatter = configuration.getScoreFormatter();
+
+		if (format == null) {
+			return formatScore(score, configuration);
+		}
+
+		return scoreFormatter.formatScore(score, format);
+	}
+
+	public static String getAchievementIncrementTitle(final Context context, final Achievement achievement,
+			final Configuration configuration) {
+		final Range range = achievement.getAward().getCounterRange();
+		if (range.getLength() > 1) {
+			final int percent = (achievement.getValue() - range.getLocation()) * 100 / range.getLength();
+			return String.format(context.getString(R.string.sl_format_achievement_increment), percent);
+		}
+		return "";
+	}
+
+	public static String getAchievementRewardTitle(final Context context, final Achievement achievement, final Configuration configuration) {
+		final Money reward = achievement.getAward().getRewardMoney();
+		if ((reward != null) && reward.hasAmount()) {
+			return StringFormatter.formatMoney(reward, configuration);
+		}
+		return "";
 	}
 
 	public static String getAchievementsSubTitle(final Context context, final ValueStore userValues, final boolean extendedText) {
 		final Integer numAchieved = userValues.<Integer> getValue(Constant.NUMBER_ACHIEVEMENTS);
 		final Integer numTotal = userValues.<Integer> getValue(Constant.NUMBER_AWARDS);
 		if ((numAchieved != null) && (numTotal != null)) {
-			int resId = extendedText ? R.string.sl_format_achievements_extended : R.string.sl_format_achievements;
+			final int resId = extendedText ? R.string.sl_format_achievements_extended : R.string.sl_format_achievements;
 			return String.format(context.getString(resId), numAchieved, numTotal);
 		}
 		return "";

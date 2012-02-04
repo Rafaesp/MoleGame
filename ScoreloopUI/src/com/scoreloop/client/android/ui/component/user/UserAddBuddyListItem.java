@@ -36,7 +36,7 @@ public class UserAddBuddyListItem extends StandardListItem<Object> {
 
 	@Override
 	protected int getLayoutId() {
-		return R.layout.sl_list_item_icon_title;
+		return R.layout.sl_list_item_user;
 	}
 
 	@Override

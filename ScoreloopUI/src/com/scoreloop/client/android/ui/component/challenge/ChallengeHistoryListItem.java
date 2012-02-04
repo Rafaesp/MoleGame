@@ -99,7 +99,7 @@ public class ChallengeHistoryListItem extends BaseListItem {
 		holder.icon.setImageDrawable(drawable != null ? drawable : getContext().getResources().getDrawable(R.drawable.sl_icon_challenges));
 		holder.contenderName.setText(_challenge.getContender().getDisplayName());
 		holder.contenderScore
-				.setText(StringFormatter.formatScore(_challenge.getContenderScore(), getComponentActivity().getConfiguration()));
+				.setText(StringFormatter.formatChallengesScore(_challenge.getContenderScore(), getComponentActivity().getConfiguration()));
 		holder.contestantName.setText(contestantName != null ? contestantName : _challenge.getContestant().getDisplayName());
 		holder.contestantScore.setText(contestantScore != null ? contestantScore : getContext().getResources().getString(
 				R.string.sl_pending));
@@ -135,7 +135,7 @@ public class ChallengeHistoryListItem extends BaseListItem {
 			}
 
 			fillView(holder, drawable, null,
-					StringFormatter.formatScore(_challenge.getContestantScore(), getComponentActivity().getConfiguration()), sign
+					StringFormatter.formatChallengesScore(_challenge.getContestantScore(), getComponentActivity().getConfiguration()), sign
 							+ StringFormatter.formatMoney(new Money(prize), getComponentActivity().getConfiguration()));
 
 		} else if (_challenge.isOpen()) {

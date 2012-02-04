@@ -23,52 +23,75 @@ package com.scoreloop.client.android.ui.component.achievement;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.scoreloop.client.android.core.model.Achievement;
-import com.scoreloop.client.android.core.model.Award;
-import com.scoreloop.client.android.core.model.Money;
+import com.scoreloop.client.android.core.model.Range;
 import com.scoreloop.client.android.ui.R;
 import com.scoreloop.client.android.ui.component.base.ComponentActivity;
-import com.scoreloop.client.android.ui.component.base.Configuration;
 import com.scoreloop.client.android.ui.component.base.Constant;
+import com.scoreloop.client.android.ui.component.base.StandardListItem;
 import com.scoreloop.client.android.ui.component.base.StringFormatter;
-import com.scoreloop.client.android.ui.framework.BaseListItem;
 
-public class AchievementListItem extends BaseListItem {
+public class AchievementListItem extends StandardListItem<Achievement> {
 
-	private static String getDescriptionText(final Achievement achievement, final Configuration configuration) {
-		final Award award = achievement.getAward();
-		final String text = award.getLocalizedDescription();
-
-		final Money reward = award.getRewardMoney();
-		if ((reward != null) && reward.hasAmount()) {
-			final StringBuilder builder = new StringBuilder();
-			builder.append(StringFormatter.formatMoney(reward, configuration)).append("\n").append(text);
-			return builder.toString();
-		}
-		return text;
+	public static class AchievementViewHolder extends StandardViewHolder {
+		View		accessory;
+		TextView	increment;
+		ProgressBar	progress;
 	}
 
-	private static String getTitleText(final Achievement achievement) {
-		return achievement.getAward().getLocalizedTitle();
-	}
-
-	private final Achievement	_achievement;
-	private final boolean		_belongsToSessionUser;
-	private final String		_description;
+	private final boolean	_belongsToSessionUser;
 
 	public AchievementListItem(final ComponentActivity activity, final Achievement achievement, final boolean belongsToSessionUser) {
-		super(activity, new BitmapDrawable(achievement.getImage()), getTitleText(achievement));
-		_description = getDescriptionText(achievement, activity.getConfiguration());
-		_achievement = achievement;
+		super(activity, achievement);
 		_belongsToSessionUser = belongsToSessionUser;
+
+		setDrawable(new BitmapDrawable(achievement.getImage()));
+
+		setTitle(achievement.getAward().getLocalizedTitle());
+
+		setSubTitle(achievement.getAward().getLocalizedDescription());
+
+		setSubTitle2(StringFormatter.getAchievementRewardTitle(activity, achievement, activity.getConfiguration()));
 	}
 
-	public Achievement getAchievement() {
-		return _achievement;
+	@Override
+	protected StandardViewHolder createViewHolder() {
+		return new AchievementViewHolder();
+	}
+
+	@Override
+	protected void fillViewHolder(final View view, final StandardViewHolder holder) {
+		super.fillViewHolder(view, holder);
+
+		final AchievementViewHolder achievementViewHolder = (AchievementViewHolder) holder;
+		achievementViewHolder.accessory = view.findViewById(R.id.sl_list_item_achievement_accessory);
+		achievementViewHolder.progress = (ProgressBar) view.findViewById(R.id.sl_list_item_achievement_progress);
+		achievementViewHolder.increment = (TextView) view.findViewById(R.id.sl_list_item_achievement_percent);
+	}
+
+	protected int getIconId() {
+		return R.id.sl_list_item_achievement_icon;
+	}
+
+	@Override
+	protected int getLayoutId() {
+		return R.layout.sl_list_item_achievement;
+	}
+
+	protected int getSubTitle2Id() {
+		return R.id.sl_list_item_achievement_reward;
+	}
+
+	protected int getSubTitleId() {
+		return R.id.sl_list_item_achievement_description;
+	}
+
+	@Override
+	protected int getTitleId() {
+		return R.id.sl_list_item_achievement_title;
 	}
 
 	@Override
@@ -77,28 +100,37 @@ public class AchievementListItem extends BaseListItem {
 	}
 
 	@Override
-	public View getView(View view, final ViewGroup parent) {
-		if (view == null) {
-			view = getLayoutInflater().inflate(R.layout.sl_list_item_achievement, null);
-		}
-
-		final ImageView icon = (ImageView) view.findViewById(R.id.sl_list_item_achievement_icon);
-		icon.setImageDrawable(getDrawable());
-
-		final TextView title = (TextView) view.findViewById(R.id.sl_list_item_achievement_title);
-		title.setText(getTitle());
-
-		final TextView descripiton = (TextView) view.findViewById(R.id.sl_list_item_achievement_description);
-		descripiton.setText(_description);
-
-		final View accessory = view.findViewById(R.id.sl_list_item_achievement_accessory);
-		accessory.setVisibility(isEnabled() ? View.VISIBLE : View.INVISIBLE);
-
-		return view;
+	public boolean isEnabled() {
+		return _belongsToSessionUser && getTarget().isAchieved() && (getTarget().getIdentifier() != null);
 	}
 
 	@Override
-	public boolean isEnabled() {
-		return _belongsToSessionUser && _achievement.isAchieved() && (_achievement.getIdentifier() != null);
+	protected void updateViews(final StandardViewHolder holder) {
+		super.updateViews(holder);
+
+		final AchievementViewHolder achievementViewHolder = (AchievementViewHolder) holder;
+
+		if (isEnabled()) {
+			achievementViewHolder.accessory.setVisibility(View.VISIBLE);
+			achievementViewHolder.subTitle2.setVisibility(View.GONE);
+		}
+		else {
+			achievementViewHolder.accessory.setVisibility(View.INVISIBLE);
+			achievementViewHolder.subTitle2.setVisibility(View.VISIBLE);			
+		}
+
+		final Range range = getTarget().getAward().getCounterRange();
+		if (!getTarget().isAchieved() &&  range.getLength() > 1) {
+			achievementViewHolder.progress.setVisibility(View.VISIBLE);
+			achievementViewHolder.progress.setMax(range.getLength());
+			achievementViewHolder.progress.setProgress(getTarget().getValue() - range.getLocation());
+
+			achievementViewHolder.increment.setVisibility(View.VISIBLE);
+			achievementViewHolder.increment.setText(StringFormatter.getAchievementIncrementTitle(getContext(), getTarget(),
+					getComponentActivity().getConfiguration()));
+		} else {
+			achievementViewHolder.progress.setVisibility(View.GONE);
+			achievementViewHolder.increment.setVisibility(View.GONE);
+		}
 	}
 }

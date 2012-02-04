@@ -30,8 +30,8 @@ public interface Manager {
 	boolean isChallengeOngoing();
 
 	void startGamePlay(Integer mode, Challenge challenge);
-
-	void submitAchievements(Runnable continuation);
+	
+	void submitLocalScores(Runnable continuation);
 
 	void persistSessionUserName();
 }

@@ -28,7 +28,7 @@ import com.scoreloop.client.android.core.controller.AchievementsController;
 import com.scoreloop.client.android.core.controller.RequestController;
 import com.scoreloop.client.android.core.model.Achievement;
 import com.scoreloop.client.android.ui.component.base.ComponentListActivity;
-import com.scoreloop.client.android.ui.component.base.Manager;
+import com.scoreloop.client.android.ui.component.base.Constant;
 import com.scoreloop.client.android.ui.component.entry.EntryListItem;
 import com.scoreloop.client.android.ui.component.post.PostOverlayActivity;
 import com.scoreloop.client.android.ui.framework.BaseListAdapter;
@@ -37,58 +37,63 @@ public class AchievementListActivity extends ComponentListActivity<AchievementLi
 
 	private AchievementsController	_achievementsController;
 
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setListAdapter(new BaseListAdapter<EntryListItem>(this));
-
-		_achievementsController = new AchievementsController(getRequestControllerObserver());
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		// in the case the user is the session user, we try to sync achievements first so that all unlocked awards
-		// will have identifiers and can be used for posting messages.
-		if (isSessionUser()) {
-			showSpinner();
-			final Manager manager = getManager();
-			manager.submitAchievements(new Runnable() {
-				public void run() {
-					hideSpinner();
-					setNeedsRefresh();
-				}
-			});
-		} else {
-			setNeedsRefresh();
-		}
-	}
-
-	@Override
-	public void onListItemClick(final AchievementListItem item) {
-		final Achievement achievement = (item).getAchievement();
-		if (item.isEnabled() && !PostOverlayActivity.isPosted(getApplicationContext(), achievement)) {
-			final Intent intent = new Intent(this, PostOverlayActivity.class);
-			PostOverlayActivity.setMessageTarget(achievement);
-			startActivity(intent);
-		}
-	}
-
-	@Override
-	public void onRefresh(final int flags) {
-		showSpinnerFor(_achievementsController);
-		_achievementsController.setUser(getUser());
-		_achievementsController.loadAchievements();
-	}
-
-	@Override
-	public void requestControllerDidReceiveResponseSafe(final RequestController aRequestController) {
+	private void onAchievements() {
 		final BaseListAdapter<AchievementListItem> adapter = getBaseListAdapter();
 		adapter.clear();
 		final boolean isSessionUser = isSessionUser();
 		for (final Achievement achievement : _achievementsController.getAchievements()) {
 			adapter.add(new AchievementListItem(this, achievement, isSessionUser));
 		}
+	}
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setListAdapter(new BaseListAdapter<EntryListItem>(this));
+
+		if (isSessionUser()) {
+			final AchievementsEngine engine = getActivityArguments().getValue(Constant.ACHIEVEMENTS_ENGINE);
+			_achievementsController = engine.getAchievementsController();
+		} else {
+			_achievementsController = new AchievementsController(getRequestControllerObserver());
+		}
+	}
+
+	@Override
+	public void onListItemClick(final AchievementListItem item) {
+		if (item.isEnabled() && !PostOverlayActivity.isPosted(getApplicationContext(), item.getTarget())) {
+			final Intent intent = new Intent(this, PostOverlayActivity.class);
+			PostOverlayActivity.setMessageTarget(item.getTarget());
+			startActivity(intent);
+		}
+	}
+
+	@Override
+	public void onRefresh(final int flags) {
+		if (isSessionUser()) {
+			showSpinner();
+			final AchievementsEngine engine = getActivityArguments().getValue(Constant.ACHIEVEMENTS_ENGINE);
+			engine.submitAchievements(true, new Runnable() {
+				public void run() {
+					hideSpinner();
+					onAchievements();
+				}
+			});
+		} else {
+			showSpinnerFor(_achievementsController);
+			_achievementsController.setUser(getUser());
+			_achievementsController.loadAchievements();
+		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		setNeedsRefresh();
+	}
+
+	@Override
+	public void requestControllerDidReceiveResponseSafe(final RequestController aRequestController) {
+		onAchievements();
 	}
 }

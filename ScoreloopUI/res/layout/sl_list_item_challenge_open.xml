@@ -4,7 +4,7 @@
 	android:layout_height="wrap_content"
 	android:background="@drawable/sl_selector_list_item">
 
-	<ImageView android:layout_width="36dp"
+	<com.scoreloop.client.android.ui.component.base.RoundCornerImageView android:layout_width="36dp"
 		android:layout_height="36dp"
 		android:layout_margin="@dimen/sl_margin_default"
 		android:layout_gravity="center_vertical"

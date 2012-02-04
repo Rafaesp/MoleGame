@@ -31,6 +31,7 @@ import com.scoreloop.client.android.ui.framework.BaseListItem;
 
 public abstract class Constant {
 
+	public static final String	ACHIEVEMENTS_ENGINE						= "achievementsEngine";
 	public static final String	NAVIGATION_INTENT						= "navigationIntent";
 	public static final String	NAVIGATION_DIALOG_CONTINUATION			= "navigationDialogContinuation";
 	public static final String	NAVIGATION_ALLOWED						= "navigationAllowed";
@@ -83,6 +84,9 @@ public abstract class Constant {
 	public static final int		DIALOG_ADD_FRIEND_LOGIN					= 19;
 	/* end: dialog ids ares used by google analytics --- PLEASE DO NOT CHANGE --- */
 
+	public static final int		LEADERBOARD_LOCAL						= 3;
+	public static final String	IS_LOCAL_LEADEARBOARD					= "isLocalLeadearboard";
+
 	public static final int		LIST_ITEM_TYPE_ACHIEVEMENT				= 1;
 	public static final int		LIST_ITEM_TYPE_CAPTION					= 2;
 	public static final int		LIST_ITEM_TYPE_CHALLENGE_CONTROLS		= 3;
@@ -104,13 +108,14 @@ public abstract class Constant {
 	public static final int		LIST_ITEM_TYPE_SCORE					= 19;
 	public static final int		LIST_ITEM_TYPE_SCORE_EXCLUDED			= 20;
 	public static final int		LIST_ITEM_TYPE_SCORE_HIGHLIGHTED		= 21;
-	public static final int		LIST_ITEM_TYPE_STANDARD					= 22;
-	public static final int		LIST_ITEM_TYPE_USER						= 23;
-	public static final int		LIST_ITEM_TYPE_USER_ADD_BUDDIES			= 24;
-	public static final int		LIST_ITEM_TYPE_USER_ADD_BUDDY			= 25;
-	public static final int		LIST_ITEM_TYPE_USER_DETAIL				= 26;
-	public static final int		LIST_ITEM_TYPE_USER_FIND_MATCH			= 27;
-	public static final int		LIST_ITEM_TYPE_X_COUNT					= 28;
+	public static final int		LIST_ITEM_TYPE_SCORE_SUBMIT_LOCAL		= 22;
+	public static final int		LIST_ITEM_TYPE_STANDARD					= 23;
+	public static final int		LIST_ITEM_TYPE_USER						= 24;
+	public static final int		LIST_ITEM_TYPE_USER_ADD_BUDDIES			= 25;
+	public static final int		LIST_ITEM_TYPE_USER_ADD_BUDDY			= 26;
+	public static final int		LIST_ITEM_TYPE_USER_DETAIL				= 27;
+	public static final int		LIST_ITEM_TYPE_USER_FIND_MATCH			= 28;
+	public static final int		LIST_ITEM_TYPE_X_COUNT					= 29;
 
 	public static final String	MANAGER									= "manager";
 	public static final long	MARKET_REFRESH_TIME						= 300 * 1000;						// 300 secods in milliseconds

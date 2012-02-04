@@ -1,0 +1,110 @@
+file:	design.txt
+about:	some internal documentation on the ScoreloopUI design
+
+
+0. introduction
+
+The idea of this document is to describe the general design of this library so that internal maintainers and maybe 
+also external users can modify or extend it more easily. 
+
+
+1. structure
+
+ScoreloopUI is hierarchically structured in the following layers:
+
+	ui
+	component
+	framework | util
+	
+The framework and util packages are completely independent from ScoreloopCore and theoretically reusable in other settings.
+The component layer consists of a base package defining general abstractions and separate packages for every ScoreloopUI
+feature like Leaderboards or Challenges. This layer depends on ScoreloopCore.
+The ui layer at the top consists of the public Activities and the ScoreloopManager abstraction.
+
+
+2. M-V-VM
+
+ScoreloopUI uses a Model-View-ViewModel pattern, where ViewModels 'cache' parts of the Model data for direct
+use in Views. We use a modification of this approach, where the contents of ViewModels is filled in an demand-driven asynchronous way. 
+
+The Model objects are ScoreloopCore entities like User/Game/Score etc. and the View objects are both Android Activities as 
+well as standard Android UI elements like TextViews. ViewModels are implemented by the generic ValueStore class of ScoreloopUI.
+
+Each screen references a ValueStore (accessible via getScreenValues()) which can hold data entries referenced by key strings.
+When entries are ValueStores themselves, they can be referenced by '/'-separated key-paths:
+
+standard-entries:
+	manager
+	configuration
+	factory
+	userValues/user
+	gameValues/game
+	sessionUserValues/user
+	sessionGameValues/game
+
+  
+Populating the ValueStore is done in a demand-driven and asynchronous way triggered by the Views. When Views want to 
+retrieve entries which are not yet present (or set dirty) in the ValueStore, so called ValueSource objects will be asked to provide
+those values via the standard ScoreloopCore controller mechanisms. A BaseAgent subclass of ValueStore helps with this task by
+implementing standard request controller observers. 
+
+A ValueStore will notify Observers when a value is put into it (via onValueChanged()). By this mechanism, the Views can update themselves when
+the ViewModel changes.
+
+The Screen-ValueStore can also be used to loosely communicate between header and body activities as both share the same Screen-ValueStore.
+Also, each Screen-ValueStore references the shared ValueStore of the session user (and session game) in order to retrieve or invalidate
+session user/game data from every activity.
+
+When an entry of a ValueStore is invalidated by a setDirty() call, observers will get informed of this (via onValueSetDirty()) giving them the 
+possibility to retrieve the observed entry afresh.
+
+On resumption of a BaseActivity, onValueSetDirty() is called for every observed key so that the activity will be able to retrieve the entries
+important to it. 
+While an Activity is paused, the framework ensures, that changes to an observed ValueStore will not be propagated to it. Once the Activity
+is resumed, onValueChanged() will be called again for each observed key with the value of the key as it was at the time of pausing and the current value.
+For this, the framework creates a snapshot of the old values on pause time.
+ 
+ 
+3.  screen descriptions
+
+The framework defines a general layout of screens consisting of status, header, body and shortcut sections. Given this abstract layout, the 
+concrete contents of the screens is described programmatically by so called ScreenDescription objects. These ScreenDescription objects specify
+the activity classes to use for the header and body sections as well as optional arguments they need. The ScreenDescription objects are created
+through a factory available to every ComponentActivity.
+
+If a new screen should be displayed, an Activity will create a corresponding ScreenDescription via the factory and then call the Activities
+display() method. The framework will then start an empty ScreenActivity and fill it according to the ScreenDescription. 
+To return to a previous screen or to the invoking game, the methods displayPrevious() and finishDisplay() respectively are available.
+
+Its also possible to start a screen with an empty stack through the method displayWithEmptyStack().
+
+When the device is rotated, Android calls onCreate() of the last started Activity. In this case, the ScreenActivity will be configured
+automatically with the latest ScreenDescription.
+  
+ 
+4. refresh
+
+Besides using the ValueStore to retrieve data from the Scoreloop servers, Activities will often also use ScoreloopCore controllers directly.
+The ComponentActivity class ensures (via the ...Safe() methods), that request callback methods will only be called while the activity is in 
+the resumed state.
+When the callback is received in the paused state, the setNeedsRefresh() flag will be set. This allows the activity to retry the 
+request once it gets resumed again (via onRefresh()).
+
+Also, setNeedsRefresh() collects several calls to it before the main-thread-looper returns and so invokes onRefresh() only once.
+
+ 
+5. spinner
+
+If a body activity wants to support a spinner, it has to set the content-view in the onCreate() method via the overloaded method setContentView(int, boolean)
+setting the second argument to true. As ComponentListActivity already sets this mode, subclasses don't have to configure anything else. To show a spinner
+during a ScoreloopCore controller request, showSpinnerFor(controller) should be used. Hiding of the spinner is done automatically by ComponentActivity
+upon receiving the request responses.
+ 
+
+6. list-items
+
+To simplify the construction of lists views, the BaseListItem and StandardListItem classes can be used. They provide hooks to create views and hold variables
+for icons, titles and subtitles. StandardListItem also implements the ViewHolder approach to speed list views. In order that Android creates the right view
+instances, every ListItem class has to return a unique type.
+
+--eof

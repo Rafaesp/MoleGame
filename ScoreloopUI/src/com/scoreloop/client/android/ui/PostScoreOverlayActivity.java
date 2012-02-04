@@ -45,9 +45,9 @@ public class PostScoreOverlayActivity extends PostOverlayActivity {
 	@Override
 	protected Entity getMessageTarget() {
 		final StandardScoreloopManager manager = StandardScoreloopManager.getFactory(ScoreloopManagerSingleton.get());
-		Entity target = manager.getLastChallenge();
+		Entity target = manager.getLastSubmittedChallenge();
 		if (target == null || target.getIdentifier() == null) {
-			target = manager.getLastScore();
+			target = manager.getLastSubmittedScore();
 		}
 		return target;
 	}
@@ -55,9 +55,9 @@ public class PostScoreOverlayActivity extends PostOverlayActivity {
 	@Override
 	protected String getPostText() {
 		final StandardScoreloopManager manager = StandardScoreloopManager.getFactory(ScoreloopManagerSingleton.get());
-		final Entity target = (Entity) getMessageTarget();
+		final Entity target = getMessageTarget();
 		if (target instanceof Score) {
-			return "Score: " + StringFormatter.formatScore((Score)target, manager.getConfiguration());
+			return "Score: " + StringFormatter.formatSocialNetworkPostScore((Score) target, manager.getConfiguration());
 		} else {
 			return "Challenge";
 		}

@@ -53,15 +53,15 @@ public class ScoreloopManagerSingleton {
 	 * - be called from within the Android application class,
 	 * - only be called once during the lifecycle of the game. 
 	 * 
-	 * \param context An  <a href="http://developer.android.com/reference/android/content/Context.html">android.content.Context</a> object; The Android
+	 * @param context An  <a href="http://developer.android.com/reference/android/content/Context.html">android.content.Context</a> object; The Android
 	 * application context. 
-	 * 
+	 * @param gameSecret Your game's secret, which can be retrieved from https://developer.scoreloop.com/
 	 */
-	public static ScoreloopManager init(final Context context) {
+	public static ScoreloopManager init(final Context context, String gameSecret) {
 		if (_singleton != null) {
 			throw new IllegalStateException("ScoreloopManagerSingleton.init() can be called only once");
 		}
-		_singleton = new StandardScoreloopManager(context);
+		_singleton = new StandardScoreloopManager(context, gameSecret);
 		return _singleton;
 	}
 
@@ -70,7 +70,7 @@ public class ScoreloopManagerSingleton {
 	 * - be called when using a custom ScoreloopManager class,
 	 * - only be called once during the lifecycle of the game. 
 	 * 
-	 * \param manager A custom ScoreloopManager object. 
+	 * @param manager A custom ScoreloopManager object. 
 	 * 
 	 */
 	public static ScoreloopManager init(final ScoreloopManager manager) {

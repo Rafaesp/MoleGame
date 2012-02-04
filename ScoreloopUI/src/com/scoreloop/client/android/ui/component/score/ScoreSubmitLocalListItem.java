@@ -19,46 +19,51 @@
  * under the License.
  */
 
-package com.scoreloop.client.android.ui.component.user;
+package com.scoreloop.client.android.ui.component.score;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-import com.scoreloop.client.android.core.model.User;
 import com.scoreloop.client.android.ui.R;
-import com.scoreloop.client.android.ui.component.base.ComponentActivity;
 import com.scoreloop.client.android.ui.component.base.Constant;
-import com.scoreloop.client.android.ui.component.base.StandardListItem;
+import com.scoreloop.client.android.ui.framework.BaseListItem;
 
-public class UserListItem extends StandardListItem<User> {
+public class ScoreSubmitLocalListItem extends BaseListItem {
 
-	private final boolean	_playsSessionGame;
-
-	public UserListItem(final ComponentActivity context, final Drawable drawable, final User user, final boolean playsSessionGame) {
-		super(context, drawable, user.getDisplayName(), null, user);
-		_playsSessionGame = playsSessionGame;
-	}
-
-	@Override
-	protected String getImageUrl() {
-		return getTarget().getImageUrl();
-	}
-
-	@Override
-	protected int getLayoutId() {
-		return R.layout.sl_list_item_user;
+	public ScoreSubmitLocalListItem(final Context context) {
+		super(context, null, null);
 	}
 
 	@Override
 	public int getType() {
-		return Constant.LIST_ITEM_TYPE_USER;
+		return Constant.LIST_ITEM_TYPE_SCORE_SUBMIT_LOCAL;
 	}
 
 	@Override
-	public Drawable getDrawable() {
-		return getContext().getResources().getDrawable(R.drawable.sl_icon_user);
+	public View getView(View view, final ViewGroup parent) {
+		if (view == null) {
+			view = getLayoutInflater().inflate(R.layout.sl_list_item_score_submit_local, null);
+		}
+		prepareView(view);
+		return view;
 	}
 
-	public boolean playsSessionGame() {
-		return _playsSessionGame;
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
+
+	private void prepareView(final View view) {
+		view.setEnabled(false);		
+		final Button button = (Button) view.findViewById(R.id.sl_submit_local_score_button);
+		button.setOnClickListener(new OnClickListener() {
+			public void onClick(final View v) {
+				view.performClick();
+			}
+		});
+	}
+
 }

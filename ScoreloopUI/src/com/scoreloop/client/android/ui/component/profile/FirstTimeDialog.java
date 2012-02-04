@@ -33,13 +33,13 @@ public class FirstTimeDialog extends BaseDialog {
 
 	public void onClick(final View v) {
 		if (_listener != null) {
-			switch (v.getId()) {
-			case R.id.sl_button_ok:
-				_listener.onAction(this, BUTTON_OK);
-				break;
-			case R.id.sl_button_cancel:
-				_listener.onAction(this, BUTTON_CANCEL);
-			}
+            int viewId = v.getId();
+            if (viewId == R.id.sl_button_ok) {
+                _listener.onAction(this, BUTTON_OK);
+
+            } else if (viewId == R.id.sl_button_cancel) {
+                _listener.onAction(this, BUTTON_CANCEL);
+            }
 		}
 	}
 

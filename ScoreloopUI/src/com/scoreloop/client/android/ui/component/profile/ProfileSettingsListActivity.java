@@ -38,8 +38,6 @@ import com.scoreloop.client.android.ui.R;
 import com.scoreloop.client.android.ui.component.base.CaptionListItem;
 import com.scoreloop.client.android.ui.component.base.ComponentListActivity;
 import com.scoreloop.client.android.ui.component.base.Constant;
-import com.scoreloop.client.android.ui.component.base.PackageManager;
-import com.scoreloop.client.android.ui.component.base.StandardListItem;
 import com.scoreloop.client.android.ui.component.base.TrackerEvents;
 import com.scoreloop.client.android.ui.framework.BaseDialog;
 import com.scoreloop.client.android.ui.framework.BaseListAdapter;
